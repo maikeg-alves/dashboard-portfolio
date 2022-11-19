@@ -25,9 +25,10 @@ const Container: NextPage<Props> = ({
         <title>{title ? title : ''}</title>
       </Head>
       <MYContainer>
-        {justify && align && direction ? (
+        {justify || align || direction ? (
           <Row
             className={`justify-content-${justify} align-items-${align} flex-${direction}`}
+            style={{ width: '100%' }}
           >
             {children}
           </Row>

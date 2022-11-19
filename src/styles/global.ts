@@ -4,9 +4,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 type Props = {
   theme: {
     colors: {
+      backgroundSecondary: string;
       background: string;
       primary: string;
       text: string;
+      textSecondary: string;
     };
   };
 };
