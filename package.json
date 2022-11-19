@@ -1,0 +1,38 @@
+{
+  "name": "next-typescript-2",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next eslint ."
+  },
+  "dependencies": {
+    "@types/bootstrap": "^5.2.6",
+    "bootstrap": "^5.2.2",
+    "next": "12.2.3",
+    "react": "18.2.0",
+    "react-bootstrap": "^2.6.0",
+    "react-dom": "18.2.0",
+    "styled-components": "^5.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "16.11.47",
+    "@types/react": "18.0.15",
+    "@types/react-bootstrap": "^0.32.32",
+    "@types/styled-components": "^5.1.26",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "babel-plugin-styled-components": "^2.0.7",
+    "eslint": "8.21.0",
+    "eslint-config-next": "12.2.3",
+    "eslint-config-prettier": "^8.5.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "typescript": "4.7.4"
+  },
+  "resolutions": {
+    "styled-components": "^5"
+  }
+}
