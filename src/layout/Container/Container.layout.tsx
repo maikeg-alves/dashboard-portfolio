@@ -1,6 +1,5 @@
 import React from 'react';
 import { NextPage } from 'next';
-import Head from 'next/head';
 import { MYContainer } from './styles';
 import { Row } from 'react-bootstrap';
 
@@ -10,6 +9,8 @@ type Props = {
   align?: 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly';
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   title?: string;
+  page?: boolean;
+  background?: string;
 };
 
 const Container: NextPage<Props> = ({
@@ -17,14 +18,14 @@ const Container: NextPage<Props> = ({
   justify,
   align,
   direction,
-  title,
+  background,
 }) => {
   return (
     <>
-      <Head>
-        <title>{title ? title : ''}</title>
-      </Head>
-      <MYContainer>
+      <MYContainer
+        back={background}
+        className={`${background && `position-absolute`}`}
+      >
         {justify || align || direction ? (
           <Row
             className={`justify-content-${justify} align-items-${align} flex-${direction}`}
@@ -33,7 +34,12 @@ const Container: NextPage<Props> = ({
             {children}
           </Row>
         ) : (
-          <>{children}</>
+          <Row
+            className={`justify-content-center align-items-center flex-column`}
+            style={{ width: '100%', height: '100vh' }}
+          >
+            {children}
+          </Row>
         )}
       </MYContainer>
     </>

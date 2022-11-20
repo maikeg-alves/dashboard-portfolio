@@ -4,15 +4,15 @@ import { ThemeProvider } from 'styled-components';
 
 import GlobalStyle from '../styles/global';
 import theme from '../styles/theme';
-import { Container } from '../layout';
+import { Layout } from '../layout';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <ThemeProvider theme={theme}>
-      <Container>
+      <Layout>
         <Component {...pageProps} />
         <GlobalStyle />
-      </Container>
+      </Layout>
     </ThemeProvider>
   );
 };

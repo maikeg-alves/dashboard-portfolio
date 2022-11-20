@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Container } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 
 type Props = {
   theme: {
@@ -10,96 +10,27 @@ type Props = {
   };
 };
 
-export const MYContainer = styled(Container)<Props>`
-  min-height: 100vh;
-  /*   padding: 4rem 0; */
+export const MYContainer = styled(Col)<Props>`
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-
-  h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  h4 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  h5 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  h6 {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  p {
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  a {
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  button {
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  input {
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  textarea {
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  select {
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  label {
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  span {
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.text};
+  width: 100%;
+  height: 100vh;
+  background-image: url(${(props) => props.back});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: ${(props) => props.theme.colors.background};
+    opacity: 0.5;
+    z-index: -1;
   }
 `;

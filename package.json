@@ -1,7 +1,8 @@
 {
-  "name": "next-typescript-2",
+  "name": "dashboard-portfolio",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,10 +12,11 @@
   "dependencies": {
     "@types/bootstrap": "^5.2.6",
     "bootstrap": "^5.2.2",
-    "next": "12.2.3",
-    "react": "18.2.0",
+    "next": "^13.0.4",
+    "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
     "react-dom": "18.2.0",
+    "react-router": "^6.4.3",
     "styled-components": "^5.3.6"
   },
   "devDependencies": {

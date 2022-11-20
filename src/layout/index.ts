@@ -1,3 +1,3 @@
 import Container from './Container/Container.layout';
-
-export { Container };
+import Layout from './Layout/Layout.layout';
+export { Container, Layout };

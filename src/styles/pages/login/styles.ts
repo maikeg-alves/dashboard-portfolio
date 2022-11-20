@@ -3,60 +3,13 @@ import { Col, Form } from 'react-bootstrap';
 
 export const Container = styled(Col)`
   display: flex;
-  flex-direction: column;
+  flex: 1;
   align-items: center;
+  flex-direction: column;
   justify-content: center;
-
-  .card {
-    background-color: ${(props) => props.theme.colors.backgroundSecondary};
-    color: ${(props) => props.theme.colors.text};
-    width: 100%;
-    min-width: 250px;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 27px;
-
-    h4 {
-      margin-top: 20px;
-    }
-
-    .msg-secondary {
-      p {
-        color: ${(props) => props.theme.colors.textSecondary}!important;
-      }
-    }
-
-    .visit {
-      margin-top: 20px;
-
-      p {
-        a {
-          color: ${(props) => props.theme.colors.primary};
-          text-decoration: none;
-        }
-      }
-    }
-
-    button {
-      margin: 10px 0 5px 0;
-      border-radius: 30px;
-      width: 137px;
-      height: 39px;
-      background: ${(props) => props.theme.colors.primary};
-      border-radius: 20px;
-
-      font-size: 11px;
-      line-height: 13px;
-    }
-
-    .forgot {
-      a {
-        color: ${(props) => props.theme.colors.primary};
-        text-decoration: none;
-        font-size: 11px;
-      }
-    }
-  }
+  width: 100%;
+  height: 100vh;
+  background-color: red;
 `;
 
 export const FormGroup = styled(Form.Group)`
@@ -84,6 +37,7 @@ export const FormGroup = styled(Form.Group)`
     -webkit-transition: all 200ms linear;
     transition: all 200ms linear;
     box-shadow: 0 4px 8px 0 rgb(21 21 21 / 20%);
+    color-scheme: dark;
 
     &:focus {
       background-color: #2e3034;
@@ -101,5 +55,55 @@ export const FormGroup = styled(Form.Group)`
     color: #ffffff75;
     display: flex;
     align-items: center;
+  }
+`;
+
+export const CardLogin = styled(Col)`
+  background-color: ${(props) => props.theme.colors.backgroundSecondary};
+  color: ${(props) => props.theme.colors.text};
+  width: 100%;
+  max-width: 350px;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 27px;
+  h4 {
+    margin-top: 20px;
+  }
+
+  .msg-secondary {
+    p {
+      color: ${(props) => props.theme.colors.textSecondary}!important;
+    }
+  }
+
+  .visit {
+    margin-top: 20px;
+
+    p {
+      a {
+        color: ${(props) => props.theme.colors.primary};
+        text-decoration: none;
+      }
+    }
+  }
+
+  button {
+    margin: 10px 0 5px 0;
+    border-radius: 30px;
+    width: 137px;
+    height: 39px;
+    background: ${(props) => props.theme.colors.primary};
+    border-radius: 20px;
+
+    font-size: 11px;
+    line-height: 13px;
+  }
+
+  .forgot {
+    a {
+      color: ${(props) => props.theme.colors.primary};
+      text-decoration: none;
+      font-size: 11px;
+    }
   }
 `;
