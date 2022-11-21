@@ -1,16 +1,20 @@
 import { Col } from 'react-bootstrap';
 import { Container } from '../layout';
-import { Panel } from '../modules';
+import { Panel, Dashbord } from '../modules';
 
 const Home = () => {
+  const handleOpen = (open: string) => {
+    console.log(open);
+  };
+
   return (
-    <Container direction="row">
-      <Col xs="auto" className="d-flex">
-        <Panel />
+    <Container direction="row" align="center" justify="center" padding="3">
+      <Col xs="auto" className="d-flex h-100">
+        <Panel setOpen={handleOpen} />
       </Col>
       <Col>
-        <Col xs="auto">
-          <h1>deshbord2</h1>
+        <Col xs="auto" className="d-flex w-100">
+          <Dashbord />
         </Col>
       </Col>
     </Container>

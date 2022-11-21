@@ -10,6 +10,7 @@ type Props = {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   title?: string;
   page?: boolean;
+  padding?: string;
   background?: string;
 };
 
@@ -19,6 +20,7 @@ const Container: NextPage<Props> = ({
   align,
   direction,
   background,
+  padding,
 }) => {
   return (
     <>
@@ -28,14 +30,14 @@ const Container: NextPage<Props> = ({
       >
         {justify || align || direction ? (
           <Row
-            className={`justify-content-${justify} align-items-${align} flex-${direction}`}
-            style={{ width: '100%' }}
+            className={`justify-content-${justify} align-items-${align} flex-${direction} p-${padding}`}
+            style={{ width: '100%', height: '100vh' }}
           >
             {children}
           </Row>
         ) : (
           <Row
-            className={`justify-content-center align-items-center flex-column`}
+            className={`justify-content-center align-items-center flex-column p-${padding}`}
             style={{ width: '100%', height: '100vh' }}
           >
             {children}
