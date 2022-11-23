@@ -1,6 +1,6 @@
 import { Col } from 'react-bootstrap';
 import { Container } from '../layout';
-import { Panel, Dashbord } from '../modules';
+import { Panel, Dashbord, Projects } from '../modules';
 
 const Home = () => {
   const handleOpen = (open: string) => {
@@ -14,7 +14,8 @@ const Home = () => {
       </Col>
       <Col>
         <Col xs="auto" className="d-flex w-100">
-          <Dashbord />
+          {/*   <Dashbord /> */}
+          <Projects />
         </Col>
       </Col>
     </Container>
