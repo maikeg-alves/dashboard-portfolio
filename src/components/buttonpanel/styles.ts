@@ -15,7 +15,7 @@ export const Container = styled.div<Props>`
     border: none;
     display: flex;
     align-items: center;
-    font-size: 15px;
+    font-size: 19px;
     transition: 0.2s;
     div {
       display: flex;

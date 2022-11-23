@@ -3,12 +3,13 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { Project } from './styles';
 
 import { AiFillPlusCircle } from 'react-icons/ai';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { TableItems, Table } from '../../components';
 
 const Projects: React.FC = () => {
   return (
     <Project xs={12}>
-      <Col xs={12} className="add">
+      <Col xs={12}>
         <Col>
           <h3>New project</h3>
         </Col>
@@ -36,6 +37,11 @@ const Projects: React.FC = () => {
               <TableItems />
             </tbody>
           </Table>
+        </Col>
+        <Col xs={12} className="modalgrid">
+          <button className="add-plus">
+            <AiOutlinePlusCircle />
+          </button>
         </Col>
       </Col>
     </Project>
