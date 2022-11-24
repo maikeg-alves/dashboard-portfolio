@@ -7,7 +7,7 @@ export const Project = styled(Col)`
     border-radius: 17px;
 
     width: 100%;
-    margin: 10px;
+
     display: flex;
     justify-content: center;
     align-items: center;
