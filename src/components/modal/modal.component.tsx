@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
 import { Modal as MUIModal } from '@mui/material';
 import { Box } from './styles';
 
@@ -7,15 +6,9 @@ export interface ModalProps {
   isShown: boolean;
   hide: () => void;
   children: React.ReactElement;
-  headerText: string;
 }
 
-const Modal: React.FC<ModalProps> = ({
-  isShown,
-  headerText,
-  hide,
-  children,
-}) => {
+const Modal: React.FC<ModalProps> = ({ isShown, hide, children }) => {
   return (
     <div>
       <MUIModal
@@ -24,12 +17,7 @@ const Modal: React.FC<ModalProps> = ({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            {headerText}
-          </Typography>
-          {children}
-        </Box>
+        <Box>{children}</Box>
       </MUIModal>
     </div>
   );

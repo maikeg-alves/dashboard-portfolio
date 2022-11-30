@@ -4,6 +4,11 @@ import { Box as MUIBox } from '@mui/material';
 
 export const Box = styled(MUIBox)`
   position: absolute;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

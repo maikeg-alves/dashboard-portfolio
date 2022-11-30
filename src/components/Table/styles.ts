@@ -46,3 +46,14 @@ export const Table = styled(BTTable)`
     border-radius: 13px;
   }
 `;
+
+export const Text = styled.div`
+  padding: 10px;
+  p {
+    font-size: 14px;
+    color: white;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+`;
