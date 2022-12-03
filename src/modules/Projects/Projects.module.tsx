@@ -14,12 +14,15 @@ import {
   FormProject,
   GetView,
   Delete,
-  PutItem,
+  /*   PutItem, */
 } from '../../components';
-import { IProject } from '../../interfaces';
+import { IGithub, IProject, ITechnologys } from '../../interfaces';
 
 type ProjectListProps = {
   projects: IProject[];
+  technologys: ITechnologys[];
+  github: IGithub[];
+  values?: boolean;
 };
 
 const Projects: React.FC<ProjectListProps> = (props) => {
@@ -29,6 +32,9 @@ const Projects: React.FC<ProjectListProps> = (props) => {
 
   const [pages, setPages] = React.useState<number>(0);
   const [projectsPage, setProjectsPage] = React.useState<Array<IProject>>([]);
+  const [putprojectsPage, setPutprojectsPage] = React.useState<
+    ProjectListProps[]
+  >([]);
 
   const handleNewProjects = () => {
     setPages(1);
@@ -42,8 +48,19 @@ const Projects: React.FC<ProjectListProps> = (props) => {
   const handleeditProjects = (id: number) => {
     setPages(3);
     toggle();
+    if (props) {
+      const data = props.projects.filter((project) => project.id === id);
 
-    setProjectsPage(projects.filter((p) => p.id === id));
+      const { technologys, github } = props;
+
+      const alldata = {
+        projects: data,
+        technologys: technologys,
+        github: github,
+      };
+
+      setPutprojectsPage(alldata);
+    }
   };
   const handledeleteProjects = (id: number) => {
     setPages(4);
@@ -113,9 +130,9 @@ const Projects: React.FC<ProjectListProps> = (props) => {
 
       <Modal isShown={isShown} hide={toggle}>
         <>
-          {pages === 1 && <FormProject />}
+          {pages === 1 && <FormProject {...props} />}
           {pages === 2 && <GetView />}
-          {pages === 3 && <PutItem {...projectsPage} />}
+          {pages === 3 && <FormProject values={true} {...putprojectsPage} />}
           {pages === 4 && <Delete {...projectsPage} />}
         </>
       </Modal>

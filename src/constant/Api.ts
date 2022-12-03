@@ -1,0 +1,1 @@
+export const URL_API = 'https://maicon-gabriel-alves.vercel.app/api'

@@ -1,6 +1,6 @@
 import { GetStaticProps, NextPage } from 'next';
 import { Col } from 'react-bootstrap';
-import { IProject, ITechnologys } from '../interfaces';
+import { IGithub, IProject, ITechnologys } from '../interfaces';
 import { Container } from '../layout';
 import { Panel, Dashbord, Projects } from '../modules';
 
@@ -9,6 +9,7 @@ const URL_API = 'https://maicon-gabriel-alves.vercel.app/api';
 type Props = {
   projects: IProject[];
   technologys: ITechnologys[];
+  github: IGithub[];
 };
 
 const Home: NextPage<Props> = (props) => {
@@ -52,7 +53,9 @@ export const getStaticProps: GetStaticProps = async () => {
     const technologys = await data2.json();
 
     const projects = dateProjects.map((project: IProject) => {
-      const validated = github.find((github) => github.name === project.github);
+      const validated = github.find(
+        (github: IGithub) => github.name === project.github,
+      );
 
       const { description, language, created_at } = validated;
 
@@ -68,6 +71,7 @@ export const getStaticProps: GetStaticProps = async () => {
       props: {
         projects,
         technologys,
+        github,
       },
     };
   } catch (error) {
@@ -76,6 +80,7 @@ export const getStaticProps: GetStaticProps = async () => {
       props: {
         projects: [],
         technologys: [],
+        github: [],
       },
     };
   }
