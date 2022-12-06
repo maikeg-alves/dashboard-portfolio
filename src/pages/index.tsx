@@ -10,6 +10,7 @@ type Props = {
   projects: IProject[];
   technologys: ITechnologys[];
   github: IGithub[];
+  values: boolean;
 };
 
 const Home: NextPage<Props> = (props) => {
@@ -72,6 +73,7 @@ export const getStaticProps: GetStaticProps = async () => {
         projects,
         technologys,
         github,
+        values: false,
       },
     };
   } catch (error) {
@@ -81,6 +83,7 @@ export const getStaticProps: GetStaticProps = async () => {
         projects: [],
         technologys: [],
         github: [],
+        values: false,
       },
     };
   }

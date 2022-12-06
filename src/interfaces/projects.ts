@@ -12,4 +12,3 @@ export interface IProject {
   created_at: string;
   technologys: ITechnologys[];
 }
-[];

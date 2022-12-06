@@ -29,7 +29,7 @@ type Outputs = {
   projects: IProject[];
   technologys: ITechnologys[];
   github: IGithub[];
-  values?: boolean;
+  values: boolean;
 };
 
 const FormProject: React.FC<Outputs> = (props) => {
@@ -109,7 +109,7 @@ const FormProject: React.FC<Outputs> = (props) => {
     }
   }, [props]);
 
-  console.log(props.values ? 'red' : 'blue');
+  console.log(props.values);
 
   return (
     <>

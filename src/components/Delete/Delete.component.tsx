@@ -1,6 +1,7 @@
 import React from 'react';
 import { Col, Form } from 'react-bootstrap';
 import { IProject } from '../../interfaces';
+import { Container } from './styles';
 
 const Delete: React.FC<IProject[]> = (props) => {
   const { name, github } = props[0];
@@ -8,7 +9,7 @@ const Delete: React.FC<IProject[]> = (props) => {
   console.log('delete', name, github);
 
   return (
-    <Col xs={'auto'}>
+    <Container xs={12}>
       <Col>
         <h4>Você tem certeza absoluta?</h4>
         <p>
@@ -36,7 +37,7 @@ const Delete: React.FC<IProject[]> = (props) => {
       <Col xs={12}>
         <button>excluir projeto</button>
       </Col>
-    </Col>
+    </Container>
   );
 };
 

@@ -14,6 +14,7 @@ export const MYContainer = styled(Col)<Props>`
   flex: 1;
   width: 100%;
   height: 100vh;
+  overflow: hidden;
   background-image: url(${(props) => props.back});
   background-size: cover;
   background-position: center;
