@@ -1,12 +1,30 @@
 import React from 'react';
-import { Col, Form } from 'react-bootstrap';
+import { Button, Col, Form } from 'react-bootstrap';
 import { IProject } from '../../interfaces';
 import { Container } from './styles';
+import { DeleteItem } from '../../scripts';
 
 const Delete: React.FC<IProject[]> = (props) => {
-  const { name, github } = props[0];
+  const { name, github, id } = props[0];
 
-  console.log('delete', name, github);
+  const [check, setCheck] = React.useState<boolean>(true);
+
+  const handlechage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.currentTarget.value === `${name}/${github}`) {
+      console.log(e.currentTarget.value);
+      setCheck(false);
+    } else {
+      setCheck(true);
+    }
+  };
+
+  const handleDelete = () => {
+    if (check === false) {
+      DeleteItem('projects', id);
+      alert(`projeto de id: ${id}, deletado com sucecsso! `);
+    }
+  };
 
   return (
     <Container xs={12}>
@@ -30,12 +48,13 @@ const Delete: React.FC<IProject[]> = (props) => {
             </strong>{' '}
             para confirmar.
           </Form.Label>
-          <Form.Control type="text" />
+          <Form.Control type="text" onChange={handlechage} />
+          <Col xs={12}>
+            <Button type="submit" disabled={check} onClick={handleDelete}>
+              excluir projeto
+            </Button>
+          </Col>
         </Form.Group>
-      </Col>
-
-      <Col xs={12}>
-        <button>excluir projeto</button>
       </Col>
     </Container>
   );

@@ -15,6 +15,15 @@ export const Container = styled(Col)`
     background-color: ${(props) => props.theme.table.danger};
     color: white;
     font-weight: bold;
+
+    &:hover {
+      color: white;
+      background-color: ${(props) => props.theme.table.danger};
+    }
+    &:disabled {
+      color: white;
+      background-color: ${(props) => props.theme.colors.textSecondary};
+    }
   }
 
   strong {

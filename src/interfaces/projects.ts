@@ -12,3 +12,13 @@ export interface IProject {
   created_at: string;
   technologys: ITechnologys[];
 }
+
+export interface PUTProject {
+  name: string;
+  github: string;
+  description: string;
+  difficulty: number;
+  img: string;
+  gif: string;
+  technologys_id: number[];
+}

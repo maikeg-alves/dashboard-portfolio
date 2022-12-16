@@ -1,3 +1,5 @@
-export { CreateItem } from './Create';
-export { DeleteItem } from './Delete';
-export { PutItem } from './Update';
+import { CreateItem } from './Create';
+import { DeleteItem } from './Delete';
+import { PutItem } from './Update';
+
+export { CreateItem, DeleteItem, PutItem };

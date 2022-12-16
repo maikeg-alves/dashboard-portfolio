@@ -6,7 +6,10 @@ import { Col } from 'react-bootstrap';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 import { Form, StepperBox } from './styles';
-import { IGithub, IProject, ITechnologys } from '@interfaces';
+import { IGithub, IProject, ITechnologys, PUTProject } from '@interfaces';
+
+import { _CRUD } from '../../scripts';
+
 /* import { Alert } from '@mui/material'; */
 
 const steps = [
@@ -20,9 +23,10 @@ type Inputs = {
   githubRepository: string;
   description: string;
   image_url: string;
-  technologies_one: string;
-  technologies_two: string;
-  technologies_three: string;
+  difficulty: number;
+  technologies_one: number;
+  technologies_two: number;
+  technologies_three: number;
 };
 
 type Outputs = {
@@ -47,36 +51,84 @@ const FormProject: React.FC<Outputs> = (props) => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    try {
-      const {
-        projectName,
-        githubRepository,
-        description,
-        image_url,
-        technologies_one,
-        technologies_two,
-        technologies_three,
-      } = data;
+    const {
+      projectName,
+      githubRepository,
+      description,
+      image_url,
+      difficulty,
+      technologies_one,
+      technologies_two,
+      technologies_three,
+    } = data;
 
-      if ((projectName && githubRepository) || description) {
-        setStep(2);
-        projects.map((item) => {
-          if (item.name === projectName) {
-            return console.error('projeto existente');
+    // converter valores em numbe
+
+    try {
+      if (typeof projectName === typeof githubRepository) {
+        const checkname = projects.map((project) => {
+          if (project.name === projectName) {
+            return null;
           }
         });
-      }
+        if (checkname !== null) {
+          setStep(2);
+          if (step === 2) {
+            if (image_url && difficulty) {
+              if (
+                typeof technologies_one &&
+                typeof technologies_two &&
+                typeof technologies_three
+              ) {
+                setStep(3);
+                const id = props.projects.map((item) => item.id);
+                const CRUD = new _CRUD(Number(id), 'projects');
 
-      if (
-        image_url &&
-        technologies_one &&
-        technologies_two &&
-        technologies_three
-      ) {
-        if (technologies_one !== technologies_two && technologies_three) {
-          if (technologies_two !== technologies_one && technologies_three) {
-            if (technologies_three !== technologies_two && technologies_one) {
-              setStep(3);
+                if (props.values) {
+                  const data: PUTProject = {
+                    name: projectName,
+                    github: githubRepository,
+                    description: description,
+                    difficulty: Number(difficulty),
+                    img: image_url,
+                    gif: image_url,
+                    technologys_id: [
+                      Number(technologies_one),
+                      Number(technologies_two),
+                      Number(technologies_three),
+                    ],
+                  };
+
+                  if (data) {
+                    CRUD.update(data).then(
+                      (res) =>
+                        res.revalidated &&
+                        alert('projeto atualizado com sucesso'),
+                    );
+                  }
+                } else {
+                  /* const createdata: PUTProject = {
+                    name: projectName,
+                    github: githubRepository,
+                    description: description,
+                    difficulty: Number(difficulty),
+                    img: image_url,
+                    gif: image_url,
+                    technologys_id: [
+                      Number(technologies_one),
+                      Number(technologies_two),
+                      Number(technologies_three),
+                    ],
+                  }; */
+                  /*        if (createdata) {
+                    CRUD.create(createdata).then(
+                      (res) =>
+                        res.revalidated &&
+                        alert('projeto atualizado com sucesso'),
+                    );
+                  } */
+                }
+              }
             }
           }
         }
@@ -84,8 +136,6 @@ const FormProject: React.FC<Outputs> = (props) => {
     } catch (error) {
       console.error(error);
     }
-
-    console.log(data);
   };
 
   React.useEffect(() => {
@@ -107,9 +157,7 @@ const FormProject: React.FC<Outputs> = (props) => {
           .slice(0, 10),
       );
     }
-  }, [props]);
-
-  console.log(props.values);
+  }, [props, errors]);
 
   return (
     <>
@@ -117,113 +165,282 @@ const FormProject: React.FC<Outputs> = (props) => {
         <Form onSubmit={handleSubmit(onSubmit)}>
           {step === 1 && (
             <>
-              <Form.Group>
-                <Form.Label>Project name</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder={`${
-                    props.values
-                      ? props.projects.map((item) => item.name)
-                      : 'projectName'
-                  }`}
-                  {...register('projectName', {
-                    required: true,
-                    pattern: /^[a-zA-Z]/,
-                  })}
-                  style={{
-                    border: errors.projectName
-                      ? '2px solid red'
-                      : '1px solid #ced4da',
-                  }}
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Github repo</Form.Label>
-                <Form.Select
-                  aria-label="Floating label select example"
-                  {...register('githubRepository')}
-                >
-                  <option>Open this select menu</option>
-                  {github.length > 0 &&
-                    github.map((tech) => (
-                      <option key={tech.id} value={tech.name}>
-                        {tech.name}
+              {props.values ? (
+                <>
+                  <Form.Group>
+                    <Form.Label>Project name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder={`${
+                        props.values && props.projects.map((item) => item.name)
+                      }`}
+                      {...register('projectName', {
+                        required: true,
+                        pattern: /^[a-zA-Z]/,
+                      })}
+                      value={
+                        errors.projectName &&
+                        `${props.projects.map((item) => item.name)}`
+                      }
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Github repo</Form.Label>
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      {...register('githubRepository', {
+                        required: true,
+                      })}
+                    >
+                      {props.projects.map((item, index) => (
+                        <option key={index} value={item.github}>
+                          {item.github}
+                        </option>
+                      ))}
+
+                      {github.length > 0 &&
+                        github.map((tech) => (
+                          <option key={tech.id} value={tech.name}>
+                            {tech.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Descriotion</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      placeholder={`${
+                        props.values &&
+                        props.projects.map((item) => item.description)
+                      }`}
+                      style={{ height: '100px' }}
+                      {...register('description', {
+                        required: false,
+                        maxLength: 1000,
+                      })}
+                    />
+                  </Form.Group>
+                </>
+              ) : (
+                <>
+                  <Form.Group>
+                    <Form.Label>Project name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder={'project name'}
+                      {...register('projectName', {
+                        required: true,
+                        pattern: /^[a-zA-Z]/,
+                      })}
+                      style={{
+                        border: errors.projectName
+                          ? '2px solid red'
+                          : '1px solid #ced4da',
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Github repo</Form.Label>
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      {...register('githubRepository', {
+                        required: true,
+                      })}
+                    >
+                      <option value={props.values ? 'teste' : ''}>
+                        Open this select menu
                       </option>
-                    ))}
-                </Form.Select>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Descriotion</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  placeholder="Leave a comment here"
-                  style={{ height: '100px' }}
-                  {...(register('description'),
-                  {
-                    required: false,
-                    maxLength: 200,
-                  })}
-                />
-              </Form.Group>
+                      {github.length > 0 &&
+                        github.map((tech) => (
+                          <option key={tech.id} value={tech.name}>
+                            {tech.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Descriotion</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      placeholder="Leave a comment here"
+                      style={{ height: '100px' }}
+                      {...(register('description'),
+                      {
+                        required: false,
+                        maxLength: 200,
+                      })}
+                    />
+                  </Form.Group>
+                </>
+              )}
             </>
           )}
 
           {step === 2 && (
             <>
-              <Form.Group>
-                <Form.Label>Image url</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="image url"
-                  {...register('image_url')}
-                  style={{
-                    border: errors.image_url
-                      ? '2px solid red'
-                      : '1px solid #ced4da',
-                  }}
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Tecnologi</Form.Label>
-                <Form.Select
-                  aria-label="Floating label select example"
-                  {...register('technologies_one')}
-                >
-                  <option>Open this select menu</option>
-                  {technologys &&
-                    technologys.map((tech) => (
-                      <option key={tech.id} value={tech.id}>
-                        {tech.name}
-                      </option>
-                    ))}
-                </Form.Select>
-                <Form.Select
-                  aria-label="Floating label select example"
-                  {...register('technologies_two')}
-                >
-                  <option>Open this select menu</option>
-                  {technologys &&
-                    technologys.map((tech) => (
-                      <option key={tech.id} value={tech.id}>
-                        {tech.name}
-                      </option>
-                    ))}
-                </Form.Select>
-                <Form.Select
-                  aria-label="Floating label select example"
-                  {...register('technologies_three')}
-                >
-                  <option>Open this select menu</option>
-                  {technologys &&
-                    technologys.map((tech) => (
-                      <option key={tech.id} value={tech.id}>
-                        {tech.name}
-                      </option>
-                    ))}
-                </Form.Select>
-              </Form.Group>
+              {props.values ? (
+                <>
+                  <Form.Group>
+                    <Form.Label>Image url</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder={`${props.projects.map((item) => item.img)}`}
+                      {...register('image_url', {
+                        required: true,
+                      })}
+                      value={
+                        errors.image_url &&
+                        `${props.projects.map((item) => item.img)}`
+                      }
+                    />
+                  </Form.Group>
 
-              <Form.Group></Form.Group>
+                  <Form.Group className="my-2">
+                    <Form.Label className="pb-2">Difficulty</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder={`${props.projects.map(
+                        (item) => item.difficulty,
+                      )}`}
+                      {...register('difficulty', {
+                        required: true,
+                        max: 100,
+                      })}
+                      value={
+                        errors.difficulty &&
+                        `${props.projects.map((item) => item.difficulty)}`
+                      }
+                    />
+                  </Form.Group>
+
+                  <Form.Group>
+                    <Form.Label>Tecnologi</Form.Label>
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      {...register('technologies_one', {
+                        required: true,
+                      })}
+                    >
+                      <option
+                        selected
+                        disabled
+                        label="Open this select menu"
+                      ></option>
+                      {technologys &&
+                        technologys.map((tech) => (
+                          <option key={tech.id} value={tech.id}>
+                            {tech.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      {...register('technologies_two', {
+                        required: true,
+                      })}
+                    >
+                      <option
+                        selected
+                        disabled
+                        label="Open this select menu"
+                      ></option>
+                      {technologys &&
+                        technologys.map((tech) => (
+                          <option key={tech.id} value={tech.id}>
+                            {tech.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      {...register('technologies_three', {
+                        required: true,
+                      })}
+                    >
+                      <option
+                        selected
+                        disabled
+                        label="Open this select menu"
+                      ></option>
+                      {technologys &&
+                        technologys.map((tech) => (
+                          <option key={tech.id} value={Number(tech.id)}>
+                            {tech.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
+                </>
+              ) : (
+                <>
+                  <Form.Group>
+                    <Form.Label>Image url</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="image url"
+                      {...register('image_url', {
+                        required: true,
+                      })}
+                      style={{
+                        border: errors.image_url
+                          ? '2px solid red'
+                          : '1px solid #ced4da',
+                      }}
+                    />
+                  </Form.Group>
+
+                  <Form.Group>
+                    <Form.Label>Tecnologi</Form.Label>
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      {...register('technologies_one', {
+                        required: true,
+                      })}
+                    >
+                      <option value={0}>Open this select menu</option>
+                      {technologys &&
+                        technologys.map((tech) => (
+                          <option key={tech.id} value={tech.id}>
+                            {tech.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      {...register('technologies_two', {
+                        required: true,
+                      })}
+                    >
+                      <option value={0}>Open this select menu</option>
+                      {technologys &&
+                        technologys.map((tech) => (
+                          <option key={tech.id} value={tech.id}>
+                            {tech.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+
+                    <Form.Select
+                      aria-label="Floating label select example"
+                      {...register('technologies_three', {
+                        required: false,
+                      })}
+                    >
+                      <option value={0}>Open this select menu</option>
+                      {technologys &&
+                        technologys.map((tech) => (
+                          <option key={tech.id} value={tech.id}>
+                            {tech.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
+                </>
+              )}
             </>
           )}
 
@@ -238,13 +455,13 @@ const FormProject: React.FC<Outputs> = (props) => {
           )}
 
           <Col xs={12} className="d-flex justify-content-center">
-            <button type="submit"> DONE </button>
+            <button type="submit" /* disabled={} */> DONE </button>
           </Col>
         </Form>
       </Col>
 
       <StepperBox>
-        <Stepper activeStep={1} alternativeLabel>
+        <Stepper activeStep={step} alternativeLabel>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>

@@ -102,10 +102,10 @@ const Projects: React.FC<Props> = (props) => {
             <Table>
               <tbody>
                 {projects &&
-                  projects.map((project, index: number) => (
+                  projects.map((project, id: number) => (
                     <>
                       <TableItems
-                        id={index === 0 ? index + 1 : index}
+                        id={id}
                         name={project.name}
                         idproject={project.id}
                         created_at={project.created_at}
