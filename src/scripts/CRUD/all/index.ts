@@ -1,4 +1,4 @@
-import { IProject, PUTProject } from '@interfaces';
+import { PUTProject } from '@interfaces';
 
 export class _CRUD {
   static baseUrl = 'https://maicon-gabriel-alves.vercel.app/api';
@@ -11,9 +11,9 @@ export class _CRUD {
   }
 
   // Create a new resource
-  async create(category: string, id: string, resource: IProject[]) {
+  async create(resource: PUTProject) {
     const response = await fetch(
-      `${_CRUD.baseUrl}/${category}?id=${id}&secret=${process.env.SECRET_API}`,
+      `${_CRUD.baseUrl}/${this.category}?id=${this.id}&secret=${process.env.SECRET_API}`,
       {
         method: 'POST',
         body: JSON.stringify(resource),
@@ -35,7 +35,7 @@ export class _CRUD {
     const response = await fetch(
       `${_CRUD.baseUrl}/${this.category}?id=${this.id}&secret=${process.env.SECRET_API}`,
       {
-        method: 'PUT',
+        method: 'PATCH',
         body: JSON.stringify(resource),
         headers: {
           'Content-Type': 'application/json',
@@ -46,23 +46,18 @@ export class _CRUD {
   }
 
   // Delete a resource by ID
-  async delete(id: string, category: string) {
-    try {
-      const response = await fetch(
-        `${_CRUD.baseUrl}/${category}?id=${id}&secret=${process.env.SECRET_API}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
+  async delete() {
+    const response = await fetch(
+      `${_CRUD.baseUrl}/${this.category}?id=${this.id}&secret=${process.env.SECRET_API}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
-      );
+      },
+    );
 
-      return await response.json();
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
+    return await response.json();
   }
 }

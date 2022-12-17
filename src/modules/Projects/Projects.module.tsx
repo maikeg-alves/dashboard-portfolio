@@ -23,6 +23,7 @@ type Props = {
   technologys: ITechnologys[];
   github: IGithub[];
   values: boolean;
+  updateValues?: (values: boolean) => void;
 };
 
 const Projects: React.FC<Props> = (props) => {
@@ -31,10 +32,12 @@ const Projects: React.FC<Props> = (props) => {
   const { isShown, toggle } = useModal();
 
   const [pages, setPages] = React.useState<number>(0);
-  const [projectsPage, setProjectsPage] = React.useState<IProject[]>([]);
+
   const [putprojectsPage, setPutprojectsPage] = React.useState<Props>(
     [] as unknown as Props,
   );
+
+  const [id, setID] = React.useState<number>(0 as number);
 
   const handleNewProjects = () => {
     setPages(1);
@@ -45,6 +48,7 @@ const Projects: React.FC<Props> = (props) => {
     setPages(2);
     toggle();
   };
+
   const handleeditProjects = (id: number) => {
     setPages(3);
     toggle();
@@ -64,10 +68,18 @@ const Projects: React.FC<Props> = (props) => {
       setPutprojectsPage(alldata);
     }
   };
+
   const handledeleteProjects = (id: number) => {
     setPages(4);
     toggle();
-    setProjectsPage(projects.filter((p) => p.id === id));
+    setID(id);
+  };
+
+  const GrUpdate = (e: boolean) => {
+    if (props.updateValues !== undefined) {
+      props.updateValues(e ? false : true);
+      toggle();
+    }
   };
 
   React.useEffect(() => {
@@ -105,7 +117,7 @@ const Projects: React.FC<Props> = (props) => {
                   projects.map((project, id: number) => (
                     <>
                       <TableItems
-                        id={id}
+                        id={id + 1}
                         name={project.name}
                         idproject={project.id}
                         created_at={project.created_at}
@@ -135,7 +147,7 @@ const Projects: React.FC<Props> = (props) => {
           {pages === 1 && <FormProject {...props} />}
           {pages === 2 && <GetView />}
           {pages === 3 && <FormProject {...putprojectsPage} />}
-          {pages === 4 && <Delete {...projectsPage} />}
+          {pages === 4 && <Delete handleDelete={GrUpdate} id={id} {...props} />}
         </>
       </Modal>
     </>

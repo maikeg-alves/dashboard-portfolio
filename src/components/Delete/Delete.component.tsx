@@ -2,12 +2,22 @@ import React from 'react';
 import { Button, Col, Form } from 'react-bootstrap';
 import { IProject } from '../../interfaces';
 import { Container } from './styles';
-import { DeleteItem } from '../../scripts';
+import { _CRUD } from '../../scripts';
 
-const Delete: React.FC<IProject[]> = (props) => {
-  const { name, github, id } = props[0];
+type Props = {
+  id: number;
+  projects: IProject[];
+  handleDelete: (check: boolean) => void;
+};
+
+const Delete: React.FC<Props> = (props) => {
+  const { name, github, id } = props.projects
+    .filter((project) => project.id === props.id)
+    .reduce((acc, item) => ({ ...acc, [item.id]: item }));
 
   const [check, setCheck] = React.useState<boolean>(true);
+
+  const CRUD = new _CRUD(id, 'projects');
 
   const handlechage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -21,8 +31,12 @@ const Delete: React.FC<IProject[]> = (props) => {
 
   const handleDelete = () => {
     if (check === false) {
-      DeleteItem('projects', id);
-      alert(`projeto de id: ${id}, deletado com sucecsso! `);
+      CRUD.delete().then((res) => {
+        if (res.revalidated) {
+          alert('projeto atualizado com sucesso');
+          props.handleDelete(check);
+        }
+      });
     }
   };
 

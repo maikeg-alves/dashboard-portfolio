@@ -88,7 +88,7 @@ const FormProject: React.FC<Outputs> = (props) => {
                   const data: PUTProject = {
                     name: projectName,
                     github: githubRepository,
-                    description: description,
+                    description: description !== undefined ? description : '',
                     difficulty: Number(difficulty),
                     img: image_url,
                     gif: image_url,
@@ -107,10 +107,10 @@ const FormProject: React.FC<Outputs> = (props) => {
                     );
                   }
                 } else {
-                  /* const createdata: PUTProject = {
+                  const createdata: PUTProject = {
                     name: projectName,
                     github: githubRepository,
-                    description: description,
+                    description: description !== undefined ? description : '',
                     difficulty: Number(difficulty),
                     img: image_url,
                     gif: image_url,
@@ -119,14 +119,15 @@ const FormProject: React.FC<Outputs> = (props) => {
                       Number(technologies_two),
                       Number(technologies_three),
                     ],
-                  }; */
-                  /*        if (createdata) {
-                    CRUD.create(createdata).then(
-                      (res) =>
-                        res.revalidated &&
-                        alert('projeto atualizado com sucesso'),
+                  };
+                  console.log('values criate project', createdata);
+                  if (createdata) {
+                    CRUD.create(createdata).then((res) =>
+                      res.revalidated
+                        ? alert('projeto criado com sucesso')
+                        : alert('error ao criar projeto'),
                     );
-                  } */
+                  }
                 }
               }
             }
@@ -389,6 +390,18 @@ const FormProject: React.FC<Outputs> = (props) => {
                           ? '2px solid red'
                           : '1px solid #ced4da',
                       }}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="my-2">
+                    <Form.Label className="pb-2">Difficulty</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder={'difficulty '}
+                      {...register('difficulty', {
+                        required: true,
+                        max: 100,
+                      })}
                     />
                   </Form.Group>
 

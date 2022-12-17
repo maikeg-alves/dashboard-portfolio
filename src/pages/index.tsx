@@ -1,3 +1,4 @@
+import React from 'react';
 import { GetStaticProps, NextPage } from 'next';
 import { Col } from 'react-bootstrap';
 import { IGithub, IProject, ITechnologys } from '../interfaces';
@@ -14,9 +15,21 @@ type Props = {
 };
 
 const Home: NextPage<Props> = (props) => {
+  const [update, setUpdate] = React.useState<boolean>(false);
+
   const handleOpen = (open: string) => {
     console.log(open);
   };
+
+  const handUpdate = (e: boolean) => {
+    console.log('update', e);
+    setUpdate(e);
+  };
+
+  React.useEffect(() => {
+    props;
+    console.log(props);
+  }, [props, update]);
 
   return (
     <Container direction="row" align="center" justify="center" padding="3">
@@ -26,7 +39,7 @@ const Home: NextPage<Props> = (props) => {
       <Col>
         <Col xs="auto" className="d-flex w-100">
           {/*   <Dashbord /> */}
-          <Projects {...props} />
+          <Projects updateValues={handUpdate} {...props} />
         </Col>
       </Col>
     </Container>
