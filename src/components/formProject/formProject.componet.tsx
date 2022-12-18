@@ -34,11 +34,14 @@ type Outputs = {
   technologys: ITechnologys[];
   github: IGithub[];
   values: boolean;
+  statusUpdate?: (status: boolean) => void;
+  stateCreate?: (status: boolean) => void;
 };
 
 const FormProject: React.FC<Outputs> = (props) => {
   const [step, setStep] = React.useState(1); //eslint-disable-line
 
+  const [update, setupdate] = React.useState<boolean>(false);
   const [technologys, setTechnologys] = React.useState<ITechnologys[]>();
   const [github, setGithub] = React.useState<IGithub[]>([]);
   const [projects, setProjects] = React.useState<IProject[]>([]);
@@ -51,6 +54,8 @@ const FormProject: React.FC<Outputs> = (props) => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
+    // values of form state
+
     const {
       projectName,
       githubRepository,
@@ -64,75 +69,105 @@ const FormProject: React.FC<Outputs> = (props) => {
 
     // converter valores em numbe
 
-    try {
-      if (typeof projectName === typeof githubRepository) {
-        const checkname = projects.map((project) => {
-          if (project.name === projectName) {
-            return null;
-          }
-        });
-        if (checkname !== null) {
-          setStep(2);
-          if (step === 2) {
-            if (image_url && difficulty) {
-              if (
-                typeof technologies_one &&
-                typeof technologies_two &&
-                typeof technologies_three
-              ) {
-                setStep(3);
-                const id = props.projects.map((item) => item.id);
-                const CRUD = new _CRUD(Number(id), 'projects');
+    const id = props.projects.map((item) => item.id);
 
-                if (props.values) {
-                  const data: PUTProject = {
-                    name: projectName,
-                    github: githubRepository,
-                    description: description !== undefined ? description : '',
-                    difficulty: Number(difficulty),
-                    img: image_url,
-                    gif: image_url,
-                    technologys_id: [
-                      Number(technologies_one),
-                      Number(technologies_two),
-                      Number(technologies_three),
-                    ],
-                  };
+    const CRUD = new _CRUD(Number(id), 'projects');
 
-                  if (data) {
-                    CRUD.update(data).then(
-                      (res) =>
-                        res.revalidated &&
-                        alert('projeto atualizado com sucesso'),
-                    );
-                  }
-                } else {
-                  const createdata: PUTProject = {
-                    name: projectName,
-                    github: githubRepository,
-                    description: description !== undefined ? description : '',
-                    difficulty: Number(difficulty),
-                    img: image_url,
-                    gif: image_url,
-                    technologys_id: [
-                      Number(technologies_one),
-                      Number(technologies_two),
-                      Number(technologies_three),
-                    ],
-                  };
-                  console.log('values criate project', createdata);
-                  if (createdata) {
-                    CRUD.create(createdata).then((res) =>
-                      res.revalidated
-                        ? alert('projeto criado com sucesso')
-                        : alert('error ao criar projeto'),
-                    );
-                  }
-                }
-              }
+    const errorMessages = [
+      'input 1 não foi selected',
+      'input 2 não foi selected',
+      'input 3 não foi selected',
+    ];
+
+    const createOrUpdateProject = (data: PUTProject) => {
+      if (props.values) {
+        CRUD.update(data).then((res) => {
+          if (res.revalidated) {
+            alert('projeto editado com sucesso');
+            setupdate(true);
+            if (props.statusUpdate !== undefined) {
+              props.statusUpdate(update);
+            }
+          } else {
+            alert('error ao editar projeto');
+            setupdate(false);
+            if (props.statusUpdate !== undefined) {
+              props.statusUpdate(update);
             }
           }
-        }
+        });
+      } else {
+        console.log('values do crete', data);
+        CRUD.create(data).then((res) => {
+          if (res.revalidated) {
+            alert('projeto criado com sucesso');
+            setupdate(true);
+            if (props.stateCreate !== undefined) {
+              props.stateCreate(update);
+            }
+          } else {
+            alert('error ao criar projeto');
+            setupdate(false);
+            if (props.stateCreate !== undefined) {
+              props.stateCreate(update);
+            }
+          }
+        });
+      }
+    };
+
+    try {
+      switch (step) {
+        case 1:
+          const checkname = projects.map((project) => {
+            if (project.name === projectName) {
+              return null;
+            }
+          });
+
+          if (checkname === null) {
+            alert('project name must be provided');
+          }
+
+          setStep(2);
+          break;
+        case 2:
+          alert('step 2');
+          if (
+            Number(technologies_one) === 0 ||
+            Number(technologies_two) === 0 ||
+            Number(technologies_three) === 0
+          ) {
+            const index = [
+              Number(technologies_one),
+              Number(technologies_two),
+              Number(technologies_three),
+            ].indexOf(0);
+            return alert(errorMessages[index]);
+          }
+          setStep(3);
+          break;
+        case 3:
+          alert('step 3');
+
+          const data: PUTProject = {
+            name: projectName,
+            github: githubRepository,
+            description: description !== undefined ? description : '',
+            difficulty: Number(difficulty),
+            img: image_url,
+            gif: image_url,
+            technologys_id: [
+              Number(technologies_one),
+              Number(technologies_two),
+              Number(technologies_three),
+            ],
+          };
+
+          createOrUpdateProject(data);
+          break;
+        default:
+          alert('sla mané');
       }
     } catch (error) {
       console.error(error);

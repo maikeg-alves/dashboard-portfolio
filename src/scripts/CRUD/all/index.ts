@@ -10,10 +10,10 @@ export class _CRUD {
     this.category = category; //projects || technologys
   }
 
-  // Create a new resource
+  // Create a new resource ?secret=
   async create(resource: PUTProject) {
     const response = await fetch(
-      `${_CRUD.baseUrl}/${this.category}?id=${this.id}&secret=${process.env.SECRET_API}`,
+      `${_CRUD.baseUrl}/${this.category}?secret=${process.env.SECRET_API}`,
       {
         method: 'POST',
         body: JSON.stringify(resource),
@@ -23,11 +23,6 @@ export class _CRUD {
       },
     );
     return await response.json();
-  }
-
-  // Read a resource by ID
-  read(id: string) {
-    return console.log('teste de la resource', id);
   }
 
   // Update a resource by ID

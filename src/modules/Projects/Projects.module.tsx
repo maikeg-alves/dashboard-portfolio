@@ -52,7 +52,6 @@ const Projects: React.FC<Props> = (props) => {
   const handleeditProjects = (id: number) => {
     setPages(3);
     toggle();
-
     if (props) {
       const data = props.projects.filter((project) => project.id === id);
 
@@ -69,18 +68,45 @@ const Projects: React.FC<Props> = (props) => {
     }
   };
 
+  // setando o id que será usado
+
   const handledeleteProjects = (id: number) => {
     setPages(4);
     toggle();
     setID(id);
   };
 
-  const GrUpdate = (e: boolean) => {
+  // solicitando updates nos dados após mudanças na base de dasdos
+
+  const statusUpdate = (e: boolean) => {
     if (props.updateValues !== undefined) {
       props.updateValues(e ? false : true);
       toggle();
     }
   };
+
+  // renderizando a pagina de acordo com oq o usuario seleciona
+
+  let element: React.ReactElement;
+
+  switch (pages) {
+    case 1:
+      element = <FormProject stateCreate={statusUpdate} {...props} />;
+      break;
+    case 2:
+      element = <GetView />;
+      break;
+    case 3:
+      element = (
+        <FormProject statusUpdate={statusUpdate} {...putprojectsPage} />
+      );
+      break;
+    case 4:
+      element = <Delete handleDelete={statusUpdate} id={id} {...props} />;
+      break;
+    default:
+      element = <div>valores não carregados</div>;
+  }
 
   React.useEffect(() => {
     if (isShown === false) {
@@ -93,7 +119,7 @@ const Projects: React.FC<Props> = (props) => {
       <Project xs={12}>
         <Col xs={12} style={{ margin: '15px 0' }}>
           <Col>
-            <h3>New project</h3>
+            <h3>New project: {props.values ? '✅' : '❌'}</h3>
           </Col>
           <Container>
             <Row>
@@ -143,12 +169,7 @@ const Projects: React.FC<Props> = (props) => {
       </Project>
 
       <Modal isShown={isShown} hide={toggle}>
-        <>
-          {pages === 1 && <FormProject {...props} />}
-          {pages === 2 && <GetView />}
-          {pages === 3 && <FormProject {...putprojectsPage} />}
-          {pages === 4 && <Delete handleDelete={GrUpdate} id={id} {...props} />}
-        </>
+        <>{element}</>
       </Modal>
     </>
   );
