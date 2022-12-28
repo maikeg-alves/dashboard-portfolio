@@ -1,42 +1,73 @@
 import React from 'react';
 import { Button, Col, Form } from 'react-bootstrap';
-import { IProject } from '../../interfaces';
+
+import { IProject, ITechnologys } from '../../interfaces';
 import { Container } from './styles';
 import { _CRUD } from '../../scripts';
+import { LoadingBtn } from 'src/styles/components';
 
 type Props = {
   id: number;
   projects: IProject[];
+  technologys: ITechnologys[];
+  mode?: boolean;
   handleDelete: (check: boolean) => void;
 };
 
 const Delete: React.FC<Props> = (props) => {
-  const { name, github, id } = props.projects
-    .filter((project) => project.id === props.id)
-    .reduce((acc, item) => ({ ...acc, [item.id]: item }));
+  console.log(props.technologys.map((res) => res.name));
 
   const [check, setCheck] = React.useState<boolean>(true);
+  const [looding, setLooding] = React.useState<boolean>(false);
 
-  const CRUD = new _CRUD(id, 'projects');
+  const CRUD = new _CRUD(
+    props.id,
+    `${props.mode ? 'technologys' : 'projects'}`,
+  );
 
   const handlechage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (e.currentTarget.value === `${name}/${github}`) {
-      console.log(e.currentTarget.value);
-      setCheck(false);
+    const { value } = e.target;
+    console.log(value);
+    if (props.mode) {
+      const { name, id } = props.technologys
+        .filter((item) => item.id === props.id)
+        .reduce((acc, item) => ({ ...acc, [item.id]: item }));
+      if (value === `${name}/id:${id}`) {
+        console.log(`foi ${value} e ${name}/id:${id}`);
+        setCheck(false);
+      } else {
+        setCheck(true);
+      }
     } else {
-      setCheck(true);
+      const { name, github } = props.projects
+        .filter((item) => item.id === props.id)
+        .reduce((acc, item) => ({ ...acc, [item.id]: item }));
+      if (value === `${name}/${github}`) {
+        console.log(`foi ${value} e ${name}/${github}`);
+        setCheck(false);
+      } else {
+        setCheck(true);
+      }
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (check === false) {
-      CRUD.delete().then((res) => {
+      setLooding(true);
+      try {
+        const res = await CRUD.delete();
         if (res.revalidated) {
-          alert('projeto atualizado com sucesso');
+          alert(
+            `${props.mode ? 'tecnologys' : 'projects'} excluido com sucesso`,
+          );
           props.handleDelete(check);
         }
-      });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLooding(false);
+      }
     }
   };
 
@@ -46,9 +77,15 @@ const Delete: React.FC<Props> = (props) => {
         <h4>Você tem certeza absoluta?</h4>
         <p>
           Esta ação não pode ser desfeita. Isso excluirá permanentemente o<br />
-          Projeto:{' '}
+          {props.mode ? 'Technologia' : 'Projeto'}: {''}
           <strong>
-            {name}/{github}
+            {props.mode
+              ? props.technologys
+                  .filter((tech) => tech.id === props.id)
+                  .map((res) => `${res.name + '/id:' + res.id}`)
+              : props.projects
+                  .filter((projct) => projct.id === props.id)
+                  .map((res) => `${res.name + '/' + res.github}`)}
           </strong>
         </p>
       </Col>
@@ -58,14 +95,26 @@ const Delete: React.FC<Props> = (props) => {
           <Form.Label>
             Digite{' '}
             <strong>
-              {name}/{github}
+              {props.mode
+                ? props.technologys
+                    .filter((tech) => tech.id === props.id)
+                    .map((res) => `${res.name + '/id:' + res.id}`)
+                : props.projects
+                    .filter((projct) => projct.id === props.id)
+                    .map((res) => `${res.name + '/' + res.github}`)}
             </strong>{' '}
             para confirmar.
           </Form.Label>
           <Form.Control type="text" onChange={handlechage} />
           <Col xs={12}>
-            <Button type="submit" disabled={check} onClick={handleDelete}>
-              excluir projeto
+            <Button disabled={check} onClick={handleDelete}>
+              {looding ? (
+                <LoadingBtn />
+              ) : props.mode ? (
+                'Excluir Tecnologia'
+              ) : (
+                'Excluir Projeto'
+              )}
             </Button>
           </Col>
         </Form.Group>

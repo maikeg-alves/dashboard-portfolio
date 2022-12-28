@@ -4,3 +4,9 @@ export interface ITechnologys {
   icon: string;
   ability: number;
 }
+
+export interface ITechnologysCRUD {
+  name: string;
+  icon: string;
+  ability: number;
+}

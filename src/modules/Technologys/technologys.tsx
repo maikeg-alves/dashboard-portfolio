@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Col, Container, Row } from 'react-bootstrap';
 
-import { Project } from './styles';
+import { Technology } from './styles';
 
 import { AiFillPlusCircle } from 'react-icons/ai';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
@@ -11,9 +11,9 @@ import {
   Table,
   Modal,
   useModal,
-  FormProject,
   GetView,
   Delete,
+  FormTechnology,
   /*   PutItem, */
 } from '../../components';
 import { IGithub, IProject, ITechnologys } from '../../interfaces';
@@ -26,8 +26,8 @@ type Props = {
   updateValues?: (values: boolean) => void;
 };
 
-const Projects: React.FC<Props> = (props) => {
-  const { projects } = props;
+const Technologys: React.FC<Props> = (props) => {
+  const { technologys } = props;
 
   const { isShown, toggle } = useModal();
 
@@ -50,16 +50,15 @@ const Projects: React.FC<Props> = (props) => {
   };
 
   const handleeditProjects = (id: number) => {
+    setID(id);
     setPages(3);
     if (props) {
-      const data = props.projects.filter((project) => project.id === id);
+      /*     const data = props.projects.filter((project) => project.id === id);
 
-      const { technologys, github } = props;
+      const { technologys, github } = props; */
 
       const alldata: Props = {
-        projects: data,
-        technologys: technologys,
-        github: github,
+        ...props,
         values: true,
       };
 
@@ -92,18 +91,26 @@ const Projects: React.FC<Props> = (props) => {
 
   switch (pages) {
     case 1:
-      pagesElement = <FormProject stateCreate={statusUpdate} {...props} />;
+      pagesElement = (
+        <FormTechnology stateCreate={statusUpdate} id={id} {...props} />
+      );
       break;
     case 2:
-      pagesElement = <GetView statusUpdate={statusUpdate} {...props} />;
+      pagesElement = <GetView mode statusUpdate={statusUpdate} {...props} />;
       break;
     case 3:
       pagesElement = (
-        <FormProject statusUpdate={statusUpdate} {...putprojectsPage} />
+        <FormTechnology
+          statusUpdate={statusUpdate}
+          id={id}
+          {...putprojectsPage}
+        />
       );
       break;
     case 4:
-      pagesElement = <Delete handleDelete={statusUpdate} id={id} {...props} />;
+      pagesElement = (
+        <Delete mode handleDelete={statusUpdate} id={id} {...props} />
+      );
       break;
     default:
       pagesElement = <div>valores não carregados</div>;
@@ -117,17 +124,17 @@ const Projects: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Project xs={12}>
+      <Technology xs={12}>
         <Col xs={12} style={{ margin: '15px 0' }}>
           <Col>
-            <h3>New project: </h3>
+            <h3>New Technology: </h3>
           </Col>
           <Container>
             <Row>
               <Col xs={12} className="modalgrid">
                 <button className="add-icon" onClick={handleNewProjects}>
                   <AiFillPlusCircle />
-                  <p>add new project</p>
+                  <p>add new Technologys</p>
                 </button>
               </Col>
             </Row>
@@ -135,20 +142,19 @@ const Projects: React.FC<Props> = (props) => {
         </Col>
         <Col xs={12}>
           <Col>
-            <h3>Existing projects</h3>
+            <h3>Existing Technologys</h3>
           </Col>
           <Col xs={12}>
             <Table>
               <tbody>
-                {projects &&
-                  projects.slice(0, 4).map((project, id: number) => (
+                {technologys &&
+                  technologys.slice(0, 7).map((tech, id: number) => (
                     <>
                       <TableItems
                         id={id + 1}
-                        name={project.name}
-                        idproject={project.id}
-                        created_at={project.created_at}
-                        technologys={project.technologys}
+                        name={tech.name}
+                        idproject={tech.id}
+                        ability={tech.ability}
                         handleDeleteProject={handledeleteProjects}
                         handleEditProject={handleeditProjects}
                       />
@@ -157,7 +163,7 @@ const Projects: React.FC<Props> = (props) => {
               </tbody>
             </Table>
           </Col>
-          {projects.length > 4 && (
+          {technologys.length > 4 && (
             <>
               <Col xs={12} className="modalgrid">
                 <button className="add-plus" onClick={handleviewProjects}>
@@ -167,7 +173,7 @@ const Projects: React.FC<Props> = (props) => {
             </>
           )}
         </Col>
-      </Project>
+      </Technology>
 
       <Modal isShown={isShown} hide={toggle}>
         <>{pagesElement}</>
@@ -176,4 +182,4 @@ const Projects: React.FC<Props> = (props) => {
   );
 };
 
-export default Projects;
+export default Technologys;

@@ -4,4 +4,5 @@ export interface IGithub {
   full_name: string;
   private: false;
   updated_at: string;
+  description: string;
 }

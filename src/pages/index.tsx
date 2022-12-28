@@ -4,6 +4,7 @@ import { Col } from 'react-bootstrap';
 import { IGithub, IProject, ITechnologys } from '../interfaces';
 import { Container } from '../layout';
 import { Panel, Dashbord, Projects } from '../modules';
+import Technologys from 'src/modules/Technologys/technologys';
 
 const URL_API = 'https://maicon-gabriel-alves.vercel.app/api';
 
@@ -17,7 +18,7 @@ type Props = {
 const Home: NextPage<Props> = (props) => {
   const [update, setUpdate] = React.useState<boolean>(false);
   const [apiData, setApiData] = React.useState<Props>(props);
-  const [pages, setPages] = React.useState<string>('Home');
+  const [pages, setPages] = React.useState<string>('Technologys');
 
   const handleOpen = (open: string) => {
     console.log(open);
@@ -40,7 +41,7 @@ const Home: NextPage<Props> = (props) => {
       pagesElement = <Projects updateValues={handUpdate} {...apiData} />;
       break;
     case 'Technologys':
-      pagesElement = <p>Pagian em construção</p>;
+      pagesElement = <Technologys updateValues={handUpdate} {...apiData} />;
       break;
     default:
       pagesElement = <p> dados não encontrado </p>;
@@ -96,8 +97,6 @@ const Home: NextPage<Props> = (props) => {
 
     getData();
   }, [update]);
-
-  console.log('estado use state', update);
 
   return (
     <Container direction="row" align="center" justify="center" padding="3">

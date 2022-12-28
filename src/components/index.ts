@@ -1,5 +1,6 @@
 import ButtonPanel from './buttonpanel/buttonpanel..component';
 import FormProject from './formProject/formProject.componet';
+import FormTechnology from './formTechnology/formTechnology.componet';
 import TableItems from './Table/TableItem.component';
 import Table from './Table/Table.component';
 import Modal from './Modal/modal.component';
@@ -16,6 +17,7 @@ export {
   Modal,
   useModal,
   FormProject,
+  FormTechnology,
   GetView,
   Delete,
 };

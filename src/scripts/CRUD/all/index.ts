@@ -1,4 +1,4 @@
-import { PUTProject } from '@interfaces';
+import { PUTProject, ITechnologysCRUD } from '@interfaces';
 
 export class _CRUD {
   static baseUrl = 'https://maicon-gabriel-alves.vercel.app/api';
@@ -11,7 +11,7 @@ export class _CRUD {
   }
 
   // Create a new resource ?secret=
-  async create(resource: PUTProject) {
+  async create(resource: PUTProject | ITechnologysCRUD) {
     const response = await fetch(
       `${_CRUD.baseUrl}/${this.category}?secret=${process.env.SECRET_API}`,
       {
@@ -26,7 +26,7 @@ export class _CRUD {
   }
 
   // Update a resource by ID
-  async update(resource: PUTProject) {
+  async update(resource: PUTProject | ITechnologysCRUD) {
     const response = await fetch(
       `${_CRUD.baseUrl}/${this.category}?id=${this.id}&secret=${process.env.SECRET_API}`,
       {

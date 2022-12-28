@@ -5,17 +5,20 @@ import StepLabel from '@mui/material/StepLabel';
 import { Col } from 'react-bootstrap';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
+import { LoadingPage } from '../loadingPage';
+
 import { Form, StepperBox } from './styles';
 import { IGithub, IProject, ITechnologys, PUTProject } from '@interfaces';
 
 import { _CRUD } from '../../scripts';
+import { Preview } from '../PreviewCrad';
 
 /* import { Alert } from '@mui/material'; */
 
 const steps = [
   'name, Github, description',
   'image url, technologies',
-  'preview ',
+  'Concluir ',
 ];
 
 type Inputs = {
@@ -39,12 +42,16 @@ type Outputs = {
 };
 
 const FormProject: React.FC<Outputs> = (props) => {
-  const [step, setStep] = React.useState(1); //eslint-disable-line
+  const [step, setStep] = React.useState<number>(1); //eslint-disable-line
+
+  const [projects, setProjects] = React.useState<IProject[]>([]);
+  const [technologys, setTechnologys] = React.useState<ITechnologys[]>([]);
+  const [github, setGithub] = React.useState<IGithub[]>([]);
+
+  const [cardData, setcardData] = React.useState<PUTProject>();
 
   const [update, setupdate] = React.useState<boolean>(false);
-  const [technologys, setTechnologys] = React.useState<ITechnologys[]>();
-  const [github, setGithub] = React.useState<IGithub[]>([]);
-  const [projects, setProjects] = React.useState<IProject[]>([]);
+  const [looding, setLooding] = React.useState<boolean>(false);
 
   const {
     register,
@@ -79,12 +86,28 @@ const FormProject: React.FC<Outputs> = (props) => {
       'input 3 não foi selected',
     ];
 
-    const createOrUpdateProject = (data: PUTProject) => {
+    const defaultValues = {
+      description: githubDescription(githubRepository, props.github),
+      img: 'https://i.imgur.com/XhUIa5q.png',
+      gif: 'https://i.imgur.com/XhUIa5q.png',
+    };
+
+    function githubDescription(repo: string, data: IGithub[]): string {
+      const description = data
+        .filter((res) => res.name === repo)
+        .map((res) => res.description)[0];
+      return String(description);
+    }
+
+    const createOrUpdateProject = async (data: PUTProject) => {
       if (props.values) {
-        CRUD.update(data).then((res) => {
+        try {
+          setLooding(true);
+          const res = await CRUD.update(data);
           if (res.revalidated) {
             alert('projeto editado com sucesso');
             setupdate(true);
+            setLooding(false);
             if (props.statusUpdate !== undefined) {
               props.statusUpdate(update);
             }
@@ -95,13 +118,17 @@ const FormProject: React.FC<Outputs> = (props) => {
               props.statusUpdate(update);
             }
           }
-        });
+        } catch (error) {
+          console.error(error);
+        }
       } else {
-        console.log('values do crete', data);
-        CRUD.create(data).then((res) => {
+        try {
+          setLooding(true);
+          const res = await CRUD.create(data);
           if (res.revalidated) {
             alert('projeto criado com sucesso');
             setupdate(true);
+            setLooding(false);
             if (props.stateCreate !== undefined) {
               props.stateCreate(update);
             }
@@ -112,27 +139,33 @@ const FormProject: React.FC<Outputs> = (props) => {
               props.stateCreate(update);
             }
           }
-        });
+        } catch (error) {
+          console.error(error);
+        }
       }
     };
 
     try {
       switch (step) {
         case 1:
-          const checkname = projects.map((project) => {
-            if (project.name === projectName) {
-              return null;
+          if (!props.values) {
+            const projectExists = projects.some(
+              (project) =>
+                project.name === projectName ||
+                project.github === githubRepository,
+            );
+
+            if (projectExists) {
+              setStep(1);
+              alert('projeto existe');
+            } else {
+              setStep(2);
             }
-          });
-
-          if (checkname === null) {
-            alert('project name must be provided');
+          } else {
+            setStep(2);
           }
-
-          setStep(2);
           break;
         case 2:
-          alert('step 2');
           if (
             Number(technologies_one) === 0 ||
             Number(technologies_two) === 0 ||
@@ -145,18 +178,21 @@ const FormProject: React.FC<Outputs> = (props) => {
             ].indexOf(0);
             return alert(errorMessages[index]);
           }
-          setStep(3);
-          break;
-        case 3:
-          alert('step 3');
 
           const data: PUTProject = {
             name: projectName,
             github: githubRepository,
-            description: description !== undefined ? description : '',
+            description:
+              description !== 'null' && typeof description !== 'undefined'
+                ? description
+                : defaultValues.description,
             difficulty: Number(difficulty),
-            img: image_url,
-            gif: image_url,
+            img: image_url.includes('https://i.imgur.com/')
+              ? image_url
+              : defaultValues.img,
+            gif: image_url.includes('https://i.mgur.com/')
+              ? image_url
+              : defaultValues.gif,
             technologys_id: [
               Number(technologies_one),
               Number(technologies_two),
@@ -164,10 +200,20 @@ const FormProject: React.FC<Outputs> = (props) => {
             ],
           };
 
-          createOrUpdateProject(data);
+          if (data !== undefined) {
+            setcardData(data);
+          }
+
+          setStep(3);
+          break;
+        case 3:
+          if (cardData) {
+            createOrUpdateProject(cardData);
+          }
           break;
         default:
-          alert('sla mané');
+          console.error('erro ao carregar dodos');
+          break;
       }
     } catch (error) {
       console.error(error);
@@ -201,6 +247,8 @@ const FormProject: React.FC<Outputs> = (props) => {
         <Form onSubmit={handleSubmit(onSubmit)}>
           {step === 1 && (
             <>
+              {/* values é ativado quando o valor é 
+              mudado para o projeto deve ser editado e não criado */}
               {props.values ? (
                 <>
                   <Form.Group>
@@ -252,9 +300,13 @@ const FormProject: React.FC<Outputs> = (props) => {
                       }`}
                       style={{ height: '100px' }}
                       {...register('description', {
-                        required: false,
+                        required: true,
                         maxLength: 1000,
                       })}
+                      value={
+                        errors.description &&
+                        `${props.projects.map((item) => item.description)}`
+                      }
                     />
                   </Form.Group>
                 </>
@@ -327,7 +379,11 @@ const FormProject: React.FC<Outputs> = (props) => {
                       })}
                       value={
                         errors.image_url &&
-                        `${props.projects.map((item) => item.img)}`
+                        `${props.projects.map((item) =>
+                          item.img !== undefined || item.img !== ''
+                            ? item.img
+                            : 'https://i.imgur.com/XhUIa5q.png',
+                        )}`
                       }
                     />
                   </Form.Group>
@@ -494,16 +550,25 @@ const FormProject: React.FC<Outputs> = (props) => {
 
           {step === 3 && (
             <>
-              <Col xs={12}>
-                <p>Preview card</p>
+              <Col xs="auto">
+                {looding ? (
+                  <LoadingPage />
+                ) : (
+                  <Preview
+                    name={cardData?.name}
+                    img={cardData?.img}
+                    description={cardData?.description}
+                    idTechs={cardData?.technologys_id}
+                    technologys={technologys}
+                  />
+                )}
               </Col>
-
-              <Col xs="auto"></Col>
             </>
           )}
-
           <Col xs={12} className="d-flex justify-content-center">
-            <button type="submit" /* disabled={} */> DONE </button>
+            <button type="submit">
+              {step === 1 || step === 2 ? 'Confirma' : 'Finalizar'}
+            </button>
           </Col>
         </Form>
       </Col>

@@ -1,33 +1,128 @@
+import * as React from 'react';
+import { IGithub, IProject, ITechnologys } from '@interfaces';
 import { Col } from 'react-bootstrap';
-import { TableItems } from '../../components';
+import {
+  Delete,
+  FormProject,
+  Table,
+  TableItems,
+  FormTechnology,
+} from '../../components';
+import { Container } from './styles';
+import { BsChevronDown } from 'react-icons/bs';
 
-const GetView = () => {
-  const handledeleteProjects = () => {
-    console.log('delete');
+type Props = {
+  projects: IProject[];
+  technologys: ITechnologys[];
+  github: IGithub[];
+  values: boolean;
+  mode?: boolean;
+  statusUpdate?: (status: boolean) => void;
+};
+
+const GetView: React.FC<Props> = (props) => {
+  console.log('status', props.mode);
+  const { projects, technologys } = props;
+
+  const [id, setId] = React.useState<number>(0);
+  const [pages, setPages] = React.useState<number>(0);
+
+  const [data, setData] = React.useState<Props>([] as unknown as Props);
+
+  const handledeleteProjects = (e: number) => {
+    setPages(1);
+    console.log('delete ', e);
+    setId(e);
   };
-  const handleeditProjects = () => {
-    console.log('edit');
+  const handleeditProjects = (id: number) => {
+    setPages(2);
+    const { projects, technologys, github } = props;
+
+    const data = projects?.filter((project) => project.id === id);
+
+    const allData: Props = {
+      projects: data,
+      technologys,
+      github,
+      values: true,
+    };
+    setData(allData);
   };
+
+  const Update = (e: boolean) => {
+    console.log('update ', e);
+    if (props.statusUpdate !== undefined) {
+      props.statusUpdate(e);
+    }
+  };
+
+  const exitpage = () => {
+    setPages(0);
+  };
+
+  console.log('getview values', props);
+
+  let Elemente: React.ReactElement;
+
+  switch (pages) {
+    case 0:
+      Elemente = (
+        <Table>
+          {props.mode
+            ? technologys.map((tech, id: number) => (
+                <>
+                  <TableItems
+                    id={id + 1}
+                    name={tech.name}
+                    idproject={tech.id}
+                    ability={tech.ability}
+                    handleDeleteProject={handledeleteProjects}
+                    handleEditProject={handleeditProjects}
+                  />
+                </>
+              ))
+            : projects.map((project, id: number) => (
+                <>
+                  <TableItems
+                    id={id + 1}
+                    name={project.name}
+                    idproject={project.id}
+                    created_at={project.created_at}
+                    technologys={project.technologys}
+                    handleDeleteProject={handledeleteProjects}
+                    handleEditProject={handleeditProjects}
+                  />
+                </>
+              ))}
+        </Table>
+      );
+      break;
+
+    case 1:
+      Elemente = <Delete handleDelete={Update} id={id} {...props} />;
+      break;
+
+    case 2:
+      if (props.mode) {
+        Elemente = <FormTechnology statusUpdate={Update} id={id} {...props} />;
+      } else {
+        Elemente = <FormProject statusUpdate={Update} {...data} />;
+      }
+      break;
+
+    default:
+      Elemente = <p>error page</p>;
+  }
 
   return (
-    <Col xs={12} md={12}>
-      <TableItems
-        handleDeleteProject={handledeleteProjects}
-        handleEditProject={handleeditProjects}
-      />
-      <TableItems
-        handleDeleteProject={handledeleteProjects}
-        handleEditProject={handleeditProjects}
-      />
-      <TableItems
-        handleDeleteProject={handledeleteProjects}
-        handleEditProject={handleeditProjects}
-      />
-      <TableItems
-        handleDeleteProject={handledeleteProjects}
-        handleEditProject={handleeditProjects}
-      />
-    </Col>
+    <Container xs={12}>
+      <Col xs={12} className="exit">
+        <span onClick={exitpage}>
+          <BsChevronDown />
+        </span>
+      </Col>
+      <>{Elemente}</>
+    </Container>
   );
 };
 

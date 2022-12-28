@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 
 export const Form = styled(BTForm)`
   input[type='text'],
-  input[type='textarea'] {
+  input[type='number'] {
     border-radius: 13px;
     height: 50px;
     margin: 10px 0;
@@ -12,7 +12,7 @@ export const Form = styled(BTForm)`
 
   label {
     font-size: 1rem;
-    margin: 0;
+    margin-bottom: 10px;
   }
 
   button {
