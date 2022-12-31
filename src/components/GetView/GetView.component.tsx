@@ -21,7 +21,6 @@ type Props = {
 };
 
 const GetView: React.FC<Props> = (props) => {
-  console.log('status', props.mode);
   const { projects, technologys } = props;
 
   const [id, setId] = React.useState<number>(0);
@@ -36,6 +35,7 @@ const GetView: React.FC<Props> = (props) => {
   };
   const handleeditProjects = (id: number) => {
     setPages(2);
+    setId(id);
     const { projects, technologys, github } = props;
 
     const data = projects?.filter((project) => project.id === id);
@@ -104,7 +104,7 @@ const GetView: React.FC<Props> = (props) => {
 
     case 2:
       if (props.mode) {
-        Elemente = <FormTechnology statusUpdate={Update} id={id} {...props} />;
+        Elemente = <FormTechnology statusUpdate={Update} id={id} {...data} />;
       } else {
         Elemente = <FormProject statusUpdate={Update} {...data} />;
       }

@@ -11,7 +11,7 @@ export const Dash = styled(Col)`
     border-radius: 17px;
     padding: 20px;
     width: 200px;
-    margin: 10px;
+    margin: 11px;
   }
 
   .Projects,
@@ -21,7 +21,7 @@ export const Dash = styled(Col)`
     flex-direction: column;
     justify-content: center;
     width: 100%;
-    height: 100px;
+    height: auto;
 
     h4,
     h6 {

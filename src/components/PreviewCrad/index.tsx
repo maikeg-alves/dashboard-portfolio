@@ -30,8 +30,8 @@ export const Preview: React.FC<Props> = (props) => {
                   props.icon ? props.icon : 'https://i.imgur.com/XhUIa5q.png'
                 }
                 alt="Picture of the author"
-                width={350}
-                height={180}
+                width={100}
+                height={100}
               />
             </>
           ) : (

@@ -110,13 +110,20 @@ const FormTechnology: React.FC<Outputs> = (props) => {
     try {
       switch (step) {
         case 1:
-          const techExists = props.technologys.some(
-            (tech) => tech.name === techName || tech.icon === urlicon,
-          );
+          const techcheck = props.technologys.some((tech) => {
+            if (!props.values) {
+              if (tech.name === techName || tech.icon === urlicon) {
+                return true;
+              }
+              return false;
+            }
+          });
 
-          if (techExists) {
-            alert('error tecnologia existe');
+          if (techcheck) {
+            alert('tecnologia existente no banco de dados');
           }
+
+          console.log('checando se é o mesmo', techcheck);
 
           if (Ability === 0) {
             return alert('adicione algum nivel de habilidade');
@@ -130,9 +137,7 @@ const FormTechnology: React.FC<Outputs> = (props) => {
               : 'https://raw.githubusercontent.com/jmnote/z-icons/master/svg/github.svg',
           };
 
-          console.log('valores do objeto', data);
-
-          if (data !== undefined && !techExists) {
+          if (data !== undefined && !techcheck) {
             setcardData(data);
             setStep(2);
           }
@@ -153,8 +158,6 @@ const FormTechnology: React.FC<Outputs> = (props) => {
     }
   };
 
-  console.log('dados do card', cardData);
-
   return (
     <>
       <Col xs={12}>
@@ -165,6 +168,7 @@ const FormTechnology: React.FC<Outputs> = (props) => {
               mudado para o projeto deve ser editado e não criado */}
               {props.values ? (
                 <>
+                  {/* formulario de update */}
                   <Form.Group>
                     <Form.Label>Technology Name </Form.Label>
                     <Form.Control
@@ -175,16 +179,16 @@ const FormTechnology: React.FC<Outputs> = (props) => {
                           .filter((res) => res.id === props.id)
                           .map((res) => res.name)
                       }`}
+                      {...register('techName', {
+                        required: true,
+                        pattern: /^[a-zA-Z]/,
+                      })}
                       value={
                         errors.techName &&
                         props.technologys
                           .filter((res) => res.id === props.id)
                           .map((res) => res.name)
                       }
-                      {...register('techName', {
-                        required: true,
-                        pattern: /^[a-zA-Z]/,
-                      })}
                     />
                   </Form.Group>
 
@@ -204,7 +208,7 @@ const FormTechnology: React.FC<Outputs> = (props) => {
                         max: 100,
                       })}
                       value={
-                        errors.techName &&
+                        errors.Ability &&
                         props.technologys
                           .filter((res) => res.id === props.id)
                           .map((res) => res.ability)
@@ -228,7 +232,7 @@ const FormTechnology: React.FC<Outputs> = (props) => {
                         pattern: /^[a-zA-Z]/,
                       })}
                       value={
-                        errors.techName &&
+                        errors.urlicon &&
                         props.technologys
                           .filter((res) => res.id === props.id)
                           .map((res) => res.icon)
@@ -238,6 +242,7 @@ const FormTechnology: React.FC<Outputs> = (props) => {
                 </>
               ) : (
                 <>
+                  {/* formulario de criação */}
                   <Form.Group>
                     <Form.Label>Technology Name </Form.Label>
                     <Form.Control

@@ -5,4 +5,5 @@ export interface IGithub {
   private: false;
   updated_at: string;
   description: string;
+  language: string;
 }

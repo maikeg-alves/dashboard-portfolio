@@ -35,7 +35,7 @@ const Home: NextPage<Props> = (props) => {
 
   switch (pages) {
     case 'Home':
-      pagesElement = <Dashbord />;
+      pagesElement = <Dashbord {...apiData} />;
       break;
     case 'Projects':
       pagesElement = <Projects updateValues={handUpdate} {...apiData} />;
