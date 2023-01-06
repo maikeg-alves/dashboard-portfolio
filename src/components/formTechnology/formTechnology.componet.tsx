@@ -10,7 +10,7 @@ import { LoadingPage } from '../loadingPage';
 import { Form, StepperBox } from './styles';
 import { IGithub, IProject, ITechnologys, ITechnologysCRUD } from '@interfaces';
 
-import { _CRUD } from '../../scripts';
+import { ApiClient } from '../../scripts';
 import { Preview } from '../PreviewCrad';
 
 /* import { Alert } from '@mui/material'; */
@@ -29,6 +29,7 @@ type Outputs = {
   github: IGithub[];
   id: number;
   values: boolean;
+  admin: boolean;
   statusUpdate?: (status: boolean) => void;
   stateCreate?: (status: boolean) => void;
 };
@@ -48,52 +49,79 @@ const FormTechnology: React.FC<Outputs> = (props) => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const CRUD = new _CRUD(Number(props.id), 'technologys');
+  const CRUD = new ApiClient(Number(props.id), 'technologys');
 
   // script base de CRUD
 
-  const createOrUpdateProject = async (data: ITechnologysCRUD) => {
-    if (props.values) {
-      try {
-        setLooding(true);
-        const res = await CRUD.update(data);
-        if (res.revalidated) {
-          alert('projeto editado com sucesso');
-          setupdate(true);
-          setLooding(false);
-          if (props.statusUpdate !== undefined) {
-            props.statusUpdate(update);
+  const createOrUpdateTechnology = async (data: ITechnologysCRUD) => {
+    if (!props.admin) {
+      return alert('acesso não autorizado');
+    }
+    const token = await localStorage.getItem('token');
+    if (token !== null) {
+      if (props.values) {
+        try {
+          setLooding(true);
+
+          const res = await CRUD.update(data, token);
+
+          if (res.code !== 200) {
+            if (props.statusUpdate !== undefined) {
+              props.statusUpdate(update);
+            }
+            setLooding(false);
+            return alert(
+              'token de acesso expirado, porfavor se logue novamente',
+            );
           }
-        } else {
-          alert('error ao editar projeto');
-          setupdate(false);
-          if (props.statusUpdate !== undefined) {
-            props.statusUpdate(update);
+
+          if (res.revalidated) {
+            alert('projeto editado com sucesso');
+            setupdate(true);
+            setLooding(false);
+            if (props.statusUpdate !== undefined) {
+              props.statusUpdate(update);
+            }
+          } else {
+            alert('error ao editar projeto');
+            setupdate(false);
+            if (props.statusUpdate !== undefined) {
+              props.statusUpdate(update);
+            }
           }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      try {
-        setLooding(true);
-        const res = await CRUD.create(data);
-        if (res.revalidated) {
-          alert('projeto criado com sucesso');
-          setupdate(true);
-          setLooding(false);
-          if (props.stateCreate !== undefined) {
-            props.stateCreate(update);
+      } else {
+        try {
+          setLooding(true);
+
+          const res = await CRUD.create(data, token);
+
+          if (res.code !== 200) {
+            setLooding(false);
+            return alert(
+              'token de acesso expirado, porfavor se logue novamente',
+            );
           }
-        } else {
-          alert('error ao criar projeto');
-          setupdate(false);
-          if (props.stateCreate !== undefined) {
-            props.stateCreate(update);
+
+          if (res.revalidated) {
+            alert('projeto criado com sucesso');
+            setupdate(true);
+            setLooding(false);
+            if (props.stateCreate !== undefined) {
+              props.stateCreate(update);
+            }
+          } else {
+            alert('error ao criar projeto');
+            setupdate(false);
+            if (props.stateCreate !== undefined) {
+              props.stateCreate(update);
+            }
           }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
       }
     }
   };
@@ -145,7 +173,7 @@ const FormTechnology: React.FC<Outputs> = (props) => {
           break;
         case 2:
           if (cardData) {
-            createOrUpdateProject(cardData);
+            createOrUpdateTechnology(cardData);
           }
           break;
 

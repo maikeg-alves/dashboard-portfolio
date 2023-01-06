@@ -4,7 +4,6 @@ import { Table as BTTable } from 'react-bootstrap';
 export const Table = styled(BTTable)`
   overflow: hidden;
   border-radius: 13px;
-  min-width: 300px;
 
   tbody,
   tr,

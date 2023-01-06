@@ -23,6 +23,7 @@ type Props = {
   technologys: ITechnologys[];
   github: IGithub[];
   values: boolean;
+  admin: boolean;
   updateValues?: (values: boolean) => void;
 };
 

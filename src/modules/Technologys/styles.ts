@@ -5,9 +5,7 @@ export const Technology = styled(Col)`
   .modalgrid {
     background-color: ${(props) => props.theme.colors.backgroundSecondary};
     border-radius: 17px;
-
     width: 100%;
-
     display: flex;
     justify-content: center;
     align-items: center;

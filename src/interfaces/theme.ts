@@ -11,4 +11,9 @@ export type Theme = {
     text: string;
     danger: string;
   };
+  mobilemenu: {
+    background: string;
+    text: string;
+    textSecondary: string;
+  };
 };

@@ -10,7 +10,7 @@ import { LoadingPage } from '../loadingPage';
 import { Form, StepperBox } from './styles';
 import { IGithub, IProject, ITechnologys, PUTProject } from '@interfaces';
 
-import { _CRUD } from '../../scripts';
+import { ApiClient } from '../../scripts';
 import { Preview } from '../PreviewCrad';
 
 /* import { Alert } from '@mui/material'; */
@@ -37,6 +37,7 @@ type Outputs = {
   technologys: ITechnologys[];
   github: IGithub[];
   values: boolean;
+  admin: boolean;
   statusUpdate?: (status: boolean) => void;
   stateCreate?: (status: boolean) => void;
 };
@@ -78,7 +79,7 @@ const FormProject: React.FC<Outputs> = (props) => {
 
     const id = props.projects.map((item) => item.id);
 
-    const CRUD = new _CRUD(Number(id), 'projects');
+    const CRUD = new ApiClient(Number(id), 'projects');
 
     const errorMessages = [
       'input 1 não foi selected',
@@ -100,47 +101,74 @@ const FormProject: React.FC<Outputs> = (props) => {
     }
 
     const createOrUpdateProject = async (data: PUTProject) => {
-      if (props.values) {
-        try {
-          setLooding(true);
-          const res = await CRUD.update(data);
-          if (res.revalidated) {
-            alert('projeto editado com sucesso');
-            setupdate(true);
-            setLooding(false);
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
+      if (!props.admin) {
+        return alert('acesso não autorizado');
+      }
+
+      const token = await localStorage.getItem('token');
+
+      if (token !== null) {
+        if (props.values) {
+          try {
+            setLooding(true);
+            const res = await CRUD.update(data, token);
+
+            if (res.code !== 200) {
+              if (props.statusUpdate !== undefined) {
+                props.statusUpdate(update);
+              }
+              setLooding(false);
+              return alert(
+                'token de acesso expirado, porfavor se logue novamente',
+              );
             }
-          } else {
-            alert('error ao editar projeto');
-            setupdate(false);
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
+
+            if (res.revalidated) {
+              alert('projeto editado com sucesso');
+              setupdate(true);
+              setLooding(false);
+              if (props.statusUpdate !== undefined) {
+                props.statusUpdate(update);
+              }
+            } else {
+              alert('error ao editar projeto');
+              setupdate(false);
+              if (props.statusUpdate !== undefined) {
+                props.statusUpdate(update);
+              }
             }
+          } catch (error) {
+            console.error(error);
           }
-        } catch (error) {
-          console.error(error);
-        }
-      } else {
-        try {
-          setLooding(true);
-          const res = await CRUD.create(data);
-          if (res.revalidated) {
-            alert('projeto criado com sucesso');
-            setupdate(true);
-            setLooding(false);
-            if (props.stateCreate !== undefined) {
-              props.stateCreate(update);
+        } else {
+          try {
+            setLooding(true);
+            const res = await CRUD.create(data, token);
+
+            if (res.code !== 200) {
+              setLooding(false);
+              return alert(
+                'token de acesso expirado, porfavor se logue novamente',
+              );
             }
-          } else {
-            alert('error ao criar projeto');
-            setupdate(false);
-            if (props.stateCreate !== undefined) {
-              props.stateCreate(update);
+
+            if (res.revalidated) {
+              alert('projeto criado com sucesso');
+              setupdate(true);
+              setLooding(false);
+              if (props.stateCreate !== undefined) {
+                props.stateCreate(update);
+              }
+            } else {
+              alert('error ao criar projeto');
+              setupdate(false);
+              if (props.stateCreate !== undefined) {
+                props.stateCreate(update);
+              }
             }
+          } catch (error) {
+            console.error(error);
           }
-        } catch (error) {
-          console.error(error);
         }
       }
     };

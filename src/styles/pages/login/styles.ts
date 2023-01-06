@@ -64,7 +64,7 @@ export const CardLogin = styled(Col)`
   width: 100%;
   max-width: 350px;
   padding: 20px;
-  margin: 20px;
+
   border-radius: 27px;
   h4 {
     margin-top: 20px;
@@ -105,5 +105,13 @@ export const CardLogin = styled(Col)`
       text-decoration: none;
       font-size: 11px;
     }
+  }
+`;
+
+export const ErrorContainer = styled(Col)`
+  p {
+    font-size: 11px;
+    color: red;
+    font-weight: bold;
   }
 `;

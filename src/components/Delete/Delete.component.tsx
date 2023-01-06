@@ -3,7 +3,7 @@ import { Button, Col, Form } from 'react-bootstrap';
 
 import { IProject, ITechnologys } from '../../interfaces';
 import { Container } from './styles';
-import { _CRUD } from '../../scripts';
+import { ApiClient } from '../../scripts';
 import { LoadingBtn } from 'src/styles/components';
 
 type Props = {
@@ -11,16 +11,15 @@ type Props = {
   projects: IProject[];
   technologys: ITechnologys[];
   mode?: boolean;
+  admin: boolean;
   handleDelete: (check: boolean) => void;
 };
 
 const Delete: React.FC<Props> = (props) => {
-  console.log(props.technologys.map((res) => res.name));
-
   const [check, setCheck] = React.useState<boolean>(true);
   const [looding, setLooding] = React.useState<boolean>(false);
 
-  const CRUD = new _CRUD(
+  const CRUD = new ApiClient(
     props.id,
     `${props.mode ? 'technologys' : 'projects'}`,
   );
@@ -28,13 +27,11 @@ const Delete: React.FC<Props> = (props) => {
   const handlechage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { value } = e.target;
-    console.log(value);
     if (props.mode) {
       const { name, id } = props.technologys
         .filter((item) => item.id === props.id)
         .reduce((acc, item) => ({ ...acc, [item.id]: item }));
       if (value === `${name}/id:${id}`) {
-        console.log(`foi ${value} e ${name}/id:${id}`);
         setCheck(false);
       } else {
         setCheck(true);
@@ -44,7 +41,6 @@ const Delete: React.FC<Props> = (props) => {
         .filter((item) => item.id === props.id)
         .reduce((acc, item) => ({ ...acc, [item.id]: item }));
       if (value === `${name}/${github}`) {
-        console.log(`foi ${value} e ${name}/${github}`);
         setCheck(false);
       } else {
         setCheck(true);
@@ -53,15 +49,34 @@ const Delete: React.FC<Props> = (props) => {
   };
 
   const handleDelete = async () => {
+    if (!props.admin) {
+      setCheck(true);
+      return alert('acesso não autorizado');
+    }
+
     if (check === false) {
       setLooding(true);
       try {
-        const res = await CRUD.delete();
-        if (res.revalidated) {
-          alert(
-            `${props.mode ? 'tecnologys' : 'projects'} excluido com sucesso`,
-          );
-          props.handleDelete(check);
+        const token = await localStorage.getItem('token');
+        if (token !== null) {
+          const res = await CRUD.delete(token);
+
+          if (res.code !== 200) {
+            props.handleDelete(check);
+            setLooding(false);
+            return alert(
+              'token de acesso expirado, porfavor se logue novamente',
+            );
+          }
+
+          if (res.revalidated) {
+            alert(
+              `${props.mode ? 'tecnologys' : 'projects'} excluido com sucesso`,
+            );
+            props.handleDelete(check);
+          }
+
+          console.log('values delete', res.code);
         }
       } catch (error) {
         console.error(error);

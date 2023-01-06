@@ -17,6 +17,7 @@ type Props = {
   github: IGithub[];
   values: boolean;
   mode?: boolean;
+  admin: boolean;
   statusUpdate?: (status: boolean) => void;
 };
 
@@ -45,6 +46,7 @@ const GetView: React.FC<Props> = (props) => {
       technologys,
       github,
       values: true,
+      admin: props.admin,
     };
     setData(allData);
   };

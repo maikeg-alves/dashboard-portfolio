@@ -3,8 +3,9 @@ import { GetServerSideProps, NextPage } from 'next';
 import { Col } from 'react-bootstrap';
 import { IGithub, IProject, ITechnologys } from '../interfaces';
 import { Container } from '../layout';
-import { Panel, Dashbord, Projects } from '../modules';
+import { Panel, Dashbord, Projects, MobilePanel } from '../modules';
 import Technologys from 'src/modules/Technologys/technologys';
+import { verifyToken } from 'src/scripts';
 
 const URL_API = 'https://maicon-gabriel-alves.vercel.app/api';
 
@@ -13,21 +14,20 @@ type Props = {
   technologys: ITechnologys[];
   github: IGithub[];
   values: boolean;
+  admin: boolean;
 };
 
 const Home: NextPage<Props> = (props) => {
   const [update, setUpdate] = React.useState<boolean>(false);
   const [apiData, setApiData] = React.useState<Props>(props);
-  const [pages, setPages] = React.useState<string>('Technologys');
+  const [pages, setPages] = React.useState<string>('Home');
 
   const handleOpen = (open: string) => {
-    console.log(open);
     setPages(open);
   };
 
-  const handUpdate = async (/* e: boolean */) => {
+  const handUpdate = () => {
     setUpdate(!update);
-    console.log('update', update);
   };
 
   // trocando as paginas
@@ -81,14 +81,19 @@ const Home: NextPage<Props> = (props) => {
         };
       });
 
-      const dataall: Props = {
+      const token = localStorage.getItem('token')
+        ? localStorage.getItem('token')
+        : '';
+
+      const admin = await verifyToken(token);
+
+      setApiData({
         projects,
         technologys,
         github,
         values: false,
-      };
-
-      setApiData(dataall);
+        admin: admin,
+      });
 
       if (Object.keys(update).length > 0) {
         setUpdate(false);
@@ -99,14 +104,17 @@ const Home: NextPage<Props> = (props) => {
   }, [update]);
 
   return (
-    <Container direction="row" align="center" justify="center" padding="3">
-      <Col xs="auto" className="d-flex h-100">
-        <Panel setOpen={handleOpen} />
+    <Container direction="column" align="center" justify="center" padding="3">
+      <Col xs="auto" className="d-flex ">
+        <Panel setOpen={handleOpen} {...apiData} />
       </Col>
-      <Col>
-        <Col xs="auto" className="d-flex w-100">
+      <Col xs="auto">
+        <Col xs={12} className="d-flex w-100">
           {pagesElement}
         </Col>
+      </Col>
+      <Col xs={12}>
+        <MobilePanel />
       </Col>
     </Container>
   );
@@ -145,12 +153,19 @@ export const getServerSideProps: GetServerSideProps = async () => {
       };
     });
 
+    const token = localStorage.getItem('token')
+      ? localStorage.getItem('token')
+      : '';
+
+    const admin = await verifyToken(token);
+
     return {
       props: {
         projects,
         technologys,
         github,
         values: false,
+        admin: admin,
       },
     };
   } catch (error) {
@@ -161,6 +176,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         technologys: [],
         github: [],
         values: false,
+        admin: false,
       },
     };
   }

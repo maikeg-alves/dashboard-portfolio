@@ -1,8 +1,7 @@
 import { Col, Container, Row } from 'react-bootstrap';
 
-import { CircleProgress, Dash, ProgressBar } from './styles';
+import { Dash, ProgressBar } from './styles';
 
-import { IoReloadOutline } from 'react-icons/io5';
 import { IGithub, IProject, ITechnologys } from '@interfaces';
 
 type Props = {

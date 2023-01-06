@@ -2,6 +2,7 @@ import { Col } from 'react-bootstrap';
 import styled from 'styled-components';
 
 export const PanelMenu = styled(Col)`
+  display: block;
   background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   width: 318px;
   height: 100%;
@@ -65,5 +66,9 @@ export const PanelMenu = styled(Col)`
       list-style: none;
       padding: 0;
     }
+  }
+
+  @media screen and (max-width: 995px) {
+    display: none;
   }
 `;

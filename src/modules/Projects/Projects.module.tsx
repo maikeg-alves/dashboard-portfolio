@@ -14,7 +14,6 @@ import {
   FormProject,
   GetView,
   Delete,
-  /*   PutItem, */
 } from '../../components';
 import { IGithub, IProject, ITechnologys } from '../../interfaces';
 
@@ -23,6 +22,7 @@ type Props = {
   technologys: ITechnologys[];
   github: IGithub[];
   values: boolean;
+  admin: boolean;
   updateValues?: (values: boolean) => void;
 };
 
@@ -56,14 +56,13 @@ const Projects: React.FC<Props> = (props) => {
 
       const { technologys, github } = props;
 
-      const alldata: Props = {
+      setPutprojectsPage({
         projects: data,
-        technologys: technologys,
-        github: github,
+        technologys,
+        github,
         values: true,
-      };
-
-      setPutprojectsPage(alldata);
+        admin: props.admin,
+      });
     }
 
     toggle();

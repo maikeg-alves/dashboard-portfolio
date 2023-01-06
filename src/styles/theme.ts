@@ -11,6 +11,11 @@ const theme = {
     text: '#FFFFFF',
     danger: '#EF0A0A',
   },
+  mobilemenu: {
+    background: '#202125',
+    text: '#01C88C',
+    textSecondary: '#FFFFFF75',
+  },
 };
 
 export default theme;
