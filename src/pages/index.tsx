@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { Col } from 'react-bootstrap';
 import { IGithub, IProject, ITechnologys } from '../interfaces';
 import { Container } from '../layout';
-import { Panel, Dashbord, Projects, MobilePanel } from '../modules';
+import { Panel, Dashbord, Projects, MobilePanel, UserArea } from '../modules';
 import Technologys from 'src/modules/Technologys/technologys';
 import { verifyToken } from 'src/scripts';
 
@@ -23,6 +23,7 @@ const Home: NextPage<Props> = (props) => {
   const [pages, setPages] = React.useState<string>('Home');
 
   const handleOpen = (open: string) => {
+    console.log('values click', open);
     setPages(open);
   };
 
@@ -42,6 +43,9 @@ const Home: NextPage<Props> = (props) => {
       break;
     case 'Technologys':
       pagesElement = <Technologys updateValues={handUpdate} {...apiData} />;
+      break;
+    case 'Settings':
+      pagesElement = <UserArea {...apiData} />;
       break;
     default:
       pagesElement = <p> dados não encontrado </p>;
