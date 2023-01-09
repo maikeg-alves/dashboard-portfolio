@@ -111,7 +111,6 @@ const Home: NextPage<Props> = (props) => {
       <Col xs="auto" className="conElementes">
         {pagesElement}
       </Col>
-
       <>
         <MobilePanel setOpen={handleOpen} />
       </>

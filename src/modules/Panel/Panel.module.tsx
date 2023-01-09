@@ -1,6 +1,6 @@
 import { PanelMenu } from './styles';
 import { IoMdExit } from 'react-icons/io';
-import { ButtonPanel } from '../../components';
+
 /* icons */
 import { RiHomeLine } from 'react-icons/ri';
 import { AiOutlineAppstoreAdd } from 'react-icons/ai';

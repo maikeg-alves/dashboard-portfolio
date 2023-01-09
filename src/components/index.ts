@@ -1,4 +1,3 @@
-import ButtonPanel from './buttonpanel/buttonpanel..component';
 import FormProject from './formProject/formProject.componet';
 import FormTechnology from './formTechnology/formTechnology.componet';
 import TableItems from './Table/TableItem.component';
@@ -11,7 +10,6 @@ import Delete from './Delete/Delete.component';
 export { PutItem } from './PutItem/PutItem.component';
 
 export {
-  ButtonPanel,
   TableItems,
   Table,
   Modal,
