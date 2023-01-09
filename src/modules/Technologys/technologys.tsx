@@ -17,6 +17,7 @@ import {
   /*   PutItem, */
 } from '../../components';
 import { IGithub, IProject, ITechnologys } from '../../interfaces';
+import { useMediaQuery } from 'src/scripts';
 
 type Props = {
   projects: IProject[];
@@ -32,13 +33,15 @@ const Technologys: React.FC<Props> = (props) => {
 
   const { isShown, toggle } = useModal();
 
-  const [pages, setPages] = React.useState<number>(0);
+  const [pages, setPages] = React.useState<number>(7);
 
   const [putprojectsPage, setPutprojectsPage] = React.useState<Props>(
     [] as unknown as Props,
   );
 
   const [id, setID] = React.useState<number>(0);
+
+  /* const [amount, setAmount] = React.useState<number>(0); */
 
   const handleNewProjects = () => {
     setPages(1);
@@ -123,6 +126,8 @@ const Technologys: React.FC<Props> = (props) => {
     }
   }, [isShown]);
 
+  const mediaQueryWidth = useMediaQuery(950);
+
   return (
     <>
       <Technology xs={12}>
@@ -149,18 +154,20 @@ const Technologys: React.FC<Props> = (props) => {
             <Table>
               <tbody>
                 {technologys &&
-                  technologys.slice(0, 7).map((tech, id: number) => (
-                    <>
-                      <TableItems
-                        id={id + 1}
-                        name={tech.name}
-                        idproject={tech.id}
-                        ability={tech.ability}
-                        handleDeleteProject={handledeleteProjects}
-                        handleEditProject={handleeditProjects}
-                      />
-                    </>
-                  ))}
+                  technologys
+                    .slice(0, mediaQueryWidth ? 3 : 7)
+                    .map((tech, id: number) => (
+                      <>
+                        <TableItems
+                          id={id + 1}
+                          name={tech.name}
+                          idproject={tech.id}
+                          ability={tech.ability}
+                          handleDeleteProject={handledeleteProjects}
+                          handleEditProject={handleeditProjects}
+                        />
+                      </>
+                    ))}
               </tbody>
             </Table>
           </Col>

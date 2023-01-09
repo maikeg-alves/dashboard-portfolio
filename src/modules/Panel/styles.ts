@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 export const PanelMenu = styled(Col)`
   display: block;
+  visibility: visible;
   background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   width: 318px;
   height: 100%;
@@ -65,10 +66,52 @@ export const PanelMenu = styled(Col)`
     ul {
       list-style: none;
       padding: 0;
+
+      .btndesk {
+        padding: 10px;
+        width: 100%;
+        border: none;
+        button {
+          background-color: transparent;
+          width: 100%;
+          height: 50px;
+          border-radius: 10px;
+          border: none;
+          display: flex;
+          align-items: center;
+          font-size: 19px;
+          transition: 0.2s;
+          div {
+            display: flex;
+            align-items: center;
+            /*   width: 150px; */
+            margin-left: 20px;
+            color: #ffffff75;
+            p {
+              color: #ffffff75;
+              margin: 0;
+              margin-left: 50px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .active {
+    button {
+      background-color: #01c88c !important;
+      div {
+        color: #ffffff !important;
+        p {
+          color: #ffffff !important;
+        }
+      }
     }
   }
 
   @media screen and (max-width: 995px) {
     display: none;
+    visibility: hidden;
   }
 `;

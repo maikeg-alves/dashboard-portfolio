@@ -1,41 +1,18 @@
 import * as React from 'react';
 import { Container } from './styles';
-import { /* AiOutlineMenu */ AiOutlineUser } from 'react-icons/ai';
+import { AiOutlineUser } from 'react-icons/ai';
 import { RiHomeLine } from 'react-icons/ri';
 import { AiOutlineAppstoreAdd } from 'react-icons/ai';
 import { RiFileCodeFill } from 'react-icons/ri';
+import { Col } from 'react-bootstrap';
 type Props = {
-  values?: string;
+  setOpen: (open: string) => void;
 };
 
-const MobilePanel: React.FC<Props> = () => {
-  /*   const listItem = document.querySelectorAll('.list');
-
-  function activateLink() {
-    listItem.forEach((item) => {
-      item.classList.remove('active');
-    });
-    this.classList.add('active');
-  }
-
-  listItem.forEach((item) => {
-    item.addEventListener('click', activateLink);
-  }); */
-
-  /*  const listItem: NodeListOf<Element> = document.querySelectorAll('.list');
-
-  function activateLink(this: HTMLDivElement): void {
-    if (listItem !== undefined) {
-      listItem.forEach((item) => {
-        item.classList.remove('active');
-      });
-      this.classList.add('active');
-    }
-  }
-
-  listItem.forEach((item) => {
-    item.addEventListener('click', activateLink);
-  }); */
+const MobilePanel: React.FC<Props> = (props) => {
+  const handleActive = (open: string): void => {
+    props.setOpen(open);
+  };
 
   if (typeof window !== 'undefined') {
     const listItem = document.querySelectorAll(
@@ -46,6 +23,7 @@ const MobilePanel: React.FC<Props> = () => {
       listItem.forEach((item) => {
         item.classList.remove('active');
       });
+
       this.classList.add('active');
     }
 
@@ -55,44 +33,48 @@ const MobilePanel: React.FC<Props> = () => {
   }
 
   return (
-    <Container xs="auto">
-      <div className="navigation">
-        <ul className="listWrap">
-          <li className="list active">
-            <a href="javascript:void(0);">
-              <i className="icon">
-                <RiHomeLine />
-              </i>
-              <span className="text">Home</span>
-            </a>
-          </li>
-          <li className="list">
-            <a href="javascript:void(0);">
-              <i className="icon">
-                <RiHomeLine />
-              </i>
-              <span className="text">About</span>
-            </a>
-          </li>
-          <li className="list">
-            <a href="javascript:void(0);">
-              <i className="icon">
-                <RiHomeLine />
-              </i>
-              <span className="text">Profile</span>
-            </a>
-          </li>
-          <li className="list">
-            <a href="javascript:void(0);">
-              <i className="icon">
-                <RiHomeLine />
-              </i>
-              <span className="text">Settings</span>
-            </a>
-          </li>
-          <li className="indicator"></li>
-        </ul>
-      </div>
+    <Container xs={12}>
+      <Col xs="auto" className="menumobile">
+        <div className="navigation">
+          <ul className="listWrap">
+            <li className="list active" onClick={() => handleActive('Home')}>
+              <a href="javascript:void(0);">
+                <i className="icon">
+                  <RiHomeLine />
+                </i>
+                <span className="text">Home</span>
+              </a>
+            </li>
+            <li className="list" onClick={() => handleActive('Projects')}>
+              <a href="javascript:void(0);">
+                <i className="icon">
+                  <AiOutlineAppstoreAdd />
+                </i>
+                <span className="text">Projects</span>
+              </a>
+            </li>
+            <li className="list" onClick={() => handleActive('Technologys')}>
+              <a href="javascript:void(0);">
+                <i className="icon">
+                  <RiFileCodeFill />
+                </i>
+                <span className="text">Technologys</span>
+              </a>
+            </li>
+
+            <li className="list" onClick={() => handleActive('Settings')}>
+              <a>
+                <i className="icon">
+                  <AiOutlineUser />
+                </i>
+                <span className="text">Settings</span>
+              </a>
+            </li>
+
+            <li className="indicator"></li>
+          </ul>
+        </div>
+      </Col>
     </Container>
   );
 };

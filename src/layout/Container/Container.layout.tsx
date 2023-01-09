@@ -30,14 +30,14 @@ const Container: NextPage<Props> = ({
       >
         {justify || align || direction ? (
           <Row
-            className={`justify-content-${justify} align-items-${align} flex-${direction} p-${padding}`}
+            className={`justify-content-${justify} align-items-${align} flex-${direction} p-${padding} rowct`}
             style={{ width: '100%', height: '100vh', margin: '0' }}
           >
             {children}
           </Row>
         ) : (
           <Row
-            className={`justify-content-center align-items-center flex-column p-${padding}`}
+            className={`justify-content-center align-items-center flex-column p-${padding} rowct`}
             style={{ width: '100%', height: '100vh', margin: '0' }}
           >
             {children}

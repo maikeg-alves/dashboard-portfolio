@@ -117,55 +117,54 @@ const Projects: React.FC<Props> = (props) => {
   return (
     <>
       <Project xs={12}>
-        <Col xs={12} style={{ margin: '15px 0' }}>
-          <Col>
-            <h3>New project: </h3>
-          </Col>
-          <Container>
-            <Row>
-              <Col xs={12} className="modalgrid">
-                <button className="add-icon" onClick={handleNewProjects}>
-                  <AiFillPlusCircle />
-                  <p>add new project</p>
-                </button>
-              </Col>
-            </Row>
-          </Container>
+        <Col>
+          <h3>New project: </h3>
         </Col>
-        <Col xs={12}>
-          <Col>
-            <h3>Existing projects</h3>
-          </Col>
+        <Container>
+          <Row className="my-3">
+            <Col className="modalgrid">
+              <button className="add-icon" onClick={handleNewProjects}>
+                <AiFillPlusCircle />
+                <p>add new project</p>
+              </button>
+            </Col>
+          </Row>
+
           <Col xs={12}>
-            <Table>
-              <tbody>
-                {projects &&
-                  projects.slice(0, 4).map((project, id: number) => (
-                    <>
-                      <TableItems
-                        id={id + 1}
-                        name={project.name}
-                        idproject={project.id}
-                        created_at={project.created_at}
-                        technologys={project.technologys}
-                        handleDeleteProject={handledeleteProjects}
-                        handleEditProject={handleeditProjects}
-                      />
-                    </>
-                  ))}
-              </tbody>
-            </Table>
+            <div>
+              <h3>Existing projects</h3>
+            </div>
+            <Row className="flex-responsive" style={{ height: 'auto' }}>
+              <Table>
+                <tbody>
+                  {projects &&
+                    projects.slice(0, 4).map((project, id: number) => (
+                      <>
+                        <TableItems
+                          id={id + 1}
+                          name={project.name}
+                          idproject={project.id}
+                          created_at={project.created_at}
+                          technologys={project.technologys}
+                          handleDeleteProject={handledeleteProjects}
+                          handleEditProject={handleeditProjects}
+                        />
+                      </>
+                    ))}
+                </tbody>
+              </Table>
+            </Row>
+            {projects.length > 4 && (
+              <>
+                <Col xs={12} className="modalgrid">
+                  <button className="add-plus" onClick={handleviewProjects}>
+                    <AiOutlinePlusCircle />
+                  </button>
+                </Col>
+              </>
+            )}
           </Col>
-          {projects.length > 4 && (
-            <>
-              <Col xs={12} className="modalgrid">
-                <button className="add-plus" onClick={handleviewProjects}>
-                  <AiOutlinePlusCircle />
-                </button>
-              </Col>
-            </>
-          )}
-        </Col>
+        </Container>
       </Project>
 
       <Modal isShown={isShown} hide={toggle}>

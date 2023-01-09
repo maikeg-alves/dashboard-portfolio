@@ -55,6 +55,13 @@ export const Table = styled(BTTable)`
   td {
     text-align: center;
   }
+
+  @media screen and (max-width: 426px) {
+    td,
+    button {
+      font-size: 12px !important;
+    }
+  }
 `;
 
 export const Text = styled.div`

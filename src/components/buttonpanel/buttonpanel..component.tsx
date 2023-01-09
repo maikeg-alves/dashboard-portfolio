@@ -25,18 +25,20 @@ const ButtonPanel: React.FC<Props> = ({
   }, [Active]);
 
   return (
-    <Container
+    /*     <Container
       background={active ? `#01C88C` : 'transparent'}
       textColor={active ? `#FFFFFF` : '#FFFFFF75'}
     >
       <button onClick={handleClick}>
         <div>
           {Icon}
-
           <p> {Title}</p>
         </div>
       </button>
-    </Container>
+    </Container> */
+    <div>
+      <p>teste</p>
+    </div>
   );
 };
 

@@ -14,39 +14,34 @@ type PanelProps = {
 };
 
 const Panel: React.FC<PanelProps> = (props) => {
-  const [active, setActive] = React.useState<boolean>(true);
-  const [active2, setActive2] = React.useState<boolean>(false);
-  const [active3, setActive3] = React.useState<boolean>(false);
   const router = useRouter();
 
-  const handleActive = () => {
-    setActive(!active);
-    setActive2(false);
-    setActive3(false);
-    props.setOpen('Home');
-  };
-
-  const handleActive2 = () => {
-    setActive2(!active2);
-    setActive(false);
-    setActive3(false);
-    props.setOpen('Projects');
-  };
-
-  const handleActive3 = () => {
-    setActive3(!active3);
-    setActive(false);
-    setActive2(false);
-    props.setOpen('Technologys');
+  const handleActive = (open: string) => {
+    props.setOpen(open);
   };
 
   const logout = () => {
-    if (localStorage.getItem('token')) {
-      localStorage.removeItem('token');
-    }
-
+    localStorage.getItem('token') && localStorage.removeItem('token');
     router.push('/login');
   };
+
+  if (typeof window !== 'undefined') {
+    const listItem = document.querySelectorAll(
+      '.btndesk',
+    ) as NodeListOf<HTMLElement>;
+
+    function activateLink(this: HTMLDivElement) {
+      listItem.forEach((item) => {
+        item.classList.remove('active');
+      });
+
+      this.classList.add('active');
+    }
+
+    listItem.forEach((item) => {
+      item.addEventListener('click', activateLink);
+    });
+  }
 
   return (
     <PanelMenu>
@@ -71,29 +66,29 @@ const Panel: React.FC<PanelProps> = (props) => {
         </div>
         <div>
           <ul>
-            <li>
-              <ButtonPanel
-                Icon={<RiHomeLine />}
-                handleActive={handleActive}
-                Title="Home"
-                Active={active}
-              />
+            <li className="btndesk active">
+              <button onClick={() => handleActive('Home')}>
+                <div>
+                  <RiHomeLine />
+                  <p>Home</p>
+                </div>
+              </button>
             </li>
-            <li>
-              <ButtonPanel
-                Icon={<AiOutlineAppstoreAdd />}
-                Title="Projects"
-                handleActive={handleActive2}
-                Active={active2}
-              />
+            <li className="btndesk">
+              <button onClick={() => handleActive('Projects')}>
+                <div>
+                  <AiOutlineAppstoreAdd />
+                  <p>Projects</p>
+                </div>
+              </button>
             </li>
-            <li>
-              <ButtonPanel
-                Icon={<RiFileCodeFill />}
-                Title="Technologys"
-                handleActive={handleActive3}
-                Active={active3}
-              />
+            <li className="btndesk">
+              <button onClick={() => handleActive('Technologys')}>
+                <div>
+                  <RiFileCodeFill />
+                  <p>Technologys</p>
+                </div>
+              </button>
             </li>
           </ul>
         </div>

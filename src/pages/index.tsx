@@ -105,17 +105,16 @@ const Home: NextPage<Props> = (props) => {
 
   return (
     <Container direction="column" align="center" justify="center" padding="3">
-      <Col xs="auto" className="d-flex ">
+      <>
         <Panel setOpen={handleOpen} {...apiData} />
+      </>
+      <Col xs="auto" className="conElementes">
+        {pagesElement}
       </Col>
-      <Col xs="auto">
-        <Col xs={12} className="d-flex w-100">
-          {pagesElement}
-        </Col>
-      </Col>
-      <Col xs={12}>
-        <MobilePanel />
-      </Col>
+
+      <>
+        <MobilePanel setOpen={handleOpen} />
+      </>
     </Container>
   );
 };

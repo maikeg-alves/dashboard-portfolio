@@ -9,11 +9,13 @@
     "lint": "next eslint ."
   },
   "dependencies": {
+    "-": "^0.0.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/material": "^5.10.15",
     "@types/bootstrap": "^5.2.6",
     "bootstrap": "^5.2.2",
+    "g": "^2.0.1",
     "next": "^13.1.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",

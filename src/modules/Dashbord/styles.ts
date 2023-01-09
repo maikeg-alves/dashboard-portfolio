@@ -1,11 +1,8 @@
 import { Col } from 'react-bootstrap';
 import styled from 'styled-components';
 import LinearProgress from '@mui/material/LinearProgress';
-import CircularProgress from '@mui/material/CircularProgress';
-export const Dash = styled(Col)`
-  width: 100%;
-  height: 100%;
 
+export const Dash = styled(Col)`
   .modalgrid {
     background-color: ${(props) => props.theme.colors.backgroundSecondary};
     border-radius: 17px;
@@ -117,6 +114,12 @@ export const Dash = styled(Col)`
       margin-bottom: 10px;
     }
   }
+
+  @media screen and (max-width: 995px) {
+    h4 {
+      font-size: 11px !important;
+    }
+  }
 `;
 
 export const ProgressBar = styled(LinearProgress)`
@@ -130,5 +133,3 @@ export const ProgressBar = styled(LinearProgress)`
     border-radius: 10px;
   }
 `;
-
-export const CircleProgress = styled(CircularProgress)``;

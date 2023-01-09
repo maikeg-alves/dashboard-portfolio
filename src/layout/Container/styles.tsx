@@ -24,6 +24,11 @@ export const MYContainer = styled(Col)<Props>`
   position: relative;
   overflow: hidden;
   z-index: 1;
+
+  .conElementes {
+    width: 65%;
+  }
+
   &::before {
     content: '';
     position: absolute;
@@ -34,5 +39,31 @@ export const MYContainer = styled(Col)<Props>`
     background-color: ${(props) => props.theme.colors.background};
     opacity: 0.5;
     z-index: -1;
+  }
+  @media screen and (max-width: 995px) {
+    .container {
+      padding-right: 0px !important ;
+      padding-left: 0px !important;
+    }
+    .rowct {
+      padding: 10px 0 !important;
+      justify-content: space-around !important;
+    }
+
+    .conElementes {
+      width: 100% !important;
+    }
+  }
+
+  @media screen and (max-width: 375px) {
+    .flex-responsive {
+      scroll-padding: 10px;
+      width: 100%;
+      height: 499px;
+      scroll-snap-type: x mandatory;
+      overflow-x: scroll;
+      scroll-snap-align: start;
+      padding: 0px;
+    }
   }
 `;
