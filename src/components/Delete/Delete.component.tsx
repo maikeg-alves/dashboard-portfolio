@@ -5,6 +5,7 @@ import { IProject, ITechnologys } from '../../interfaces';
 import { Container } from './styles';
 import { ApiClient } from '../../scripts';
 import { LoadingBtn } from 'src/styles/components';
+import ErrorMessage from '../ErrorMessage/ErrorMessage.component';
 
 type Props = {
   id: number;
@@ -18,6 +19,9 @@ type Props = {
 const Delete: React.FC<Props> = (props) => {
   const [check, setCheck] = React.useState<boolean>(true);
   const [looding, setLooding] = React.useState<boolean>(false);
+  const [alertmensage, setAlertMensage] = React.useState<string>('');
+
+  let mensage: React.ReactElement;
 
   const CRUD = new ApiClient(
     props.id,
@@ -51,7 +55,7 @@ const Delete: React.FC<Props> = (props) => {
   const handleDelete = async () => {
     if (!props.admin) {
       setCheck(true);
-      return alert('acesso não autorizado');
+      return setAlertMensage('accessError');
     }
 
     if (check === false) {
@@ -64,19 +68,13 @@ const Delete: React.FC<Props> = (props) => {
           if (res.code !== 200) {
             props.handleDelete(check);
             setLooding(false);
-            return alert(
-              'token de acesso expirado, porfavor se logue novamente',
-            );
+            return setAlertMensage('revokedAccess');
           }
 
           if (res.revalidated) {
-            alert(
-              `${props.mode ? 'tecnologys' : 'projects'} excluido com sucesso`,
-            );
+            setAlertMensage('successDelete');
             props.handleDelete(check);
           }
-
-          console.log('values delete', res.code);
         }
       } catch (error) {
         console.error(error);
@@ -86,13 +84,50 @@ const Delete: React.FC<Props> = (props) => {
     }
   };
 
+  switch (alertmensage) {
+    case 'accessError':
+      mensage = <ErrorMessage message="Acesso não autorizado" />;
+      break;
+    case 'revokedAccess':
+      mensage = (
+        <ErrorMessage
+          message="Token de acesso expirado, porfavor se logue novamente"
+          alert="warning"
+        />
+      );
+      break;
+    case 'successDelete':
+      mensage = (
+        <ErrorMessage
+          message={`${
+            props.mode ? 'Tecnologys' : 'Projects'
+          } excluido com sucesso`}
+          alert="success"
+        />
+      );
+      break;
+    /*     case 'errorDelete':
+      mensage = <ErrorMessage message="error ao criar projeto" />;
+      break; */
+    default:
+      mensage = <p></p>;
+      break;
+  }
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setAlertMensage('');
+    }, 3000);
+  }, [alertmensage]);
+
   return (
     <Container xs={12}>
+      <Col>{mensage}</Col>
       <Col>
         <h4>Você tem certeza absoluta?</h4>
         <p>
-          Esta ação não pode ser desfeita. Isso excluirá permanentemente o<br />
-          {props.mode ? 'Technologia' : 'Projeto'}: {''}
+          Esta ação não pode ser desfeita. Isso excluirá permanentemente <br />
+          {props.mode ? 'a Technologia' : 'o Projeto'}: {''}
           <strong>
             {props.mode
               ? props.technologys

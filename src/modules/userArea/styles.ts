@@ -9,6 +9,9 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
 
+  h3 {
+    color: #01c88c;
+  }
   img {
     border-radius: 50%;
   }

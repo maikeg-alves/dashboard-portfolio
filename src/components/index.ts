@@ -6,6 +6,7 @@ import Modal from './Modal/modal.component';
 import { useModal } from './Modal/usemodal.component';
 import GetView from './GetView/GetView.component';
 import Delete from './Delete/Delete.component';
+import ErrorMessage from './ErrorMessage/ErrorMessage.component';
 
 export { PutItem } from './PutItem/PutItem.component';
 
@@ -18,4 +19,5 @@ export {
   FormTechnology,
   GetView,
   Delete,
+  ErrorMessage,
 };
