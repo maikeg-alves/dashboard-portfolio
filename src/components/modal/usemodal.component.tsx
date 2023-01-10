@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const useModal = () => {
+const useModal = () => {
   const [isShown, setIsShown] = React.useState<boolean>(false);
   const toggle = () => setIsShown(!isShown);
 
@@ -9,3 +9,5 @@ export const useModal = () => {
     toggle,
   };
 };
+
+export default useModal;

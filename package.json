@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next eslint ."
+    "lint": "next lint ."
   },
   "dependencies": {
     "-": "^0.0.1",
