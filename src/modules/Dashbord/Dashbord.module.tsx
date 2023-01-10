@@ -47,10 +47,6 @@ const Dashbord: React.FC<Props> = (props) => {
     return maxLanguage;
   }
 
-  const resposta = languageCounts(props.github);
-
-  console.log(resposta);
-
   return (
     <Dash>
       <div>
