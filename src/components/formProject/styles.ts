@@ -33,13 +33,13 @@ export const Form = styled(BTForm)`
 export const StepperBox = styled(Box)`
   width: 100%;
   color: ${(props) => props.theme.colors.text};
-  .css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed {
-    color: ${(props) => props.theme.colors.primary};
+  .Mui-completed path {
+    color: ${(props) => props.theme.colors.primary}!important;
   }
-  .css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-active {
-    color: ${(props) => props.theme.colors.textSecondary};
+  .Mui-active {
+    color: ${(props) => props.theme.colors.textSecondary}!important;
   }
-  .css-1hv8oq8-MuiStepLabel-label.MuiStepLabel-alternativeLabel {
-    color: ${(props) => props.theme.colors.textSecondary};
+  .MuiStepLabel-alternativeLabel {
+    color: ${(props) => props.theme.colors.textSecondary}!important;
   }
 `;

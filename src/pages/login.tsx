@@ -26,6 +26,7 @@ type Inputs = {
 const errosMessage = {
   email: 'email vazio ou prenchido de forma incorreta ',
   password: 'senha vazia ou prenchido de forma incorreta',
+  auth: 'email ou password incorreto',
 };
 
 const Login: NextPage = () => {
@@ -39,6 +40,7 @@ const Login: NextPage = () => {
   const router = useRouter();
 
   const [shouldRedirect, setShouldRedirect] = React.useState<boolean>(false);
+  const [errorauth, setErrorAuth] = React.useState<boolean>(false);
 
   const CRUD = new ApiClient(Number(undefined), String(undefined));
 
@@ -55,6 +57,7 @@ const Login: NextPage = () => {
         if (localStorage.getItem('token')) {
           localStorage.removeItem('token');
         }
+        res.code ? setErrorAuth(true) : setErrorAuth(false);
       } else {
         const token = res.token;
         localStorage.setItem('token', token);
@@ -64,7 +67,6 @@ const Login: NextPage = () => {
       }
     });
   };
-
   React.useEffect(() => {
     if (shouldRedirect) {
       router.push('/');
@@ -102,7 +104,9 @@ const Login: NextPage = () => {
                     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
                 })}
                 style={{
-                  border: `2px solid ${errors.email ? 'red' : '#01C88C'}`,
+                  border: `2px solid ${
+                    errors.email || errorauth ? 'red' : '#01C88C'
+                  }`,
                 }}
               />
               <div className="icon">
@@ -115,6 +119,12 @@ const Login: NextPage = () => {
               </ErrorContainer>
             )}
 
+            {errorauth && (
+              <ErrorContainer>
+                <p>{errosMessage.auth}</p>
+              </ErrorContainer>
+            )}
+
             <FormGroup>
               <Form.Control
                 type="password"
@@ -123,7 +133,9 @@ const Login: NextPage = () => {
                   required: true,
                 })}
                 style={{
-                  border: `2px solid ${errors.password ? 'red' : '#01C88C'}`,
+                  border: `2px solid ${
+                    errors.password || errorauth ? 'red' : '#01C88C'
+                  }`,
                 }}
               />
 
@@ -134,6 +146,12 @@ const Login: NextPage = () => {
             {errors.password && (
               <ErrorContainer>
                 <p>{errosMessage.password}</p>
+              </ErrorContainer>
+            )}
+
+            {errorauth && (
+              <ErrorContainer>
+                <p>{errosMessage.auth}</p>
               </ErrorContainer>
             )}
 
