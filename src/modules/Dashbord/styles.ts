@@ -126,9 +126,12 @@ export const ProgressBar = styled(LinearProgress)`
   height: 15px !important;
   border-radius: 10px;
   background-color: #494a4e !important;
-  .css-5xe99f-MuiLinearProgress-bar1 {
+
+  .css-5xe99f-MuiLinearProgress-bar1,
+  span {
     background-color: ${(props) => props.theme.colors.primary}!important;
   }
+
   span {
     border-radius: 10px;
   }
