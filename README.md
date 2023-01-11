@@ -26,6 +26,15 @@ Inicie o desenvolvimento local com o comando npm run dev ou yarn dev.
   yarn dev
 ```
 
+## Dependências
+
+- react-bootstrap - Utilizado para proporcionar componentes baseados no Bootstrap para React.
+
+- react-hook-form - Utilizado para gerenciar formulários em React.
+
+- mui/material - Utilizado para proporcionar componentes baseados no Material-UI.
+
+- styled-components - Utilizado para estilizar componentes React com uma sintaxe CSS.
 
 ## Licença
 
