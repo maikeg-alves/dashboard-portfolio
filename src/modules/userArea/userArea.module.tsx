@@ -22,7 +22,7 @@ const UserArea: React.FC<Props> = (props) => {
         <Image
           src={`${
             props.admin
-              ? ' https://i.imgur.com/p7LZCvN.png'
+              ? 'https://i.imgur.com/p7LZCvN.png'
               : 'https://i.imgur.com/YYNLL6b.jpgs'
           }`} /* */
           alt="avatar user"
