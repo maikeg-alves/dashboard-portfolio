@@ -10,7 +10,6 @@ module.exports = {
       'upload.vectorlogo.zone',
       'raw.githubusercontent.com',
       'user-images.githubusercontent.com',
-      ,
     ],
   },
   env: {
