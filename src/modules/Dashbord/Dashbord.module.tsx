@@ -20,37 +20,30 @@ const Dashbord: React.FC<Props> = (props) => {
     // Cria um objeto para armazenar os contadores de palavras
     const languageCounts: LanguageCount = {};
 
-    const list = lislanguage
-      .filter((github) => github.language !== undefined)
-      .map((github) => github.language);
-
-    // Itera sobre o array de palavras
-    for (const language of list) {
-      // Incrementa o contador para a palavra atual
-      if (language in languageCounts) {
-        languageCounts[language]++;
+    lislanguage.forEach((repo) => {
+      if (repo.language in languageCounts) {
+        languageCounts[repo.language]++;
       } else {
-        languageCounts[language] = 1;
+        languageCounts[repo.language] = 1;
       }
-    }
+    });
 
-    let maxLanguage: string | null = null;
-    let maxCount = 0;
+    // Sort data in descending order
+    const sortedLanguages = Object.entries(languageCounts).sort(
+      (a, b) => b[1] - a[1],
+    );
 
-    for (const [language, count] of Object.entries(languageCounts)) {
-      if (count > maxCount) {
-        maxLanguage = language;
-        maxCount = count;
-      }
-    }
-
-    return maxLanguage;
+    return sortedLanguages;
   }
+
+  const mostLanguage = languageCounts(props.github);
+
+  console.log(mostLanguage);
 
   return (
     <Dash>
       <div>
-        <h3>Dashbord</h3>
+        <h3>Dashbord:</h3>
       </div>
       <Container className="flex-responsive ">
         <Row>
@@ -68,9 +61,16 @@ const Dashbord: React.FC<Props> = (props) => {
             </Col>
           </Col>
           <Col className="Visitors modalgrid">
-            <h6>Most used language</h6>
+            <h5>Most used language</h5>
             <Col xs={12}>
-              <h4>{languageCounts(props.github)}</h4>
+              <h3>
+                {mostLanguage.length > 0 &&
+                  mostLanguage
+                    .filter((language) => language[0] !== 'null')
+                    .reduce((prev, current) =>
+                      prev[1] > current[1] ? prev : current,
+                    )[0]}
+              </h3>
             </Col>
           </Col>
         </Row>
@@ -79,34 +79,39 @@ const Dashbord: React.FC<Props> = (props) => {
             <h4>Technology ranking </h4>
             <Col xs={12}>
               {props.technologys &&
-                props.technologys.slice(0, 5).map((technology, id) => (
-                  <>
-                    <Col className="progress-items" key={id}>
-                      <p>{technology.name}</p>
-                      <ProgressBar
-                        variant="determinate"
-                        value={technology.ability}
-                      />
-                    </Col>
-                  </>
-                ))}
+                props.technologys
+                  .slice(0, 5)
+                  .sort((a, b) => b.ability - a.ability)
+                  .map((technology, id) => (
+                    <>
+                      <Col className="progress-items" key={id}>
+                        <p>{technology.name}</p>
+                        <ProgressBar
+                          variant="determinate"
+                          value={technology.ability}
+                        />
+                      </Col>
+                    </>
+                  ))}
             </Col>
           </Col>
           <Col className="RankingLangue modalgrid">
             <h4>Language ranking</h4>
             <Col xs={12}>
-              {props.projects &&
-                props.projects.slice(0, 5).map((project, id) => (
-                  <>
-                    <Col className="progress-items" key={id}>
-                      <p>{project.name}</p>
-                      <ProgressBar
-                        variant="determinate"
-                        value={project.difficulty}
-                      />
-                    </Col>
-                  </>
-                ))}
+              {mostLanguage.length > 0 &&
+                mostLanguage
+                  .filter((language) => language[0] !== 'null')
+                  .map((project, id) => (
+                    <>
+                      <Col className="progress-items" key={id}>
+                        <p>{project[0]}</p>
+                        <ProgressBar
+                          variant="determinate"
+                          value={project[1] * 10}
+                        />
+                      </Col>
+                    </>
+                  ))}
             </Col>
           </Col>
         </Row>

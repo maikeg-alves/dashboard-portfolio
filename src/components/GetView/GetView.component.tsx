@@ -71,31 +71,37 @@ const GetView: React.FC<Props> = (props) => {
       Elemente = (
         <Table>
           {props.mode
-            ? technologys.map((tech, id: number) => (
-                <>
-                  <TableItems
-                    id={id + 1}
-                    name={tech.name}
-                    idproject={tech.id}
-                    ability={tech.ability}
-                    handleDeleteProject={handledeleteProjects}
-                    handleEditProject={handleeditProjects}
-                  />
-                </>
-              ))
-            : projects.map((project, id: number) => (
-                <>
-                  <TableItems
-                    id={id + 1}
-                    name={project.name}
-                    idproject={project.id}
-                    created_at={project.created_at}
-                    technologys={project.technologys}
-                    handleDeleteProject={handledeleteProjects}
-                    handleEditProject={handleeditProjects}
-                  />
-                </>
-              ))}
+            ? technologys
+                .sort((a, b) => b.ability - a.ability)
+                .map((tech, id: number) => (
+                  <>
+                    <TableItems
+                      id={id + 1}
+                      name={tech.name}
+                      idproject={tech.id}
+                      ability={tech.ability}
+                      handleDeleteProject={handledeleteProjects}
+                      handleEditProject={handleeditProjects}
+                    />
+                  </>
+                ))
+            : projects
+                .sort(
+                  (a, b) => Date.parse(a.created_at) - Date.parse(b.created_at),
+                )
+                .map((project, id: number) => (
+                  <>
+                    <TableItems
+                      id={id + 1}
+                      name={project.name}
+                      idproject={project.id}
+                      created_at={project.created_at}
+                      technologys={project.technologys}
+                      handleDeleteProject={handledeleteProjects}
+                      handleEditProject={handleeditProjects}
+                    />
+                  </>
+                ))}
         </Table>
       );
       break;

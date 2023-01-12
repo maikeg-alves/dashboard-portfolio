@@ -20,12 +20,13 @@ export const Dash = styled(Col)`
     width: 100%;
     height: auto;
 
-    h4,
-    h6 {
+    h2,
+    h3 {
       color: ${(props) => props.theme.colors.text};
     }
 
-    h2 {
+    h4,
+    h5 {
       color: ${(props) => props.theme.colors.textSecondary};
     }
 
@@ -60,7 +61,7 @@ export const Dash = styled(Col)`
 
     span {
       margin: 0;
-      width: 72%;
+      width: 60%;
     }
   }
 

@@ -156,6 +156,7 @@ const Technologys: React.FC<Props> = (props) => {
                 {technologys &&
                   technologys
                     .slice(0, mediaQueryWidth ? 3 : 7)
+                    .sort((a, b) => b.ability - a.ability)
                     .map((tech, id: number) => (
                       <>
                         <TableItems

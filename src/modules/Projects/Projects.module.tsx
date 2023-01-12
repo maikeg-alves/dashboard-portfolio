@@ -114,6 +114,8 @@ const Projects: React.FC<Props> = (props) => {
     }
   }, [isShown]);
 
+  console.log(projects);
+
   return (
     <>
       <Project xs={12}>
@@ -138,19 +140,25 @@ const Projects: React.FC<Props> = (props) => {
               <Table>
                 <tbody>
                   {projects &&
-                    projects.slice(0, 4).map((project, id: number) => (
-                      <>
-                        <TableItems
-                          id={id + 1}
-                          name={project.name}
-                          idproject={project.id}
-                          created_at={project.created_at}
-                          technologys={project.technologys}
-                          handleDeleteProject={handledeleteProjects}
-                          handleEditProject={handleeditProjects}
-                        />
-                      </>
-                    ))}
+                    projects
+                      .sort(
+                        (a, b) =>
+                          Date.parse(a.created_at) - Date.parse(b.created_at),
+                      )
+                      .slice(0, 4)
+                      .map((project, id: number) => (
+                        <>
+                          <TableItems
+                            id={id + 1}
+                            name={project.name}
+                            idproject={project.id}
+                            created_at={project.created_at}
+                            technologys={project.technologys}
+                            handleDeleteProject={handledeleteProjects}
+                            handleEditProject={handleeditProjects}
+                          />
+                        </>
+                      ))}
                 </tbody>
               </Table>
             </Row>
