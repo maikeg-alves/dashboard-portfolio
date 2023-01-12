@@ -31,7 +31,6 @@ const GetView: React.FC<Props> = (props) => {
 
   const handledeleteProjects = (e: number) => {
     setPages(1);
-    console.log('delete ', e);
     setId(e);
   };
   const handleeditProjects = (id: number) => {
@@ -52,7 +51,6 @@ const GetView: React.FC<Props> = (props) => {
   };
 
   const Update = (e: boolean) => {
-    console.log('update ', e);
     if (props.statusUpdate !== undefined) {
       props.statusUpdate(e);
     }
@@ -61,8 +59,6 @@ const GetView: React.FC<Props> = (props) => {
   const exitpage = () => {
     setPages(0);
   };
-
-  console.log('getview values', props);
 
   let Elemente: React.ReactElement;
 

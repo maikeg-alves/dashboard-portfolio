@@ -114,8 +114,6 @@ const Projects: React.FC<Props> = (props) => {
     }
   }, [isShown]);
 
-  console.log(projects);
-
   return (
     <>
       <Project xs={12}>
