@@ -2,6 +2,7 @@ import React from 'react';
 import { NextPage } from 'next';
 import { MYContainer } from './styles';
 import { Row } from 'react-bootstrap';
+import Head from 'next/head';
 
 type Props = {
   children: React.ReactNode;
@@ -24,6 +25,9 @@ const Container: NextPage<Props> = ({
 }) => {
   return (
     <>
+      <Head>
+        <title>Dashboard</title>
+      </Head>
       <MYContainer
         back={background}
         className={`${background && `position-absolute`}`}

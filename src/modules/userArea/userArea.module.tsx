@@ -13,7 +13,7 @@ const UserArea: React.FC<Props> = (props) => {
 
   const logout = () => {
     localStorage.getItem('token') && localStorage.removeItem('token');
-    router.push('/login');
+    router.push('/');
   };
 
   return (

@@ -23,7 +23,7 @@ const Panel: React.FC<PanelProps> = (props) => {
 
   const logout = () => {
     localStorage.getItem('token') && localStorage.removeItem('token');
-    router.push('/login');
+    router.push('/');
   };
 
   if (typeof window !== 'undefined') {
