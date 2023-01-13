@@ -57,10 +57,6 @@ const Technologys: React.FC<Props> = (props) => {
     setID(id);
     setPages(3);
     if (props) {
-      /*     const data = props.projects.filter((project) => project.id === id);
-
-      const { technologys, github } = props; */
-
       const alldata: Props = {
         ...props,
         values: true,
@@ -96,7 +92,7 @@ const Technologys: React.FC<Props> = (props) => {
   switch (pages) {
     case 1:
       pagesElement = (
-        <FormTechnology stateCreate={statusUpdate} id={id} {...props} />
+        <FormTechnology statusUpdate={statusUpdate} id={id} {...props} />
       );
       break;
     case 2:
@@ -155,8 +151,8 @@ const Technologys: React.FC<Props> = (props) => {
               <tbody>
                 {technologys &&
                   technologys
-                    .slice(0, mediaQueryWidth ? 3 : 7)
                     .sort((a, b) => b.ability - a.ability)
+                    .slice(0, mediaQueryWidth ? 3 : 7)
                     .map((tech, id: number) => (
                       <>
                         <TableItems

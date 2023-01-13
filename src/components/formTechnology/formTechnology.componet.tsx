@@ -10,7 +10,7 @@ import { LoadingPage } from '../loadingPage';
 import { Form, StepperBox } from './styles';
 import { IGithub, IProject, ITechnologys, ITechnologysCRUD } from '@interfaces';
 
-import { ApiClient } from '../../scripts';
+import { ApiClient, verifyToken } from '@scripts';
 import { Preview } from '../PreviewCrad';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.component';
 
@@ -31,8 +31,7 @@ type Outputs = {
   id: number;
   values: boolean;
   admin: boolean;
-  statusUpdate?: (status: boolean) => void;
-  stateCreate?: (status: boolean) => void;
+  statusUpdate: (status: boolean) => void;
 };
 
 const FormTechnology: React.FC<Outputs> = (props) => {
@@ -40,7 +39,6 @@ const FormTechnology: React.FC<Outputs> = (props) => {
 
   const [cardData, setcardData] = React.useState<ITechnologysCRUD>();
 
-  const [update, setupdate] = React.useState<boolean>(false);
   const [looding, setLooding] = React.useState<boolean>(false);
 
   const [alertmensage, setAlertMensage] = React.useState<string>('');
@@ -59,66 +57,59 @@ const FormTechnology: React.FC<Outputs> = (props) => {
   // script base de CRUD
 
   const createOrUpdateTechnology = async (data: ITechnologysCRUD) => {
+    const token = await localStorage.getItem('token');
+
     if (!props.admin) {
       return setAlertMensage('accessError');
     }
-    const token = await localStorage.getItem('token');
-    if (token !== null) {
+
+    verifyToken(token).then(() => {
+      if (!token) {
+        return setAlertMensage('revokedAccess');
+      }
+    });
+
+    if (token) {
       if (props.values) {
         try {
           setLooding(true);
-
           const res = await CRUD.update(data, token);
 
-          if (res.code !== 200) {
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
-            }
-            setLooding(false);
-            return setAlertMensage('revokedAccess');
+          if (res.code === 505) {
+            setAlertMensage('errorUpdate');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
 
           if (res.revalidated) {
             setAlertMensage('successUpdate');
-            setupdate(true);
-            setLooding(false);
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
-            }
-          } else {
-            setAlertMensage('errorUpdate');
-            setupdate(false);
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
-            }
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
         } catch (error) {
           console.error(error);
         }
-      } else {
+      }
+
+      if (!props.values) {
         try {
           setLooding(true);
-
           const res = await CRUD.create(data, token);
 
-          if (res.code !== 200) {
-            setLooding(false);
-            return setAlertMensage('revokedAccess');
+          if (res.code === 505) {
+            setAlertMensage('errorCreating');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
 
           if (res.revalidated) {
             setAlertMensage('successCreating');
-            setupdate(true);
-            setLooding(false);
-            if (props.stateCreate !== undefined) {
-              props.stateCreate(update);
-            }
-          } else {
-            setAlertMensage('errorCreating');
-            setupdate(false);
-            if (props.stateCreate !== undefined) {
-              props.stateCreate(update);
-            }
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
         } catch (error) {
           console.error(error);
@@ -133,8 +124,6 @@ const FormTechnology: React.FC<Outputs> = (props) => {
     // values of form state
 
     const { techName, Ability, urlicon } = data;
-
-    // converter valores em numbe
 
     try {
       switch (step) {
@@ -210,18 +199,20 @@ const FormTechnology: React.FC<Outputs> = (props) => {
     case 'successCreating':
       mensage = (
         <ErrorMessage
-          message="Technologia criado com sucesso"
+          message="Technologia criada com sucesso"
           alert="success"
         />
       );
       break;
     case 'errorCreating':
-      mensage = <ErrorMessage message="Error ao criar projeto" />;
+      mensage = (
+        <ErrorMessage message="Error ao criar projeto, verifique se está repetindo item unicos" />
+      );
       break;
     case 'successUpdate':
       mensage = (
         <ErrorMessage
-          message="Technologia editado com sucesso"
+          message="Technologia editada com sucesso"
           alert="success"
         />
       );

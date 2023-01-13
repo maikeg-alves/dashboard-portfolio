@@ -3,7 +3,7 @@ import { Button, Col, Form } from 'react-bootstrap';
 
 import { IProject, ITechnologys } from '../../interfaces';
 import { Container } from './styles';
-import { ApiClient } from '../../scripts';
+import { ApiClient, verifyToken } from '@scripts';
 import { LoadingBtn } from 'src/styles/components';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.component';
 
@@ -53,34 +53,38 @@ const Delete: React.FC<Props> = (props) => {
   };
 
   const handleDelete = async () => {
+    const token = await localStorage.getItem('token');
+
     if (!props.admin) {
-      setCheck(true);
       return setAlertMensage('accessError');
     }
 
-    if (check === false) {
-      setLooding(true);
-      try {
-        const token = await localStorage.getItem('token');
-        if (token !== null) {
-          const res = await CRUD.delete(token);
-
-          if (res.code !== 200) {
-            props.handleDelete(check);
-            setLooding(false);
-            return setAlertMensage('revokedAccess');
-          }
-
-          if (res.revalidated) {
-            setAlertMensage('successDelete');
-            props.handleDelete(check);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLooding(false);
+    verifyToken(token).then(() => {
+      if (!token) {
+        return setAlertMensage('revokedAccess');
       }
+    });
+
+    setLooding(true);
+    try {
+      if (token) {
+        const res = await CRUD.delete(token);
+        if (res.code !== 200) {
+          setAlertMensage('errorDelete');
+          setTimeout(() => {
+            props.handleDelete(true);
+          }, 3000);
+        }
+
+        if (res.revalidated) {
+          setAlertMensage('successDelete');
+          setTimeout(() => {
+            props.handleDelete(true);
+          }, 3000);
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -100,25 +104,19 @@ const Delete: React.FC<Props> = (props) => {
       mensage = (
         <ErrorMessage
           message={`${
-            props.mode ? 'Tecnologys' : 'Projects'
+            props.mode ? 'Technologia' : 'Projeto'
           } excluido com sucesso`}
           alert="success"
         />
       );
       break;
-    /*     case 'errorDelete':
+    case 'errorDelete':
       mensage = <ErrorMessage message="error ao criar projeto" />;
-      break; */
+      break;
     default:
       mensage = <p></p>;
       break;
   }
-
-  React.useEffect(() => {
-    setTimeout(() => {
-      setAlertMensage('');
-    }, 3000);
-  }, [alertmensage]);
 
   return (
     <Container xs={12}>

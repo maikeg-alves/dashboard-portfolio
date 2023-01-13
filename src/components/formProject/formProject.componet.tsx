@@ -10,11 +10,9 @@ import { LoadingPage } from '../loadingPage';
 import { Form, StepperBox } from './styles';
 import { IGithub, IProject, ITechnologys, PUTProject } from '@interfaces';
 
-import { ApiClient } from '../../scripts';
+import { ApiClient, verifyToken } from '@scripts';
 import { Preview } from '../PreviewCrad';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.component';
-
-/* import { Alert } from '@mui/material'; */
 
 const steps = [
   'name, Github, description',
@@ -39,8 +37,7 @@ type Outputs = {
   github: IGithub[];
   values: boolean;
   admin: boolean;
-  statusUpdate?: (status: boolean) => void;
-  stateCreate?: (status: boolean) => void;
+  statusUpdate: (status: boolean) => void;
 };
 
 const FormProject: React.FC<Outputs> = (props) => {
@@ -52,7 +49,6 @@ const FormProject: React.FC<Outputs> = (props) => {
 
   const [cardData, setcardData] = React.useState<PUTProject>();
 
-  const [update, setupdate] = React.useState<boolean>(false);
   const [looding, setLooding] = React.useState<boolean>(false);
   const [alertmensage, setAlertMensage] = React.useState<string>('');
 
@@ -70,67 +66,62 @@ const FormProject: React.FC<Outputs> = (props) => {
   const CRUD = new ApiClient(Number(id), 'projects');
 
   const createOrUpdateProject = async (data: PUTProject) => {
+    const token = await localStorage.getItem('token');
+
     if (!props.admin) {
       return setAlertMensage('accessError');
     }
 
-    const token = await localStorage.getItem('token');
+    verifyToken(token).then(() => {
+      if (!token) {
+        return setAlertMensage('revokedAccess');
+      }
+    });
 
-    if (token !== null) {
+    if (token) {
       if (props.values) {
         try {
           setLooding(true);
           const res = await CRUD.update(data, token);
 
-          if (res.code !== 200) {
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
-            }
-            setLooding(false);
-            return setAlertMensage('revokedAccess');
+          if (res.code === 505) {
+            setAlertMensage('errorUpdate');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
 
           if (res.revalidated) {
             setAlertMensage('successUpdate');
-            setupdate(true);
-            setLooding(false);
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
-            }
-          } else {
-            setAlertMensage('errorUpdate');
-            setupdate(false);
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
-            }
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
         } catch (error) {
           console.error(error);
         }
-      } else {
+      }
+
+      if (!props.values) {
         try {
           setLooding(true);
           const res = await CRUD.create(data, token);
 
-          if (res.code !== 200) {
-            setLooding(false);
-            return setAlertMensage('revokedAccess');
+          if (res.code === 505) {
+            setAlertMensage('errorCreating');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
 
           if (res.revalidated) {
             setAlertMensage('successCreating');
-            setupdate(true);
-            setLooding(false);
-            if (props.stateCreate !== undefined) {
-              props.stateCreate(update);
-            }
-          } else {
-            setAlertMensage('errorCreating');
-            setupdate(false);
-            if (props.stateCreate !== undefined) {
-              props.stateCreate(update);
-            }
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
+
+          console.log(res);
         } catch (error) {
           console.error(error);
         }
@@ -140,7 +131,6 @@ const FormProject: React.FC<Outputs> = (props) => {
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     // values of form state
-
     const {
       projectName,
       githubRepository,
@@ -356,7 +346,6 @@ const FormProject: React.FC<Outputs> = (props) => {
                       }`}
                       style={{ height: '100px' }}
                       {...register('description', {
-                        required: true,
                         maxLength: 1000,
                       })}
                       value={

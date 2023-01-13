@@ -30,7 +30,6 @@ const Home: NextPage<Props> = (props) => {
     setUpdate(!update);
   };
 
-  // trocando as paginas
   let pagesElement: React.ReactElement;
 
   switch (pages) {

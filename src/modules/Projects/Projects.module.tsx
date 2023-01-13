@@ -91,7 +91,7 @@ const Projects: React.FC<Props> = (props) => {
 
   switch (pages) {
     case 1:
-      pagesElement = <FormProject stateCreate={statusUpdate} {...props} />;
+      pagesElement = <FormProject statusUpdate={statusUpdate} {...props} />;
       break;
     case 2:
       pagesElement = <GetView statusUpdate={statusUpdate} {...props} />;
