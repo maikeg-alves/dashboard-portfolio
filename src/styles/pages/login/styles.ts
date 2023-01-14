@@ -77,12 +77,15 @@ export const CardLogin = styled(Col)`
   }
 
   .visit {
+    text-align: center;
     margin-top: 20px;
-
     p {
       a {
         color: ${(props) => props.theme.colors.primary};
         text-decoration: none;
+        :hover {
+          color: ${(props) => props.theme.colors.primary};
+        }
       }
     }
   }
@@ -97,6 +100,13 @@ export const CardLogin = styled(Col)`
 
     font-size: 11px;
     line-height: 13px;
+    &:disabled {
+      background: ${(props) => props.theme.colors.textSecondary};
+    }
+
+    h5 {
+      margin: 0;
+    }
   }
 
   .forgot {

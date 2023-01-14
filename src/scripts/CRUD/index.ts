@@ -89,6 +89,13 @@ export class ApiClient {
       };
     }
 
-    return response ? await response.json() : null;
+    const json = await response.json();
+
+    return response
+      ? {
+          response: json,
+          code: response.status,
+        }
+      : null;
   }
 }

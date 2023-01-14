@@ -17,6 +17,7 @@ const image = 'https://i.imgur.com/NIkBDgT.jpg';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ApiClient, verifyToken } from '@scripts';
+import Countdown from 'react-countdown-now';
 
 type Inputs = {
   email: string;
@@ -27,6 +28,8 @@ const errosMessage = {
   email: 'email vazio ou prenchido de forma incorreta ',
   password: 'senha vazia ou prenchido de forma incorreta',
   auth: 'email ou password incorreto',
+  bruteforce:
+    'muitas tentativas de acesso,  espere o time acabar e tente novamnte mais tarde',
 };
 
 const Login: NextPage = () => {
@@ -42,6 +45,10 @@ const Login: NextPage = () => {
   const [shouldRedirect, setShouldRedirect] = React.useState<boolean>(false);
   const [errorauth, setErrorAuth] = React.useState<boolean>(false);
 
+  const [lockoutTime, setLockoutTime] = React.useState<number>(5);
+  const [attempts, setAttempts] = React.useState<number>(0);
+  const [disabled, setDisabled] = React.useState<boolean>(false);
+
   const CRUD = new ApiClient(Number(undefined), String(undefined));
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -52,20 +59,35 @@ const Login: NextPage = () => {
       password: password,
     };
 
-    await CRUD.login(logindata).then((res) => {
-      if (res.error) {
+    const res = await CRUD.login(logindata);
+
+    if (res) {
+      if (res.code !== 200) {
+        setErrorAuth(true);
+        setAttempts(attempts + 1);
         if (localStorage.getItem('token')) {
           localStorage.removeItem('token');
         }
-        res.code ? setErrorAuth(true) : setErrorAuth(false);
-      } else {
-        const token = res.token;
+      }
+
+      if (attempts === 3) {
+        setDisabled(true);
+        setTimeout(() => {
+          setDisabled(false);
+          setAttempts(0);
+          setLockoutTime(lockoutTime * 2);
+        }, lockoutTime * 60 * 1000);
+      }
+
+      if (res.code === 200) {
+        const token = res.response.token;
         localStorage.setItem('token', token);
         if (localStorage.getItem('token')) {
           setShouldRedirect(true);
         }
+        return;
       }
-    });
+    }
   };
 
   const handleVisitor = () => {
@@ -128,7 +150,7 @@ const Login: NextPage = () => {
                 })}
                 style={{
                   border: `2px solid ${
-                    errors.email || errorauth ? 'red' : '#01C88C'
+                    errors.email || errorauth || disabled ? 'red' : '#01C88C'
                   }`,
                 }}
               />
@@ -157,7 +179,7 @@ const Login: NextPage = () => {
                 })}
                 style={{
                   border: `2px solid ${
-                    errors.password || errorauth ? 'red' : '#01C88C'
+                    errors.password || errorauth || disabled ? 'red' : '#01C88C'
                   }`,
                 }}
               />
@@ -178,18 +200,41 @@ const Login: NextPage = () => {
               </ErrorContainer>
             )}
 
+            {disabled && (
+              <ErrorContainer>
+                <p>{errosMessage.bruteforce}</p>
+              </ErrorContainer>
+            )}
+
             <Col xs="auto" className="d-flex flex-column align-items-center">
               <Col xs="auto" className="d-flex flex-column align-items-center">
-                <button type="submit">LOGIN</button>
+                <button type="submit" disabled={disabled}>
+                  {disabled ? (
+                    <Countdown
+                      date={Date.now() + lockoutTime * 60 * 1000}
+                      renderer={(props) => (
+                        <h5>
+                          {props.minutes}:
+                          {props.seconds < 10
+                            ? '0' + props.seconds
+                            : props.seconds}
+                        </h5>
+                      )}
+                    />
+                  ) : (
+                    <h5>LOGIN</h5>
+                  )}
+                </button>
                 <Col className="forgot">
                   <a href="">forgot Password?</a>
                 </Col>
               </Col>
-              <Col className="msg-secondary visit ">
+              <Col className="msg-secondary visit">
                 <p>
-                  Don t have an account?
+                  Não é o administrador? entre como
                   <a onClick={handleVisitor} style={{ cursor: 'pointer' }}>
-                    Visit
+                    {' '}
+                    Visitante
                   </a>
                 </p>
               </Col>
