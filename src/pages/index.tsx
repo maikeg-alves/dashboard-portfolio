@@ -53,7 +53,7 @@ const Login: NextPage = () => {
   const [errorauth, setErrorAuth] = React.useState<boolean>(false);
 
   const [state, setState] = React.useState<State>({
-    lockoutTime: 1,
+    lockoutTime: 5,
     attempts: 0,
     disabled: false,
   });
