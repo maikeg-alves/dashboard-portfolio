@@ -109,6 +109,24 @@ export const CardLogin = styled(Col)`
     }
   }
 
+  .timer {
+    margin: 10px 0 5px 0;
+    width: 137px;
+    height: 39px;
+    background: ${(props) => props.theme.colors.textSecondary};
+    border-radius: 20px;
+    font-size: 11px;
+    line-height: 13px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    h5 {
+      margin: 0;
+    }
+  }
+
   .forgot {
     a {
       color: ${(props) => props.theme.colors.primary};
