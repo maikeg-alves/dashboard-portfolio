@@ -17,4 +17,9 @@ export const Box = styled(MUIBox)`
   box-shadow: 24px;
   padding: 40px;
   border-radius: 17px;
+
+  @media screen and (max-width: 426px) {
+    width: 90%;
+    padding: 20px;
+  }
 `;

@@ -22,10 +22,7 @@ export class ApiClient {
     });
 
     if (response.status !== 200) {
-      return {
-        error: `Erro ao fazer mudança: código de status ${response.status}`,
-        code: response.status,
-      };
+      return { code: response.status };
     }
 
     return response ? await response.json() : null;
@@ -34,7 +31,7 @@ export class ApiClient {
   // Update a resource by ID
   async update(resource: PUTProject | ITechnologysCRUD, token: string) {
     const response = await fetch(
-      `${ApiClient.baseUrl}/${this.category}${this.id ? `?id=${this.id}` : ''}`,
+      `${ApiClient.baseUrl}/${this.category}${`?id=${this.id}`}`,
       {
         method: 'PUT',
         body: JSON.stringify(resource),
@@ -46,10 +43,7 @@ export class ApiClient {
     );
 
     if (response.status !== 200) {
-      return {
-        error: `Erro ao fazer mudança: código de status ${response.status}`,
-        code: response.status,
-      };
+      return { code: response.status };
     }
 
     return response ? await response.json() : null;
@@ -95,6 +89,13 @@ export class ApiClient {
       };
     }
 
-    return response ? await response.json() : null;
+    const json = await response.json();
+
+    return response
+      ? {
+          response: json,
+          code: response.status,
+        }
+      : null;
   }
 }

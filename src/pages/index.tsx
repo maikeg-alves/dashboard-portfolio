@@ -1,181 +1,292 @@
 import React from 'react';
-import { GetServerSideProps, NextPage } from 'next';
-import { Col } from 'react-bootstrap';
-import { IGithub, IProject, ITechnologys } from '../interfaces';
+import type { NextPage } from 'next';
+import { Col, Form } from 'react-bootstrap';
+import { useRouter } from 'next/router';
+
+import {
+  CardLogin,
+  ErrorContainer,
+  FormGroup,
+} from '../styles/pages/login/styles';
+
 import { Container } from '../layout';
-import { Panel, Dashbord, Projects, MobilePanel } from '../modules';
-import Technologys from 'src/modules/Technologys/technologys';
-import { verifyToken } from 'src/scripts';
+import { MdOutlineEmail } from 'react-icons/md';
+import { RiLockPasswordLine } from 'react-icons/ri';
 
-const URL_API = 'https://maicon-gabriel-alves.vercel.app/api';
+const image = 'https://i.imgur.com/NIkBDgT.jpg';
 
-type Props = {
-  projects: IProject[];
-  technologys: ITechnologys[];
-  github: IGithub[];
-  values: boolean;
-  admin: boolean;
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { ApiClient, verifyToken } from '@scripts';
+import Countdown from 'react-countdown-now';
+/* import { GrDriveCage } from 'react-icons/gr'; */
+
+type Inputs = {
+  email: string;
+  password: string;
 };
 
-const Home: NextPage<Props> = (props) => {
-  const [update, setUpdate] = React.useState<boolean>(false);
-  const [apiData, setApiData] = React.useState<Props>(props);
-  const [pages, setPages] = React.useState<string>('Home');
+interface State {
+  lockoutTime: number;
+  attempts: number;
+  disabled: boolean;
+}
 
-  const handleOpen = (open: string) => {
-    setPages(open);
+const errosMessage = {
+  email: 'email vazio ou prenchido de forma incorreta ',
+  password: 'senha vazia ou prenchido de forma incorreta',
+  auth: 'email ou password incorreto',
+  bruteforce:
+    'muitas tentativas de acesso,  espere o time acabar e tente novamnte mais tarde',
+};
+
+const Login: NextPage = () => {
+  const {
+    register,
+    handleSubmit,
+    /* watch, */
+    formState: { errors },
+  } = useForm<Inputs>();
+
+  const router = useRouter();
+
+  const [shouldRedirect, setShouldRedirect] = React.useState<boolean>(false);
+  const [errorauth, setErrorAuth] = React.useState<boolean>(false);
+
+  const [state, setState] = React.useState<State>({
+    lockoutTime: 5,
+    attempts: 0,
+    disabled: false,
+  });
+
+  const CRUD = new ApiClient(Number(undefined), String(undefined));
+
+  const checkLockoutTime = () => {
+    const lockoutTime = localStorage.getItem('lockoutTime');
+
+    if (lockoutTime && Date.now() < Number(lockoutTime)) {
+      setState((prevState) => ({ ...prevState, disabled: true }));
+    } else {
+      setState((prevState) => ({ ...prevState, disabled: false }));
+      localStorage.removeItem('lockoutTime');
+    }
   };
 
-  const handUpdate = () => {
-    setUpdate(!update);
-  };
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const { email, password } = data;
 
-  // trocando as paginas
-  let pagesElement: React.ReactElement;
+    const logindata = {
+      email: email,
+      password: password,
+    };
 
-  switch (pages) {
-    case 'Home':
-      pagesElement = <Dashbord {...apiData} />;
-      break;
-    case 'Projects':
-      pagesElement = <Projects updateValues={handUpdate} {...apiData} />;
-      break;
-    case 'Technologys':
-      pagesElement = <Technologys updateValues={handUpdate} {...apiData} />;
-      break;
-    default:
-      pagesElement = <p> dados não encontrado </p>;
-  }
+    checkLockoutTime();
 
-  /* utilizando da tecnica polling, atualizando os dados
-   sempre que tem resquestes que altera o banco de dados */
+    const res = await CRUD.login(logindata);
 
-  React.useEffect(() => {
-    async function getData() {
-      const data1 = await fetch(`${URL_API}/projects`);
-      const data2 = await fetch(`${URL_API}/technologys`);
-      const datagit = await fetch(
-        'https://api.github.com/users/maikeg-alves/repos',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${process.env.GITHUB_TOKEN}`,
-          },
-        },
-      );
+    if (res) {
+      if (res.code !== 200) {
+        setErrorAuth(true);
+        setState((prevState) => ({
+          ...prevState,
+          attempts: prevState.attempts + 1,
+        }));
+        if (localStorage.getItem('token')) {
+          localStorage.removeItem('token');
+        }
+      }
 
-      const dateProjects = await data1.json();
-      const technologys = await data2.json();
-      const github = await datagit.json();
+      if (state.attempts === 3) {
+        setState((prevState) => ({ ...prevState, disabled: true }));
 
-      const projects = dateProjects.map((project: IProject) => {
-        const validated = github.find(
-          (github: IGithub) => github.name === project.github,
+        localStorage.setItem(
+          'lockoutTime',
+          (Date.now() + state.lockoutTime * 60 * 1000).toString(),
         );
-        const { description, language, created_at } = validated;
-        return {
-          ...project,
-          description,
-          language,
-          created_at,
-        };
-      });
 
-      const token = localStorage.getItem('token')
-        ? localStorage.getItem('token')
-        : '';
+        setTimeout(() => {
+          setState((prevState) => ({
+            ...prevState,
+            disabled: false,
+            attempts: 0,
+            lockoutTime: prevState.lockoutTime * 2,
+          }));
+        }, state.lockoutTime * 60 * 1000);
+      }
 
-      const admin = await verifyToken(token);
-
-      setApiData({
-        projects,
-        technologys,
-        github,
-        values: false,
-        admin: admin,
-      });
-
-      if (Object.keys(update).length > 0) {
-        setUpdate(false);
+      if (res.code === 200) {
+        const token = res.response.token;
+        localStorage.setItem('token', token);
+        if (localStorage.getItem('token')) {
+          setShouldRedirect(true);
+        }
+        return;
       }
     }
+  };
 
-    getData();
-  }, [update]);
+  const handleVisitor = () => {
+    if (localStorage.getItem('token')) {
+      localStorage.removeItem('token');
+    }
+    setShouldRedirect(true);
+  };
+
+  async function checkIfUserIsLoggedIn() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = await verifyToken(token);
+      if (decodedToken) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  React.useEffect(() => {
+    checkLockoutTime();
+
+    if (shouldRedirect) {
+      router.push('/dash');
+    }
+
+    const checkAuth = async () => {
+      const isLoggedIn = await checkIfUserIsLoggedIn();
+      if (isLoggedIn) {
+        router.push('/dash');
+      }
+    };
+
+    checkAuth();
+  }, [shouldRedirect, router]);
 
   return (
-    <Container direction="column" align="center" justify="center" padding="3">
-      <>
-        <Panel setOpen={handleOpen} {...apiData} />
-      </>
-      <Col xs="auto" className="conElementes">
-        {pagesElement}
-      </Col>
-      <>
-        <MobilePanel setOpen={handleOpen} />
-      </>
+    <Container background={image}>
+      <CardLogin xs={12}>
+        <Col className="d-flex flex-column align-items-center" xs="auto">
+          <Form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
+            <Col xs="auto">
+              <Col>
+                <h4>Login</h4>
+              </Col>
+              <Col className="msg-secondary">
+                <p>Please, fill in your details to enter</p>
+              </Col>
+            </Col>
+
+            <FormGroup controlId="formBasicEmail">
+              <Form.Control
+                type="email"
+                placeholder="Email"
+                {...register('email', {
+                  required: true,
+                  pattern:
+                    /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                })}
+                style={{
+                  border: `2px solid ${
+                    errors.email || errorauth || state.disabled
+                      ? 'red'
+                      : '#01C88C'
+                  }`,
+                }}
+              />
+              <div className="icon">
+                <MdOutlineEmail />
+              </div>
+            </FormGroup>
+            {errors.email && (
+              <ErrorContainer>
+                <p>{errosMessage.email}</p>
+              </ErrorContainer>
+            )}
+
+            {errorauth && (
+              <ErrorContainer>
+                <p>{errosMessage.auth}</p>
+              </ErrorContainer>
+            )}
+
+            <FormGroup>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                {...register('password', {
+                  required: true,
+                })}
+                style={{
+                  border: `2px solid ${
+                    errors.password || errorauth || state.disabled
+                      ? 'red'
+                      : '#01C88C'
+                  }`,
+                }}
+              />
+
+              <div className="icon">
+                <RiLockPasswordLine />
+              </div>
+            </FormGroup>
+            {errors.password && (
+              <ErrorContainer>
+                <p>{errosMessage.password}</p>
+              </ErrorContainer>
+            )}
+
+            {errorauth && (
+              <ErrorContainer>
+                <p>{errosMessage.auth}</p>
+              </ErrorContainer>
+            )}
+
+            {state.disabled && (
+              <ErrorContainer>
+                <p>{errosMessage.bruteforce}</p>
+              </ErrorContainer>
+            )}
+
+            <Col xs="auto" className="d-flex flex-column align-items-center">
+              <Col xs="auto" className="d-flex flex-column align-items-center">
+                {state.disabled ? (
+                  <div className="timer">
+                    <Countdown
+                      date={Number(localStorage.getItem('lockoutTime'))}
+                      renderer={(props) => (
+                        <h5>
+                          {props.minutes}:
+                          {props.seconds < 10
+                            ? '0' + props.seconds
+                            : props.seconds}
+                        </h5>
+                      )}
+                    />
+                  </div>
+                ) : (
+                  <button type="submit" disabled={state.disabled}>
+                    <h5>LOGIN</h5>
+                  </button>
+                )}
+
+                <Col className="forgot">
+                  <a href="">forgot Password?</a>
+                </Col>
+              </Col>
+              <Col className="msg-secondary visit">
+                <p>
+                  Não é o administrador? entre como
+                  <a onClick={handleVisitor} style={{ cursor: 'pointer' }}>
+                    {' '}
+                    Visitante
+                  </a>
+                </p>
+              </Col>
+            </Col>
+          </Form>
+        </Col>
+      </CardLogin>
     </Container>
   );
 };
 
-export default Home;
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  try {
-    const data1 = await fetch(`${URL_API}/projects`);
-    const data2 = await fetch(`${URL_API}/technologys`);
-    const datagit = await fetch(
-      'https://api.github.com/users/maikeg-alves/repos',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${process.env.GITHUB_TOKEN}`,
-        },
-      },
-    );
-
-    const dateProjects = await data1.json();
-    const technologys = await data2.json();
-    const github = await datagit.json();
-
-    const projects: IProject[] = dateProjects.map((project: IProject) => {
-      const validated = github.find(
-        (github: IGithub) => github.name === project.github,
-      );
-      const { description, language, created_at } = validated;
-      return {
-        ...project,
-        description,
-        language,
-        created_at,
-      };
-    });
-
-    const token = localStorage.getItem('token')
-      ? localStorage.getItem('token')
-      : '';
-
-    const admin = await verifyToken(token);
-
-    return {
-      props: {
-        projects,
-        technologys,
-        github,
-        values: false,
-        admin: admin,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      props: {
-        projects: [],
-        technologys: [],
-        github: [],
-        values: false,
-        admin: false,
-      },
-    };
-  }
-};
+export default Login;

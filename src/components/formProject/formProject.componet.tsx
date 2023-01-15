@@ -10,10 +10,9 @@ import { LoadingPage } from '../loadingPage';
 import { Form, StepperBox } from './styles';
 import { IGithub, IProject, ITechnologys, PUTProject } from '@interfaces';
 
-import { ApiClient } from '../../scripts';
+import { ApiClient, verifyToken } from '@scripts';
 import { Preview } from '../PreviewCrad';
-
-/* import { Alert } from '@mui/material'; */
+import ErrorMessage from '../ErrorMessage/ErrorMessage.component';
 
 const steps = [
   'name, Github, description',
@@ -38,8 +37,7 @@ type Outputs = {
   github: IGithub[];
   values: boolean;
   admin: boolean;
-  statusUpdate?: (status: boolean) => void;
-  stateCreate?: (status: boolean) => void;
+  statusUpdate: (status: boolean) => void;
 };
 
 const FormProject: React.FC<Outputs> = (props) => {
@@ -51,8 +49,10 @@ const FormProject: React.FC<Outputs> = (props) => {
 
   const [cardData, setcardData] = React.useState<PUTProject>();
 
-  const [update, setupdate] = React.useState<boolean>(false);
   const [looding, setLooding] = React.useState<boolean>(false);
+  const [alertmensage, setAlertMensage] = React.useState<string>('');
+
+  let mensage: React.ReactElement;
 
   const {
     register,
@@ -61,9 +61,76 @@ const FormProject: React.FC<Outputs> = (props) => {
     formState: { errors },
   } = useForm<Inputs>();
 
+  const id = props.projects.map((item) => item.id);
+
+  const CRUD = new ApiClient(Number(id), 'projects');
+
+  const createOrUpdateProject = async (data: PUTProject) => {
+    const token = await localStorage.getItem('token');
+
+    if (!props.admin) {
+      return setAlertMensage('accessError');
+    }
+
+    verifyToken(token).then(() => {
+      if (!token) {
+        return setAlertMensage('revokedAccess');
+      }
+    });
+
+    if (token) {
+      if (props.values) {
+        try {
+          setLooding(true);
+          const res = await CRUD.update(data, token);
+
+          if (res.code === 505) {
+            setAlertMensage('errorUpdate');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
+          }
+
+          if (res.revalidated) {
+            setAlertMensage('successUpdate');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      if (!props.values) {
+        try {
+          setLooding(true);
+          const res = await CRUD.create(data, token);
+
+          if (res.code === 505) {
+            setAlertMensage('errorCreating');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
+          }
+
+          if (res.revalidated) {
+            setAlertMensage('successCreating');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
+          }
+
+          console.log(res);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+  };
+
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     // values of form state
-
     const {
       projectName,
       githubRepository,
@@ -76,16 +143,6 @@ const FormProject: React.FC<Outputs> = (props) => {
     } = data;
 
     // converter valores em numbe
-
-    const id = props.projects.map((item) => item.id);
-
-    const CRUD = new ApiClient(Number(id), 'projects');
-
-    const errorMessages = [
-      'input 1 não foi selected',
-      'input 2 não foi selected',
-      'input 3 não foi selected',
-    ];
 
     const defaultValues = {
       description: githubDescription(githubRepository, props.github),
@@ -100,79 +157,6 @@ const FormProject: React.FC<Outputs> = (props) => {
       return String(description);
     }
 
-    const createOrUpdateProject = async (data: PUTProject) => {
-      if (!props.admin) {
-        return alert('acesso não autorizado');
-      }
-
-      const token = await localStorage.getItem('token');
-
-      if (token !== null) {
-        if (props.values) {
-          try {
-            setLooding(true);
-            const res = await CRUD.update(data, token);
-
-            if (res.code !== 200) {
-              if (props.statusUpdate !== undefined) {
-                props.statusUpdate(update);
-              }
-              setLooding(false);
-              return alert(
-                'token de acesso expirado, porfavor se logue novamente',
-              );
-            }
-
-            if (res.revalidated) {
-              alert('projeto editado com sucesso');
-              setupdate(true);
-              setLooding(false);
-              if (props.statusUpdate !== undefined) {
-                props.statusUpdate(update);
-              }
-            } else {
-              alert('error ao editar projeto');
-              setupdate(false);
-              if (props.statusUpdate !== undefined) {
-                props.statusUpdate(update);
-              }
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        } else {
-          try {
-            setLooding(true);
-            const res = await CRUD.create(data, token);
-
-            if (res.code !== 200) {
-              setLooding(false);
-              return alert(
-                'token de acesso expirado, porfavor se logue novamente',
-              );
-            }
-
-            if (res.revalidated) {
-              alert('projeto criado com sucesso');
-              setupdate(true);
-              setLooding(false);
-              if (props.stateCreate !== undefined) {
-                props.stateCreate(update);
-              }
-            } else {
-              alert('error ao criar projeto');
-              setupdate(false);
-              if (props.stateCreate !== undefined) {
-                props.stateCreate(update);
-              }
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        }
-      }
-    };
-
     try {
       switch (step) {
         case 1:
@@ -185,7 +169,7 @@ const FormProject: React.FC<Outputs> = (props) => {
 
             if (projectExists) {
               setStep(1);
-              alert('projeto existe');
+              setAlertMensage('existingProject');
             } else {
               setStep(2);
             }
@@ -199,12 +183,7 @@ const FormProject: React.FC<Outputs> = (props) => {
             Number(technologies_two) === 0 ||
             Number(technologies_three) === 0
           ) {
-            const index = [
-              Number(technologies_one),
-              Number(technologies_two),
-              Number(technologies_three),
-            ].indexOf(0);
-            return alert(errorMessages[index]);
+            return setAlertMensage('selectTechnology');
           }
 
           const data: PUTProject = {
@@ -235,9 +214,7 @@ const FormProject: React.FC<Outputs> = (props) => {
           setStep(3);
           break;
         case 3:
-          if (cardData) {
-            createOrUpdateProject(cardData);
-          }
+          cardData && createOrUpdateProject(cardData);
           break;
         default:
           console.error('erro ao carregar dodos');
@@ -248,14 +225,51 @@ const FormProject: React.FC<Outputs> = (props) => {
     }
   };
 
-  React.useEffect(() => {
-    if (props.technologys) {
-      setTechnologys(Object.values(props.technologys));
-    }
+  switch (alertmensage) {
+    case 'accessError':
+      mensage = <ErrorMessage message="Acesso não autorizado" />;
+      break;
+    case 'revokedAccess':
+      mensage = (
+        <ErrorMessage
+          message="Token de acesso expirado, porfavor se logue novamente"
+          alert="warning"
+        />
+      );
+      break;
+    case 'existingProject':
+      mensage = <ErrorMessage message="Projeto existente!" alert="warning" />;
+      break;
+    case 'selectTechnology':
+      mensage = (
+        <ErrorMessage message="Preencha todos os campos" alert="warning" />
+      );
+      break;
+    case 'successCreating':
+      mensage = (
+        <ErrorMessage message="Projeto criado com sucesso" alert="success" />
+      );
+      break;
+    case 'errorCreating':
+      mensage = <ErrorMessage message="Error ao criar projeto" />;
+      break;
+    case 'successUpdate':
+      mensage = (
+        <ErrorMessage message="Projeto editado com sucesso" alert="success" />
+      );
+      break;
+    case 'errorUpdate':
+      mensage = <ErrorMessage message="Error ao editar projeto" />;
+      break;
+    default:
+      mensage = <span></span>;
+      break;
+  }
 
-    if (props.projects) {
-      setProjects(Object.values(props.projects));
-    }
+  React.useEffect(() => {
+    props.technologys && setTechnologys(Object.values(props.technologys));
+
+    props.projects && setProjects(Object.values(props.projects));
 
     if (props.github) {
       // filter github repositories for updated_at
@@ -267,7 +281,11 @@ const FormProject: React.FC<Outputs> = (props) => {
           .slice(0, 10),
       );
     }
-  }, [props, errors]);
+
+    setTimeout(() => {
+      setAlertMensage('');
+    }, 3000);
+  }, [props, errors, alertmensage]);
 
   return (
     <>
@@ -328,7 +346,6 @@ const FormProject: React.FC<Outputs> = (props) => {
                       }`}
                       style={{ height: '100px' }}
                       {...register('description', {
-                        required: true,
                         maxLength: 1000,
                       })}
                       value={
@@ -610,6 +627,8 @@ const FormProject: React.FC<Outputs> = (props) => {
           ))}
         </Stepper>
       </StepperBox>
+
+      {mensage}
     </>
   );
 };

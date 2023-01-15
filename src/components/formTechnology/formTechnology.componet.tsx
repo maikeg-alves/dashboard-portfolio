@@ -10,8 +10,9 @@ import { LoadingPage } from '../loadingPage';
 import { Form, StepperBox } from './styles';
 import { IGithub, IProject, ITechnologys, ITechnologysCRUD } from '@interfaces';
 
-import { ApiClient } from '../../scripts';
+import { ApiClient, verifyToken } from '@scripts';
 import { Preview } from '../PreviewCrad';
+import ErrorMessage from '../ErrorMessage/ErrorMessage.component';
 
 /* import { Alert } from '@mui/material'; */
 
@@ -30,8 +31,7 @@ type Outputs = {
   id: number;
   values: boolean;
   admin: boolean;
-  statusUpdate?: (status: boolean) => void;
-  stateCreate?: (status: boolean) => void;
+  statusUpdate: (status: boolean) => void;
 };
 
 const FormTechnology: React.FC<Outputs> = (props) => {
@@ -39,8 +39,11 @@ const FormTechnology: React.FC<Outputs> = (props) => {
 
   const [cardData, setcardData] = React.useState<ITechnologysCRUD>();
 
-  const [update, setupdate] = React.useState<boolean>(false);
   const [looding, setLooding] = React.useState<boolean>(false);
+
+  const [alertmensage, setAlertMensage] = React.useState<string>('');
+
+  let mensage: React.ReactElement;
 
   const {
     register,
@@ -54,70 +57,59 @@ const FormTechnology: React.FC<Outputs> = (props) => {
   // script base de CRUD
 
   const createOrUpdateTechnology = async (data: ITechnologysCRUD) => {
-    if (!props.admin) {
-      return alert('acesso não autorizado');
-    }
     const token = await localStorage.getItem('token');
-    if (token !== null) {
+
+    if (!props.admin) {
+      return setAlertMensage('accessError');
+    }
+
+    verifyToken(token).then(() => {
+      if (!token) {
+        return setAlertMensage('revokedAccess');
+      }
+    });
+
+    if (token) {
       if (props.values) {
         try {
           setLooding(true);
-
           const res = await CRUD.update(data, token);
 
-          if (res.code !== 200) {
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
-            }
-            setLooding(false);
-            return alert(
-              'token de acesso expirado, porfavor se logue novamente',
-            );
+          if (res.code === 505) {
+            setAlertMensage('errorUpdate');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
 
           if (res.revalidated) {
-            alert('projeto editado com sucesso');
-            setupdate(true);
-            setLooding(false);
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
-            }
-          } else {
-            alert('error ao editar projeto');
-            setupdate(false);
-            if (props.statusUpdate !== undefined) {
-              props.statusUpdate(update);
-            }
+            setAlertMensage('successUpdate');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
         } catch (error) {
           console.error(error);
         }
-      } else {
+      }
+
+      if (!props.values) {
         try {
           setLooding(true);
-
           const res = await CRUD.create(data, token);
 
-          if (res.code !== 200) {
-            setLooding(false);
-            return alert(
-              'token de acesso expirado, porfavor se logue novamente',
-            );
+          if (res.code === 505) {
+            setAlertMensage('errorCreating');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
 
           if (res.revalidated) {
-            alert('projeto criado com sucesso');
-            setupdate(true);
-            setLooding(false);
-            if (props.stateCreate !== undefined) {
-              props.stateCreate(update);
-            }
-          } else {
-            alert('error ao criar projeto');
-            setupdate(false);
-            if (props.stateCreate !== undefined) {
-              props.stateCreate(update);
-            }
+            setAlertMensage('successCreating');
+            setTimeout(() => {
+              props.statusUpdate(true);
+            }, 3000);
           }
         } catch (error) {
           console.error(error);
@@ -133,8 +125,6 @@ const FormTechnology: React.FC<Outputs> = (props) => {
 
     const { techName, Ability, urlicon } = data;
 
-    // converter valores em numbe
-
     try {
       switch (step) {
         case 1:
@@ -148,13 +138,11 @@ const FormTechnology: React.FC<Outputs> = (props) => {
           });
 
           if (techcheck) {
-            alert('tecnologia existente no banco de dados');
+            setAlertMensage('existingProject');
           }
 
-          console.log('checando se é o mesmo', techcheck);
-
           if (Ability === 0) {
-            return alert('adicione algum nivel de habilidade');
+            return setAlertMensage('selectTechnology');
           }
 
           const data: ITechnologysCRUD = {
@@ -185,6 +173,62 @@ const FormTechnology: React.FC<Outputs> = (props) => {
       console.error(error);
     }
   };
+
+  switch (alertmensage) {
+    case 'accessError':
+      mensage = <ErrorMessage message="Acesso não autorizado" />;
+      break;
+    case 'revokedAccess':
+      mensage = (
+        <ErrorMessage
+          message="Token de acesso expirado, porfavor se logue novamente"
+          alert="warning"
+        />
+      );
+      break;
+    case 'existingProject':
+      mensage = (
+        <ErrorMessage message="Technologia existente!" alert="warning" />
+      );
+      break;
+    case 'selectTechnology':
+      mensage = (
+        <ErrorMessage message="Preencha todos os campos" alert="warning" />
+      );
+      break;
+    case 'successCreating':
+      mensage = (
+        <ErrorMessage
+          message="Technologia criada com sucesso"
+          alert="success"
+        />
+      );
+      break;
+    case 'errorCreating':
+      mensage = (
+        <ErrorMessage message="Error ao criar projeto, verifique se está repetindo item unicos" />
+      );
+      break;
+    case 'successUpdate':
+      mensage = (
+        <ErrorMessage
+          message="Technologia editada com sucesso"
+          alert="success"
+        />
+      );
+      break;
+    case 'errorUpdate':
+      mensage = <ErrorMessage message="Error ao editar projeto" />;
+      break;
+    default:
+      mensage = <span></span>;
+  }
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setAlertMensage('');
+    }, 3000);
+  }, [alertmensage]);
 
   return (
     <>
@@ -361,6 +405,8 @@ const FormTechnology: React.FC<Outputs> = (props) => {
           ))}
         </Stepper>
       </StepperBox>
+
+      {mensage}
     </>
   );
 };

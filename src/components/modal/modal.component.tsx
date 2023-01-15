@@ -23,4 +23,14 @@ const Modal: React.FC<ModalProps> = ({ isShown, hide, children }) => {
   );
 };
 
-export default Modal;
+const useModal = () => {
+  const [isShown, setIsShown] = React.useState<boolean>(false);
+  const toggle = () => setIsShown(!isShown);
+
+  return {
+    isShown,
+    toggle,
+  };
+};
+
+export { useModal, Modal };

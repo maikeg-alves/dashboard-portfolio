@@ -20,12 +20,13 @@ export const Dash = styled(Col)`
     width: 100%;
     height: auto;
 
-    h4,
-    h6 {
+    h2,
+    h3 {
       color: ${(props) => props.theme.colors.text};
     }
 
-    h2 {
+    h4,
+    h5 {
       color: ${(props) => props.theme.colors.textSecondary};
     }
 
@@ -60,7 +61,7 @@ export const Dash = styled(Col)`
 
     span {
       margin: 0;
-      width: 72%;
+      width: 60%;
     }
   }
 
@@ -126,9 +127,12 @@ export const ProgressBar = styled(LinearProgress)`
   height: 15px !important;
   border-radius: 10px;
   background-color: #494a4e !important;
-  .css-5xe99f-MuiLinearProgress-bar1 {
+
+  .css-5xe99f-MuiLinearProgress-bar1,
+  span {
     background-color: ${(props) => props.theme.colors.primary}!important;
   }
+
   span {
     border-radius: 10px;
   }

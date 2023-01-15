@@ -3,10 +3,11 @@ import { IoMdExit } from 'react-icons/io';
 
 /* icons */
 import { RiHomeLine } from 'react-icons/ri';
-import { AiOutlineAppstoreAdd } from 'react-icons/ai';
+import { AiOutlineAppstoreAdd, AiOutlineUser } from 'react-icons/ai';
 import { RiFileCodeFill } from 'react-icons/ri';
 import React from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 type PanelProps = {
   setOpen: (open: string) => void;
@@ -22,7 +23,7 @@ const Panel: React.FC<PanelProps> = (props) => {
 
   const logout = () => {
     localStorage.getItem('token') && localStorage.removeItem('token');
-    router.push('/login');
+    router.push('/');
   };
 
   if (typeof window !== 'undefined') {
@@ -47,11 +48,21 @@ const Panel: React.FC<PanelProps> = (props) => {
     <PanelMenu>
       <div className="d-flex flex-row align-items-center login">
         <div className="avatar">
-          <h4></h4>
+          {/* <h4></h4> */}
+          <Image
+            src={`${
+              props.admin
+                ? 'https://i.imgur.com/p7LZCvN.png'
+                : 'https://i.imgur.com/YYNLL6b.jpgs'
+            }`} /* */
+            alt="avatar user"
+            width={55}
+            height={55}
+          />
         </div>
         <div className="user">
-          <h6>{props.admin ? 'Maicon Gabriel alves' : 'User '}</h6>
-          <p> {props.admin ? 'admin' : 'visitante '} </p>
+          <h6>{props.admin ? 'Maicon Gabriel alves' : 'Usuário '}</h6>
+          <p> {props.admin ? 'administrador' : 'visitante '} </p>
         </div>
         <div className="m-3 logout">
           <button onClick={logout}>
@@ -87,6 +98,14 @@ const Panel: React.FC<PanelProps> = (props) => {
                 <div>
                   <RiFileCodeFill />
                   <p>Technologys</p>
+                </div>
+              </button>
+            </li>
+            <li className="btndesk">
+              <button onClick={() => handleActive('Settings')}>
+                <div>
+                  <AiOutlineUser />
+                  <p>Settings</p>
                 </div>
               </button>
             </li>

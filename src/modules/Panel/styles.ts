@@ -22,6 +22,9 @@ export const PanelMenu = styled(Col)`
       background-color: ${({ theme }) => theme.colors.primary};
       border-radius: 50%;
       margin-right: 10px;
+      img {
+        border-radius: 50%;
+      }
     }
 
     .logout {
