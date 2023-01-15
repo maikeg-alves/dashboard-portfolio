@@ -17,7 +17,7 @@ const image = 'https://i.imgur.com/NIkBDgT.jpg';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ApiClient, verifyToken } from '@scripts';
-import Countdown from 'react-countdown';
+import Countdown from 'react-countdown-now';
 /* import { GrDriveCage } from 'react-icons/gr'; */
 
 type Inputs = {
