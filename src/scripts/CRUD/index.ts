@@ -22,7 +22,7 @@ export class ApiClient {
     });
 
     if (response.status !== 200) {
-      return { code: response.status };
+      return { code: response.status, data: resource };
     }
 
     return response ? await response.json() : null;
