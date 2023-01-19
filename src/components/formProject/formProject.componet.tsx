@@ -74,7 +74,10 @@ const FormProject: React.FC<Outputs> = (props) => {
 
     verifyToken(token).then(() => {
       if (!token) {
-        return setAlertMensage('revokedAccess');
+        setAlertMensage('revokedAccess');
+        setTimeout(() => {
+          props.statusUpdate(true);
+        }, 3000);
       }
     });
 
@@ -89,6 +92,7 @@ const FormProject: React.FC<Outputs> = (props) => {
             setTimeout(() => {
               props.statusUpdate(true);
             }, 3000);
+            console.log('data crete', data);
           }
 
           if (res.revalidated) {
@@ -121,7 +125,7 @@ const FormProject: React.FC<Outputs> = (props) => {
             }, 3000);
           }
 
-          console.log(res);
+          console.log('crete', data);
         } catch (error) {
           console.error(error);
         }

@@ -105,6 +105,8 @@ const Home: NextPage<Props> = (props) => {
     getData();
   }, [update]);
 
+  console.log('values projects', apiData.projects);
+
   return (
     <Container direction="column" align="center" justify="center" padding="3">
       <>
