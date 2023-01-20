@@ -41,7 +41,7 @@ const Dashbord: React.FC<Props> = (props) => {
   return (
     <Dash>
       <div>
-        <h3>Dashbord:</h3>
+        <h3>Dashboard:</h3>
       </div>
       <Container className="flex-responsive ">
         <Row>

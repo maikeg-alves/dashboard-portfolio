@@ -92,7 +92,6 @@ const FormProject: React.FC<Outputs> = (props) => {
             setTimeout(() => {
               props.statusUpdate(true);
             }, 3000);
-            console.log('data crete', data);
           }
 
           if (res.revalidated) {
@@ -116,8 +115,6 @@ const FormProject: React.FC<Outputs> = (props) => {
             setTimeout(() => {
               props.statusUpdate(true);
             }, 3000);
-
-            console.log(res);
           }
 
           if (res.revalidated) {
@@ -126,8 +123,6 @@ const FormProject: React.FC<Outputs> = (props) => {
               props.statusUpdate(true);
             }, 3000);
           }
-
-          console.log('crete', data);
         } catch (error) {
           console.error(error);
         }
@@ -156,12 +151,19 @@ const FormProject: React.FC<Outputs> = (props) => {
     };
 
     const githubDescription = (description: string): string => {
-      const gitdescription =
-        props.github
-          .find((res) => res.name === githubRepository)
-          ?.description?.substring(0, 150) + '...';
-
-      return description || gitdescription || '';
+      if (
+        description !== null &&
+        typeof description !== undefined &&
+        description !== ''
+      ) {
+        return description;
+      } else {
+        return (
+          props.github
+            .find((res) => res.name === githubRepository)
+            ?.description?.substring(0, 150) + '...'
+        );
+      }
     };
 
     try {

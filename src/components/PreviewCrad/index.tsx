@@ -15,7 +15,6 @@ type Props = {
 };
 
 export const Preview: React.FC<Props> = (props) => {
-  /* console.log('dados preview', props); */
   return (
     <Container>
       <h4 className="my-2">{props.name}</h4>
