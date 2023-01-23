@@ -111,7 +111,11 @@ const Delete: React.FC<Props> = (props) => {
       );
       break;
     case 'errorDelete':
-      mensage = <ErrorMessage message="error ao criar projeto" />;
+      mensage = (
+        <ErrorMessage
+          message={`error ao deletar ${props.mode ? 'technologia' : 'projeto'}`}
+        />
+      );
       break;
     default:
       mensage = <p></p>;

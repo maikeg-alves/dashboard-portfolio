@@ -92,7 +92,6 @@ const FormProject: React.FC<Outputs> = (props) => {
             setTimeout(() => {
               props.statusUpdate(true);
             }, 3000);
-            console.log('data crete', data);
           }
 
           if (res.revalidated) {
@@ -124,8 +123,6 @@ const FormProject: React.FC<Outputs> = (props) => {
               props.statusUpdate(true);
             }, 3000);
           }
-
-          console.log('crete', data);
         } catch (error) {
           console.error(error);
         }
@@ -149,17 +146,25 @@ const FormProject: React.FC<Outputs> = (props) => {
     // converter valores em numbe
 
     const defaultValues = {
-      description: githubDescription(githubRepository, props.github),
       img: 'https://i.imgur.com/XhUIa5q.png',
       gif: 'https://i.imgur.com/XhUIa5q.png',
     };
 
-    function githubDescription(repo: string, data: IGithub[]): string {
-      const description = data
-        .filter((res) => res.name === repo)
-        .map((res) => res.description)[0];
-      return String(description);
-    }
+    const githubDescription = (description: string): string => {
+      if (
+        description !== null &&
+        typeof description !== undefined &&
+        description !== ''
+      ) {
+        return description;
+      } else {
+        return (
+          props.github
+            .find((res) => res.name === githubRepository)
+            ?.description?.substring(0, 150) + '...'
+        );
+      }
+    };
 
     try {
       switch (step) {
@@ -193,10 +198,7 @@ const FormProject: React.FC<Outputs> = (props) => {
           const data: PUTProject = {
             name: projectName,
             github: githubRepository,
-            description:
-              description !== 'null' && typeof description !== 'undefined'
-                ? description
-                : defaultValues.description,
+            description: githubDescription(description),
             difficulty: Number(difficulty),
             img: image_url.includes('https://i.imgur.com/')
               ? image_url
@@ -350,7 +352,7 @@ const FormProject: React.FC<Outputs> = (props) => {
                       }`}
                       style={{ height: '100px' }}
                       {...register('description', {
-                        maxLength: 1000,
+                        maxLength: 250,
                       })}
                       value={
                         errors.description &&
