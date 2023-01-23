@@ -7,6 +7,6 @@ export const Container = styled.div`
   align-items: center;
   justify-content: center;
   .css-18lrjg1-MuiCircularProgress-root {
-    color: ${(props) => props.theme.colors.primary};
+    color: ${(props) => props.theme.colors.primary}!important;
   }
 `;

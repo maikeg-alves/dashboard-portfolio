@@ -39,6 +39,10 @@ export const Dash = styled(Col)`
     }
   }
 
+  .Visitors {
+    justify-content: space-between !important;
+  }
+
   .RankingTech,
   .RankingLangue {
     text-align: center;
