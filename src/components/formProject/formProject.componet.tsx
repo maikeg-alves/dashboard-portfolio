@@ -57,7 +57,7 @@ const FormProject: React.FC<Outputs> = (props) => {
   const {
     register,
     handleSubmit,
-    watch,
+    /*   watch, */
     formState: { errors },
   } = useForm<Inputs>();
 
@@ -158,7 +158,6 @@ const FormProject: React.FC<Outputs> = (props) => {
       ) {
         return description;
       } else {
-        console.log(description);
         return (
           props.github
             .find((res) => res.name === githubRepository)
@@ -216,7 +215,6 @@ const FormProject: React.FC<Outputs> = (props) => {
 
           if (data !== undefined) {
             setcardData(data);
-            console.log('dados crete', data);
           }
 
           setStep(3);
@@ -294,8 +292,6 @@ const FormProject: React.FC<Outputs> = (props) => {
       setAlertMensage('');
     }, 3000);
   }, [props, errors, alertmensage]);
-
-  console.log(watch());
 
   return (
     <>
