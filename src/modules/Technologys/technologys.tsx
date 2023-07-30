@@ -17,7 +17,7 @@ import {
   /*   PutItem, */
 } from '../../components';
 import { IGithub, IProject, ITechnologys } from '../../interfaces';
-import { useMediaQuery } from 'src/scripts';
+import { useMediaQuery } from '@utils';
 
 type Props = {
   projects: IProject[];

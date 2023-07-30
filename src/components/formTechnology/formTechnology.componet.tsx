@@ -10,7 +10,7 @@ import { LoadingPage } from '../loadingPage';
 import { Form, StepperBox } from './styles';
 import { IGithub, IProject, ITechnologys, ITechnologysCRUD } from '@interfaces';
 
-import { ApiClient, verifyToken } from '@scripts';
+import { ApiClient, verifyToken } from '@utils';
 import { Preview } from '../PreviewCrad';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.component';
 

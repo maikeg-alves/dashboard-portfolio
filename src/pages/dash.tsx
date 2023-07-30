@@ -5,7 +5,7 @@ import { IGithub, IProject, ITechnologys } from '../interfaces';
 import { Container } from '../layout';
 import { Panel, Dashbord, Projects, MobilePanel, UserArea } from '../modules';
 import Technologys from 'src/modules/Technologys/technologys';
-import { verifyToken } from 'src/scripts';
+import { verifyToken } from '@utils';
 
 const URL_API = 'https://maicon-gabriel-alves.vercel.app/api';
 

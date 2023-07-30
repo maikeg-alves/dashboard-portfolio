@@ -1,6 +1,6 @@
 import { GrEdit } from 'react-icons/gr';
 import { BsTrash } from 'react-icons/bs';
-import { formatDate } from '../../scripts';
+import { formatDate } from '@utils';
 import { ITechnologys } from '../../interfaces';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Text } from './styles';

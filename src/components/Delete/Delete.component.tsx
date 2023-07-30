@@ -3,7 +3,7 @@ import { Button, Col, Form } from 'react-bootstrap';
 
 import { IProject, ITechnologys } from '../../interfaces';
 import { Container } from './styles';
-import { ApiClient, verifyToken } from '@scripts';
+import { ApiClient, verifyToken } from '@utils';
 import { LoadingBtn } from 'src/styles/components';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.component';
 

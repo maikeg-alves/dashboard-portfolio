@@ -22,7 +22,7 @@
       "@pages": ["src/components/pages"],
       "@styles": ["src/styles"],
       "@constant": ["src/constant"],
-      "@scripts": ["src/scripts"]
+      "@utils": ["src/utils"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
