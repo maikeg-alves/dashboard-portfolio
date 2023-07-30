@@ -1,15 +1,5 @@
-import { Theme } from './theme';
-import { IProject, PUTProject } from './projects';
-import { ITechnologys, ITechnologysCRUD } from './technologys';
-import { IGithub } from './github';
-import { Ilogin } from './login';
-
-export type {
-  Theme,
-  IProject,
-  ITechnologys,
-  IGithub,
-  PUTProject,
-  ITechnologysCRUD,
-  Ilogin,
-};
+export type { Theme } from './theme';
+export type { IProject, PUTProject } from './projects';
+export type { ITechnologys, ITechnologysCRUD } from './technologys';
+export type { IGithub } from './github';
+export type { Ilogin } from './login';

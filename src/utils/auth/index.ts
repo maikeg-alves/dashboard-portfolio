@@ -1,4 +1,4 @@
-const verifyToken = async (token: string | null) => {
+export async function verifyToken(token: string | null) {
   try {
     if (!token) {
       return false;
@@ -26,6 +26,4 @@ const verifyToken = async (token: string | null) => {
     console.error(error);
     return false;
   }
-};
-
-export default verifyToken;
+}
