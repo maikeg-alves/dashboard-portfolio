@@ -1,4 +1,5 @@
 import { PUTProject, ITechnologysCRUD, Ilogin } from '@interfaces';
+import { baseUrl } from '@utils';
 
 export class ApiClient {
   static baseUrl = 'https://maicon-gabriel-alves.vercel.app/api';
@@ -12,7 +13,7 @@ export class ApiClient {
 
   // Create a new resource
   async create(resource: PUTProject | ITechnologysCRUD, token: string) {
-    const response = await fetch(`${ApiClient.baseUrl}/${this.category}`, {
+    const response = await fetch(`${ApiClient.baseUrl}/api/${this.category}`, {
       method: 'POST',
       body: JSON.stringify(resource),
       headers: {
@@ -25,7 +26,7 @@ export class ApiClient {
       return { code: response.status, data: resource };
     }
 
-    return response ? await response.json() : null;
+    return await response.json();
   }
 
   // Update a resource by ID
@@ -73,7 +74,7 @@ export class ApiClient {
   }
 
   async login(resource: Ilogin) {
-    const response = await fetch(`${ApiClient.baseUrl}/login`, {
+    const response = await fetch(`${baseUrl}/api/login`, {
       method: 'POST',
       body: JSON.stringify(resource),
       headers: {
@@ -98,4 +99,54 @@ export class ApiClient {
         }
       : null;
   }
+
+  /*   async recovery(email: string) {
+    const response = await fetch(`${baseUrl}/api/login/recovery`, {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+
+    if (response.status !== 200) {
+      return {
+        code: response.status,
+      };
+    }
+
+    return {
+      code: response.status,
+    };
+  } */
+
+  /* async recoveryCode(email: string, code: number) {
+    try {
+      const response = await fetch(`${baseUrl}/api/login/recovery`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({ email, code }),
+      });
+
+      if (!response.ok) {
+        return {
+          error: `Error during recovery code retrieval: status code ${response.status}`,
+          code: response.status,
+        };
+      }
+
+      const json = await response.json();
+
+      return {
+        code: json.code,
+        tokenrecovery: json.recoveryToken,
+      };
+    } catch (error) {
+      return { error: 'An error occurred while processing the request.' };
+    }
+  } */
 }

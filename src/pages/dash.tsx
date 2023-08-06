@@ -5,7 +5,7 @@ import { IGithub, IProject, ITechnologys } from '../interfaces';
 import { Container } from '../layout';
 import { Panel, Dashbord, Projects, MobilePanel, UserArea } from '../modules';
 import Technologys from 'src/modules/Technologys/technologys';
-import { verifyToken } from '@utils';
+import { checkIfUserIsLoggedIn, verifyToken } from '@utils';
 
 const URL_API = 'https://maicon-gabriel-alves.vercel.app/api';
 
@@ -153,11 +153,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       };
     });
 
-    const token = localStorage.getItem('token')
-      ? localStorage.getItem('token')
-      : '';
-
-    const admin = await verifyToken(token);
+    const admin = await checkIfUserIsLoggedIn();
 
     return {
       props: {

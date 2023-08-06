@@ -1,3 +1,5 @@
+import { DeleteCookie, GetCookie } from '@utils';
+
 export async function verifyToken(token: string | null) {
   try {
     if (!token) {
@@ -5,9 +7,9 @@ export async function verifyToken(token: string | null) {
     }
 
     const response = await fetch(
-      `https://maicon-gabriel-alves.vercel.app/api/login`,
+      `https://maicon-gabriel-alves.vercel.app/api/login/verifyToken`,
       {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -15,8 +17,8 @@ export async function verifyToken(token: string | null) {
       },
     );
     if (response.status !== 200) {
-      if (localStorage.getItem('token')) {
-        localStorage.removeItem('token');
+      if (GetCookie('token')) {
+        DeleteCookie('token');
       }
       return false;
     }
