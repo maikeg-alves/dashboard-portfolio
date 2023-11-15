@@ -7,7 +7,14 @@ import { ErrorContainer, FormGroup } from '../styles';
 import { useRouter } from 'next/router';
 
 import { LoadingPage } from '@components';
-import { GetCookie, baseUrl, recoveryPasswordErrors } from '@utils';
+import {
+  GetCookie,
+  baseUrl,
+  closeAlertWithDelay,
+  delayChangePage,
+  recoveryPasswordErrors,
+} from '@utils';
+import { StatusCodes, statusMessages } from './exceptions';
 
 interface Props {
   setPage: (page: number) => void;
@@ -18,7 +25,7 @@ interface Inputs {
   password2: string;
 }
 
-export const ChangePasswordComponent: React.FC<Props> = (props) => {
+export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
   const {
     register,
     handleSubmit,
@@ -33,76 +40,69 @@ export const ChangePasswordComponent: React.FC<Props> = (props) => {
     type: '',
   });
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { password1, password2 } = data;
+  const [Element, setElement] = React.useState<JSX.Element | null>(null);
+  const [showAlert, setShowAlert] = React.useState(false);
 
-    if (password1 !== password2) {
-      setError({
-        status: true,
-        type: 'incompatible',
-      });
-      return;
-    }
-
-    const code: string | null = GetCookie('code');
-    const recoveryToken: string | null = GetCookie('recoveryToken');
-
-    if (code === null) {
-      setError({
-        status: true,
-        type: 'code',
-      });
-      return;
-    }
-
-    if (recoveryToken === null) {
-      setError({
-        status: true,
-        type: 'token',
-      });
-      return;
-    }
-
-    const url = `${baseUrl}api/login/recovery/changePassword`;
-
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${recoveryToken}`,
-      },
-      body: JSON.stringify({ password: password1, code: +code }),
-    };
-
+  const onSubmit: SubmitHandler<Inputs> = async (formData) => {
     try {
       setLoader(true);
 
-      const response = await fetch(url, options);
+      const { password1, password2 } = formData;
 
-      const json = await response.json();
-
-      if (!response.ok) {
-        setLoader(false);
+      if (password1 !== password2) {
         setError({
           status: true,
-          type: response.status === 401 ? 'code' : 'server',
+          type: 'incompatible',
         });
+        setLoader(false);
 
-        throw new Error(
-          `Error status code ${response.status} >  ${json.message}`,
-        );
+        closeAlertWithDelay(6000, setShowAlert);
+        setElement(statusMessages[StatusCodes.BAD_REQUEST]);
+        return;
       }
 
-      if (response.ok) props.setPage(1);
+      const recoveryToken: string | null = GetCookie('recoveryToken');
+
+      if (!recoveryToken) {
+        closeAlertWithDelay(6000, setShowAlert);
+        setElement(statusMessages[StatusCodes.UNAUTHORIZED]);
+        delayChangePage(3000, setPage, 1);
+      }
+
+      const url = `${baseUrl}auth/recovery/reset-password`;
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${recoveryToken}`,
+        },
+        body: JSON.stringify({
+          newPassword: password1,
+          newPasswordConfirm: password1,
+        }),
+      };
+
+      const response = await fetch(url, options);
+
+      if (response.status === 401) {
+        closeAlertWithDelay(6000, setShowAlert);
+        setElement(statusMessages[response.status]);
+        delayChangePage(3000, setPage, 1);
+      }
+
+      setElement(statusMessages[response.status]);
+      closeAlertWithDelay(3000, setShowAlert);
+      delayChangePage(3000, setPage, 1);
     } catch (error) {
       setLoader(false);
       if (error instanceof Error) {
         console.error('Erro ao processar requisição:', error.message);
+        setShowAlert(true);
+        setElement(statusMessages[500]);
       } else {
         console.error('Erro desconhecido:', error);
       }
-    } finally {
-      setLoader(false);
     }
   };
 
@@ -138,6 +138,11 @@ export const ChangePasswordComponent: React.FC<Props> = (props) => {
                 placeholder="Password"
                 {...register('password1', {
                   required: true,
+                  minLength: {
+                    value: 8,
+                    message:
+                      'Your password must be at least 8 characters long.',
+                  },
                 })}
                 style={{
                   border: `2px solid ${
@@ -157,12 +162,19 @@ export const ChangePasswordComponent: React.FC<Props> = (props) => {
               </ErrorContainer>
             )}
 
+            {errors.password1?.type === 'minLength' && (
+              <ErrorContainer>
+                <p>{recoveryPasswordErrors.incompatibleSize}</p>
+              </ErrorContainer>
+            )}
+
             <FormGroup>
               <Form.Control
                 type="password"
                 placeholder="Confirmar Password"
                 {...register('password2', {
                   required: true,
+                  value: watch('password1'),
                 })}
                 style={{
                   border: `2px solid ${
@@ -188,7 +200,7 @@ export const ChangePasswordComponent: React.FC<Props> = (props) => {
                   <h5>Confimar</h5>
                 </button>
                 <Col className="forgot">
-                  <a onClick={() => props.setPage(1)}>fazer login</a>
+                  <a onClick={() => setPage(1)}>fazer login</a>
                 </Col>
               </Col>
 
@@ -209,28 +221,11 @@ export const ChangePasswordComponent: React.FC<Props> = (props) => {
                   <p>{recoveryPasswordErrors.incompatible}</p>
                 </ErrorContainer>
               )}
-
-              {error.status && error.type === 'code' && (
-                <ErrorContainer>
-                  <p>{recoveryPasswordErrors.code}</p>
-                </ErrorContainer>
-              )}
-
-              {error.status && error.type === 'token' && (
-                <ErrorContainer>
-                  <p>{recoveryPasswordErrors.token}</p>
-                </ErrorContainer>
-              )}
-
-              {error.status && error.type === 'server' && (
-                <ErrorContainer>
-                  <p>{recoveryPasswordErrors.server}</p>
-                </ErrorContainer>
-              )}
             </Col>
           </Form>
         </Col>
       )}
+      {showAlert && Element}
 
       {loader && <LoadingPage />}
     </>

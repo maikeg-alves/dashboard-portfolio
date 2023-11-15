@@ -3,12 +3,15 @@ import { Col, Form } from 'react-bootstrap';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineEmail } from '@styles';
 import { ErrorContainer, FormGroup } from '../styles';
-import { SetCookie, baseUrl, loginFormErrors } from '@utils';
-
+import {
+  baseUrl,
+  loginFormErrors,
+  closeAlertWithDelay,
+  delayChangePage,
+} from '@utils';
 import { useRouter } from 'next/router';
-
 import { LoadingPage } from '@components';
-
+import { statusMessages } from './exceptions';
 interface Props {
   setPage: (page: number) => void;
 }
@@ -17,7 +20,7 @@ interface Inputs {
   email: string;
 }
 
-export const RecoveryComponent: React.FC<Props> = (props) => {
+export const RecoveryComponent: React.FC<Props> = ({ setPage }) => {
   const {
     register,
     handleSubmit,
@@ -27,66 +30,38 @@ export const RecoveryComponent: React.FC<Props> = (props) => {
 
   const router = useRouter();
   const [loader, setLoader] = React.useState<boolean>(false);
-  const [error, setError] = React.useState({
-    status: false,
-    type: '',
-  });
+  const [Element, setElement] = React.useState<JSX.Element | null>(null);
+  const [showAlert, setShowAlert] = React.useState(false);
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { email } = data;
-
-    if (!email) {
-      setError({
-        status: true,
-        type: 'email',
-      });
-    }
-
-    const url = `${baseUrl}api/login/recovery`;
-
-    const options = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    };
-
+  const onSubmit: SubmitHandler<Inputs> = async (formData) => {
     try {
       setLoader(true);
 
-      const response = await fetch(url, options);
+      const url = `${baseUrl}auth/recovery`;
 
-      if (response.status === 401) {
-        setLoader(false);
-        setError({
-          status: true,
-          type: 'invalid',
-        });
-        return;
-      }
-
-      if (response.status === 500) {
-        setLoader(false);
-        setError({
-          status: true,
-          type: 'server',
-        });
-        return;
-      }
-
-      const optionsCookie = {
-        path: '/',
-        maxAge: 3600 * 24, // Expires after 1 day
-        sameSite: 'strict', // 'strict', 'lax', ou 'none' (dependendo dos requisitos do seu projeto)
+      const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email }),
       };
 
-      SetCookie('emailuser', email, optionsCookie);
+      const response = await fetch(url, options);
 
-      if (response.status === 200) props.setPage(3);
+      if (!response.ok) {
+        setElement(statusMessages[response.status]);
+        closeAlertWithDelay(6000, setShowAlert);
+        setLoader(false);
+        return;
+      }
+
+      setElement(statusMessages[response.status]);
+      closeAlertWithDelay(6000, setShowAlert);
+
+      if (response.ok) delayChangePage(3000, setPage, 3);
     } catch (error) {
-      setLoader(false);
       console.error('Erro ao processar requisição:', error);
-    } finally {
-      setLoader(false);
+      setShowAlert(true);
+      setElement(statusMessages[500]);
     }
   };
 
@@ -124,9 +99,7 @@ export const RecoveryComponent: React.FC<Props> = (props) => {
                     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
                 })}
                 style={{
-                  border: `2px solid ${
-                    errors.email || error.status ? 'red' : '#01C88C'
-                  }`,
+                  border: `2px solid ${errors.email && 'red'}`,
                 }}
               />
               <div className="icon">
@@ -146,37 +119,24 @@ export const RecoveryComponent: React.FC<Props> = (props) => {
                   <h5>Enviar Código</h5>
                 </button>
                 <Col className="forgot">
-                  <a onClick={() => props.setPage(1)}>fazer login</a>
+                  <a onClick={() => setPage(1)}>fazer login</a>
                 </Col>
               </Col>
 
               <Col className="msg-secondary visit">
-                {!error.type && error.type === '' && (
-                  <p>
-                    Não é o administrador? entre como
-                    <a onClick={handleVisitor} style={{ cursor: 'pointer' }}>
-                      {' '}
-                      Visitante
-                    </a>
-                  </p>
-                )}
+                <p>
+                  Não é o administrador? entre como{' '}
+                  <a onClick={handleVisitor} style={{ cursor: 'pointer' }}>
+                    Visitante
+                  </a>
+                </p>
               </Col>
-
-              {error.status && error.type === 'invalid' && (
-                <ErrorContainer>
-                  <p>{loginFormErrors.email}</p>
-                </ErrorContainer>
-              )}
-
-              {error.status && error.type === 'server' && (
-                <ErrorContainer>
-                  <p>{loginFormErrors.server}</p>
-                </ErrorContainer>
-              )}
             </Col>
           </Form>
         </Col>
       )}
+
+      {showAlert && Element}
 
       {loader && <LoadingPage />}
     </>

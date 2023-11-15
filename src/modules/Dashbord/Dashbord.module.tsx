@@ -1,6 +1,6 @@
 import { Col, Container, Row } from 'react-bootstrap';
 
-import { Dash, ProgressBar } from './styles';
+import { CardGrid, Dash, ProgressBar } from './styles';
 
 import { IGithub, IProject, ITechnologys } from '@interfaces';
 
@@ -14,8 +14,6 @@ type Props = {
 type LanguageCount = { [language: string]: number };
 
 const Dashbord: React.FC<Props> = (props) => {
-  // Create an object to store the language counts
-
   function languageCounts(lislanguage: IGithub[]) {
     // Cria um objeto para armazenar os contadores de palavras
     const languageCounts: LanguageCount = {};
@@ -28,7 +26,6 @@ const Dashbord: React.FC<Props> = (props) => {
       }
     });
 
-    // Sort data in descending order
     const sortedLanguages = Object.entries(languageCounts).sort(
       (a, b) => b[1] - a[1],
     );
@@ -45,22 +42,23 @@ const Dashbord: React.FC<Props> = (props) => {
       </div>
       <Container className="flex-responsive ">
         <Row>
-          <Col className="Projects modalgrid">
+          <CardGrid>
             <h4>Projects</h4>
-            <Col xs={12}>
+            <Col xs={12} className="bodyGrid">
               <h2>{props.projects && props.projects.length}</h2>
             </Col>
-          </Col>
+          </CardGrid>
 
-          <Col className="Technologys modalgrid">
+          <CardGrid>
             <h4>Technologys</h4>
-            <Col xs={12}>
+            <Col xs={12} className="bodyGrid">
               <h2>{props.technologys && props.technologys.length}</h2>
             </Col>
-          </Col>
-          <Col className="Visitors modalgrid">
-            <h5>Most used language</h5>
-            <Col xs={12}>
+          </CardGrid>
+
+          <CardGrid>
+            <h6>Most used language</h6>
+            <Col xs={12} className="bodyGrid">
               <h3>
                 {mostLanguage.length > 0 &&
                   mostLanguage
@@ -70,12 +68,12 @@ const Dashbord: React.FC<Props> = (props) => {
                     )[0]}
               </h3>
             </Col>
-          </Col>
+          </CardGrid>
         </Row>
         <Row>
-          <Col className="RankingTech modalgrid">
+          <CardGrid>
             <h4>Technology ranking </h4>
-            <Col xs={12}>
+            <Col xs={12} className="bodyGridList">
               {props.technologys &&
                 props.technologys
                   .slice(0, 5)
@@ -92,10 +90,11 @@ const Dashbord: React.FC<Props> = (props) => {
                     </>
                   ))}
             </Col>
-          </Col>
-          <Col className="RankingLangue modalgrid">
+          </CardGrid>
+
+          <CardGrid>
             <h4>Language ranking</h4>
-            <Col xs={12}>
+            <Col xs={12} className="bodyGridList">
               {mostLanguage.length > 0 &&
                 mostLanguage
                   .filter((language) => language[0] !== 'null')
@@ -111,7 +110,7 @@ const Dashbord: React.FC<Props> = (props) => {
                     </>
                   ))}
             </Col>
-          </Col>
+          </CardGrid>
         </Row>
       </Container>
     </Dash>

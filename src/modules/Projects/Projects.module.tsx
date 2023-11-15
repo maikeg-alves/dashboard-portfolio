@@ -15,6 +15,7 @@ import {
   GetView,
   Delete,
 } from '../../components';
+
 import { IGithub, IProject, ITechnologys } from '../../interfaces';
 
 type Props = {
@@ -172,6 +173,7 @@ const Projects: React.FC<Props> = (props) => {
           </Col>
         </Container>
       </Project>
+      {/*  modal de dialogo */}
 
       <Modal isShown={isShown} hide={toggle}>
         <>{pagesElement}</>

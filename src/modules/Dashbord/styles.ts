@@ -3,42 +3,6 @@ import styled from 'styled-components';
 import LinearProgress from '@mui/material/LinearProgress';
 
 export const Dash = styled(Col)`
-  .modalgrid {
-    background-color: ${(props) => props.theme.colors.backgroundSecondary};
-    border-radius: 17px;
-    padding: 20px;
-    width: 200px;
-    margin: 11px;
-  }
-
-  .Projects,
-  .Technologys,
-  .Visitors {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 100%;
-    height: auto;
-
-    h2,
-    h3 {
-      color: ${(props) => props.theme.colors.text};
-    }
-
-    h4,
-    h5 {
-      color: ${(props) => props.theme.colors.textSecondary};
-    }
-
-    div {
-      text-align: center;
-    }
-
-    h2 {
-      margin-top: 10px;
-    }
-  }
-
   .Visitors {
     justify-content: space-between !important;
   }
@@ -139,5 +103,54 @@ export const ProgressBar = styled(LinearProgress)`
 
   span {
     border-radius: 10px;
+  }
+`;
+
+export const CardGrid = styled(Col)`
+  background-color: ${(props) => props.theme.colors.backgroundSecondary};
+  border-radius: 17px;
+  padding: 20px;
+  width: 200px;
+  margin: 11px;
+
+  .bodyGrid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bodyGridList {
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+  }
+
+  h2,
+  h3 {
+    color: ${(props) => props.theme.colors.text};
+  }
+
+  h4,
+  h5,
+  h6 {
+    color: ${(props) => props.theme.colors.textSecondary};
+  }
+
+  div {
+    text-align: center;
+  }
+
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
   }
 `;

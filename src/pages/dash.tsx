@@ -1,13 +1,14 @@
 import React from 'react';
-import { GetServerSideProps, NextPage } from 'next';
 import { Col } from 'react-bootstrap';
-import { IGithub, IProject, ITechnologys } from '../interfaces';
-import { Container } from '../layout';
-import { Panel, Dashbord, Projects, MobilePanel, UserArea } from '../modules';
-import Technologys from 'src/modules/Technologys/technologys';
-import { checkIfUserIsLoggedIn, verifyToken } from '@utils';
+import useSWR from 'swr';
 
-const URL_API = 'https://maicon-gabriel-alves.vercel.app/api';
+import { GetServerSideProps, NextPage } from 'next';
+import { IGithub, IProject, ITechnologys } from '../interfaces';
+import { Panel, Dashbord, Projects, MobilePanel, UserArea } from '../modules';
+import { Container } from '../layout';
+import Technologys from 'src/modules/Technologys/technologys';
+import { getData } from '@utils';
+import { LoadingPage } from '@components';
 
 type Props = {
   projects: IProject[];
@@ -19,8 +20,9 @@ type Props = {
 
 const Home: NextPage<Props> = (props) => {
   const [update, setUpdate] = React.useState<boolean>(false);
-  const [apiData, setApiData] = React.useState<Props>(props);
+  const [loader, setLoader] = React.useState<boolean>(true);
   const [pages, setPages] = React.useState<string>('Home');
+  const { data: apiData, error: apiError } = useSWR<Props>(props, getData);
 
   const handleOpen = (open: string) => {
     setPages(open);
@@ -31,6 +33,18 @@ const Home: NextPage<Props> = (props) => {
   };
 
   let pagesElement: React.ReactElement;
+
+  React.useEffect(() => {
+    if (apiData?.projects.length) {
+      setTimeout(() => {
+        setLoader(false);
+      }, 3000);
+    }
+  }, [apiData?.projects.length]);
+
+  if (!apiData) {
+    return (pagesElement = <p></p>);
+  }
 
   switch (pages) {
     case 'Home':
@@ -49,73 +63,24 @@ const Home: NextPage<Props> = (props) => {
       pagesElement = <p> dados não encontrado </p>;
   }
 
-  /* utilizando da tecnica polling, atualizando os dados
-   sempre que tem resquestes que altera o banco de dados */
+  if (apiError) {
+    return (pagesElement = <p>Error fetching data from the API</p>);
+  }
 
-  React.useEffect(() => {
-    async function getData() {
-      const data1 = await fetch(`${URL_API}/projects`);
-      const data2 = await fetch(`${URL_API}/technologys`);
-      const datagit = await fetch(
-        'https://api.github.com/users/maikeg-alves/repos',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${process.env.GITHUB_TOKEN}`,
-          },
-        },
-      );
-
-      const dateProjects = await data1.json();
-      const technologys = await data2.json();
-      const github = await datagit.json();
-
-      const projects = dateProjects.map((project: IProject) => {
-        const validated = github.find(
-          (github: IGithub) => github.name === project.github,
-        );
-        const { description, language, created_at } = validated;
-        return {
-          ...project,
-          description,
-          language,
-          created_at,
-        };
-      });
-
-      const token = localStorage.getItem('token')
-        ? localStorage.getItem('token')
-        : '';
-
-      const admin = await verifyToken(token);
-
-      setApiData({
-        projects,
-        technologys,
-        github,
-        values: false,
-        admin: admin,
-      });
-
-      if (Object.keys(update).length > 0) {
-        setUpdate(false);
-      }
-    }
-
-    getData();
-  }, [update]);
+  console.log(apiData);
 
   return (
     <Container direction="column" align="center" justify="center" padding="3">
-      <>
-        <Panel setOpen={handleOpen} {...apiData} />
-      </>
-      <Col xs="auto" className="conElementes">
-        {pagesElement}
-      </Col>
-      <>
-        <MobilePanel setOpen={handleOpen} />
-      </>
+      {!loader && (
+        <>
+          <Panel setOpen={handleOpen} {...apiData} />
+          <Col xs="auto" className="conElementes">
+            {pagesElement}
+          </Col>
+          <MobilePanel setOpen={handleOpen} />
+        </>
+      )}
+      {loader && <LoadingPage />}
     </Container>
   );
 };
@@ -124,48 +89,11 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const data1 = await fetch(`${URL_API}/projects`);
-    const data2 = await fetch(`${URL_API}/technologys`);
-    const datagit = await fetch(
-      'https://api.github.com/users/maikeg-alves/repos',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${process.env.GITHUB_TOKEN}`,
-        },
-      },
-    );
-
-    const dateProjects = await data1.json();
-    const technologys = await data2.json();
-    const github = await datagit.json();
-
-    const projects: IProject[] = dateProjects.map((project: IProject) => {
-      const validated = github.find(
-        (github: IGithub) => github.name === project.github,
-      );
-      const { description, language, created_at } = validated;
-      return {
-        ...project,
-        description,
-        language,
-        created_at,
-      };
-    });
-
-    const admin = await checkIfUserIsLoggedIn();
-
+    const data = await getData();
     return {
-      props: {
-        projects,
-        technologys,
-        github,
-        values: false,
-        admin: admin,
-      },
+      props: data,
     };
   } catch (error) {
-    console.error(error);
     return {
       props: {
         projects: [],

@@ -7,27 +7,13 @@ import Countdown from 'react-countdown-now';
 
 import { RiLockPasswordLine, MdOutlineEmail } from '@styles';
 
-import {
-  checkIfUserIsLoggedIn,
-  saveToken,
-  loginFormErrors,
-  baseUrl,
-} from '@utils';
+import { saveToken, loginFormErrors, baseUrl } from '@utils';
 
 import { ErrorContainer, FormGroup } from './styles';
 
 import { LoadingPage } from '@components';
 
-type Inputs = {
-  email: string;
-  password: string;
-};
-
-interface State {
-  lockoutTime: number;
-  attempts: number;
-  disabled: boolean;
-}
+import { IState, Inputs } from '@interfaces';
 
 interface Props {
   setPage: (page: number) => void;
@@ -46,19 +32,34 @@ export const LoginComponet: React.FC<Props> = (props) => {
   const [errorauth, setErrorAuth] = React.useState<boolean>(false);
   const [loader, setLoader] = React.useState<boolean>(false);
 
-  const [state, setState] = React.useState<State>({
+  const [state, setState] = React.useState<IState>({
     lockoutTime: 5,
     attempts: 0,
     disabled: false,
+    passaPortAcesse: Math.floor(Math.random() * 10000000000),
   });
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const invalidatedComposition = () => {
+    if (localStorage.getItem('lockObject')) {
+      const objetoRecuperado = localStorage.getItem('lockObject');
+      if (objetoRecuperado) {
+        const objetoParseado = JSON.parse(objetoRecuperado) as IState;
+
+        if (objetoParseado.passaPortAcesse != state.passaPortAcesse) {
+          return true;
+        }
+        return false;
+      }
+    }
+  };
+
+  const onSubmit: SubmitHandler<Inputs> = async (formData) => {
     try {
-      const { email, password } = data;
+      const { email, password } = formData;
 
       setLoader(true);
 
-      const url = `${baseUrl}api/login`;
+      const url = `${baseUrl}auth/login`;
 
       const options = {
         method: 'POST',
@@ -68,60 +69,65 @@ export const LoginComponet: React.FC<Props> = (props) => {
 
       const response = await fetch(url, options);
 
-      if (!response.ok) {
-        if (response.status === 400) {
-          setLoader(false);
-          setErrorAuth(true);
-          setState((prevState) => ({
-            ...prevState,
-            attempts: prevState.attempts + 1,
-          }));
+      if (response.status === 401) {
+        console.log(state);
+        setLoader(false);
+        setErrorAuth(true);
 
-          if (state.attempts === 3) {
-            setState((prevState) => ({ ...prevState, disabled: true }));
+        setState((prevState) => ({
+          ...prevState,
+          attempts: prevState.attempts + 1,
+        }));
 
-            localStorage.setItem(
-              'lockoutTime',
-              (Date.now() + state.lockoutTime * 60 * 1000).toString(),
-            );
+        const inv = invalidatedComposition();
 
-            setTimeout(() => {
-              setState((prevState) => ({
-                ...prevState,
-                disabled: false,
-                attempts: 0,
-                lockoutTime: prevState.lockoutTime * 2,
-              }));
-            }, state.lockoutTime * 60 * 1000);
-          }
-          return;
-        } else if (response.status === 500) {
-          throw new Error(
-            'Error ao tentar eestabelecer conexão com o servidor',
+        console.log(inv);
+
+        if (state.attempts === 3) {
+          setState((prevState) => ({ ...prevState, disabled: true }));
+          const objetoRecuperado = localStorage.getItem('lockObject');
+
+          localStorage.setItem(
+            'lockoutTime',
+            (Date.now() + state.lockoutTime * 60 * 1000).toString(),
           );
+
+          if (objetoRecuperado) {
+            const objetoParseado = JSON.parse(objetoRecuperado) as IState;
+
+            if (objetoParseado.disabled) {
+              setTimeout(() => {
+                setState((prevState) => ({
+                  ...prevState,
+                  disabled: false,
+                  attempts: 0,
+                  lockoutTime: prevState.lockoutTime * 2,
+                }));
+              }, state.lockoutTime * 60 * 1000);
+
+              console.log('fechou no stateps', state);
+            }
+          }
         }
       }
 
-      const json = await response.json();
+      /* const json = await response.json();
 
-      const token = json.token;
-
-      const isTokenSaved = await saveToken(token);
-
-      if (isTokenSaved) {
-        const isLoggedIn = await checkIfUserIsLoggedIn();
-        if (isLoggedIn) {
-          router.push('/dash');
-        }
-      }
+      const token = json.token; */
+      /* 
+      const isTokenSaved = await saveToken(token); */
+      /* 
+      if (isTokenSaved || response.ok) {
+        router.push('/dash');
+      } */
     } catch (error) {
+      setErrorAuth(true);
+      setLoader(false);
       if (error instanceof Error) {
         console.error('Erro ao processar requisição:', error.message);
       } else {
-        console.error('Erro desconhecido:', error);
+        throw new Error('Error ao tentar eestabelecer conexão com o servidor');
       }
-    } finally {
-      setLoader(false);
     }
   };
 
@@ -131,6 +137,12 @@ export const LoginComponet: React.FC<Props> = (props) => {
     }
     router.push('/dash');
   };
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('lockObject', JSON.stringify(state));
+    }
+  }, [state]);
 
   return (
     <>

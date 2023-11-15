@@ -17,6 +17,7 @@
     "@types/bootstrap": "^5.2.6",
     "bootstrap": "^5.2.2",
     "clsx": "^2.0.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "g": "^2.0.1",
     "next": "^13.1.1",
     "react": "^18.2.0",
@@ -26,7 +27,8 @@
     "react-hook-form": "^7.40.0",
     "react-icons": "^4.6.0",
     "react-router": "^6.4.4",
-    "styled-components": "^5.3.6"
+    "styled-components": "^5.3.6",
+    "swr": "^2.2.0"
   },
   "devDependencies": {
     "@types/node": "16.11.47",

@@ -22,4 +22,5 @@ export const recoveryPasswordErrors = {
   code: 'O código necessário para redefinição não foi encontrado nos cookies da aplicação.',
   token: 'O token de redefinição não foi encontrado nos cookies da aplicação.',
   server: 'Erro ao obter verificação no servidor. Tente novamente mais tarde.',
+  incompatibleSize: 'Your password must contain at least 8 characters ',
 };

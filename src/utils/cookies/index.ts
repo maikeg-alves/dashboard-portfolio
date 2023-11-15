@@ -7,6 +7,10 @@ export function SetCookie(name: string, value: string, options: object): void {
 }
 
 export function GetCookie(name: string) {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
   const cookies = document.cookie.split(';');
 
   for (const cookie of cookies) {
