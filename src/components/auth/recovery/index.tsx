@@ -2,7 +2,7 @@ import React from 'react';
 import { Col, Form } from 'react-bootstrap';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineEmail } from '@styles';
-import { ErrorContainer, FormGroup } from '../styles';
+import { ErrorContainer, FormGroup } from '../login/styles';
 import {
   baseUrl,
   loginFormErrors,

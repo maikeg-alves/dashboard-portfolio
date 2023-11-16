@@ -9,10 +9,11 @@ import ErrorMessage from './ErrorMessage/ErrorMessage.component';
 export { LoadingPage } from './loadingPage';
 export { PutItem } from './PutItem/PutItem.component';
 
-export { LoginComponet } from './login';
-export { RecoveryComponent } from './login/recovery';
-export { ConfirmCodeComponent } from './login/confirmCode';
-export { ChangePasswordComponent } from './login/changePassword';
+export { LoginComponet } from './auth/login';
+export { RecoveryComponent } from './auth/recovery';
+export { ConfirmCodeComponent } from './auth/confirmCode';
+export { ChangePasswordComponent } from './auth/changePassword';
+export { AuthTwoStep } from './auth/authTwoStep';
 
 export {
   TableItems,

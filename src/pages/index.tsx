@@ -9,12 +9,13 @@ import {
   ChangePasswordComponent,
   ConfirmCodeComponent,
   RecoveryComponent,
+  AuthTwoStep,
 } from '@components';
 
 const image = 'https://i.imgur.com/NIkBDgT.jpg';
 
 const Login: NextPage = () => {
-  const [page, setPage] = React.useState<number>(1);
+  const [page, setPage] = React.useState<number>(2);
 
   let setComponent: React.ReactElement;
 
@@ -23,7 +24,7 @@ const Login: NextPage = () => {
       setComponent = <LoginComponet setPage={(page) => setPage(page)} />;
       break;
     case 2:
-      setComponent = <RecoveryComponent setPage={(page) => setPage(page)} />;
+      setComponent = <AuthTwoStep />;
       break;
     case 3:
       setComponent = <ConfirmCodeComponent setPage={(page) => setPage(page)} />;
@@ -32,6 +33,9 @@ const Login: NextPage = () => {
       setComponent = (
         <ChangePasswordComponent setPage={(page) => setPage(page)} />
       );
+      break;
+    case 5:
+      setComponent = <RecoveryComponent setPage={(page) => setPage(page)} />;
       break;
     default:
       setComponent = <p>Nenhuma página disponível</p>;
