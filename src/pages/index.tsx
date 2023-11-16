@@ -15,7 +15,7 @@ import {
 const image = 'https://i.imgur.com/NIkBDgT.jpg';
 
 const Login: NextPage = () => {
-  const [page, setPage] = React.useState<number>(2);
+  const [page, setPage] = React.useState<number>(1);
 
   let setComponent: React.ReactElement;
 

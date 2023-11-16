@@ -2,27 +2,18 @@ import { Col, Container, Row } from 'react-bootstrap';
 
 import { CardGrid, Dash, ProgressBar } from './styles';
 
-import { IGithub, IProject, ITechnologys } from '@interfaces';
-
-type Props = {
-  projects: IProject[];
-  technologys: ITechnologys[];
-  github: IGithub[];
-  values: boolean;
-};
+import { Provaider, IGithubRepos } from '@interfaces';
 
 type LanguageCount = { [language: string]: number };
 
-const Dashbord: React.FC<Props> = (props) => {
-  function languageCounts(lislanguage: IGithub[]) {
-    // Cria um objeto para armazenar os contadores de palavras
+const Dashbord: React.FC<Provaider> = (props) => {
+  function languageCounts(reposGithub: IGithubRepos[]) {
     const languageCounts: LanguageCount = {};
 
-    lislanguage.forEach((repo) => {
-      if (repo.language in languageCounts) {
-        languageCounts[repo.language]++;
-      } else {
-        languageCounts[repo.language] = 1;
+    reposGithub.forEach((repo) => {
+      if (repo.language && repo.language != null) {
+        languageCounts[repo.language] =
+          (languageCounts[repo.language] || 0) + 1;
       }
     });
 
@@ -35,6 +26,8 @@ const Dashbord: React.FC<Props> = (props) => {
 
   const mostLanguage = languageCounts(props.github);
 
+  console.log(props.github.length);
+
   return (
     <Dash>
       <div>
@@ -45,14 +38,14 @@ const Dashbord: React.FC<Props> = (props) => {
           <CardGrid>
             <h4>Projects</h4>
             <Col xs={12} className="bodyGrid">
-              <h2>{props.projects && props.projects.length}</h2>
+              <h2>{(props.projects && props.projects.length) || 0}</h2>
             </Col>
           </CardGrid>
 
           <CardGrid>
             <h4>Technologys</h4>
             <Col xs={12} className="bodyGrid">
-              <h2>{props.technologys && props.technologys.length}</h2>
+              <h2>{(props.techs && props.techs.length) || 0}</h2>
             </Col>
           </CardGrid>
 
@@ -74,17 +67,20 @@ const Dashbord: React.FC<Props> = (props) => {
           <CardGrid>
             <h4>Technology ranking </h4>
             <Col xs={12} className="bodyGridList">
-              {props.technologys &&
-                props.technologys
+              {props.techs &&
+                props.techs
                   .slice(0, 5)
-                  .sort((a, b) => b.ability - a.ability)
+                  .sort(
+                    (a, b) =>
+                      (b.projects?.length || 0) - (a.projects?.length || 0),
+                  )
                   .map((technology, id) => (
                     <>
                       <Col className="progress-items" key={id}>
                         <p>{technology.name}</p>
                         <ProgressBar
                           variant="determinate"
-                          value={technology.ability}
+                          value={(technology.projects?.length || 0) * 20}
                         />
                       </Col>
                     </>
@@ -99,15 +95,13 @@ const Dashbord: React.FC<Props> = (props) => {
                 mostLanguage
                   .filter((language) => language[0] !== 'null')
                   .map((project, id) => (
-                    <>
-                      <Col className="progress-items" key={id}>
-                        <p>{project[0]}</p>
-                        <ProgressBar
-                          variant="determinate"
-                          value={project[1] * 10}
-                        />
-                      </Col>
-                    </>
+                    <Col className="progress-items" key={id}>
+                      <p>{project[0]}</p>
+                      <ProgressBar
+                        variant="determinate"
+                        value={project[1] * 10}
+                      />
+                    </Col>
                   ))}
             </Col>
           </CardGrid>

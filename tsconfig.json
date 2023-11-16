@@ -23,7 +23,8 @@
       "@styles": ["src/styles"],
       "@constant": ["src/constant"],
       "@utils": ["src/utils"],
-      "@layout": ["src/layout"]
+      "@layout": ["src/layout"],
+      "@hook": ["src/hook"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

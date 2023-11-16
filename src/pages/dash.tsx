@@ -3,38 +3,31 @@ import { Col } from 'react-bootstrap';
 import useSWR from 'swr';
 
 import { GetServerSideProps, NextPage } from 'next';
-import { IGithub, IProject, ITechnologys } from '../interfaces';
+import { IGithubRepos, IProject, ITech, Provaider } from '../interfaces';
 import { Panel, Dashbord, Projects, MobilePanel, UserArea } from '../modules';
 import { Container } from '../layout';
 import Technologys from 'src/modules/Technologys/technologys';
 import { getData } from '@utils';
 import { LoadingPage } from '@components';
+import { DataProvider } from '@hook';
 
-type Props = {
-  projects: IProject[];
-  technologys: ITechnologys[];
-  github: IGithub[];
-  values: boolean;
-  admin: boolean;
-};
-
-const Home: NextPage<Props> = (props) => {
+const Home: NextPage<Provaider> = (props) => {
   const [update, setUpdate] = React.useState<boolean>(false);
-  const [loader, setLoader] = React.useState<boolean>(true);
+  const [loader, setLoader] = React.useState<boolean>(false);
   const [pages, setPages] = React.useState<string>('Home');
-  const { data: apiData, error: apiError } = useSWR<Props>(props, getData);
+  /*  const { data: apiData, error: apiError } = useSWR<Props>(props, getData); */
 
   const handleOpen = (open: string) => {
     setPages(open);
   };
 
-  const handUpdate = () => {
+  /*   const handUpdate = () => {
     setUpdate(!update);
-  };
+  }; */
 
   let pagesElement: React.ReactElement;
 
-  React.useEffect(() => {
+  /*  React.useEffect(() => {
     if (apiData?.projects.length) {
       setTimeout(() => {
         setLoader(false);
@@ -44,13 +37,13 @@ const Home: NextPage<Props> = (props) => {
 
   if (!apiData) {
     return (pagesElement = <p></p>);
-  }
+  } */
 
   switch (pages) {
     case 'Home':
-      pagesElement = <Dashbord {...apiData} />;
+      pagesElement = <Dashbord {...props} />;
       break;
-    case 'Projects':
+    /*  case 'Projects':
       pagesElement = <Projects updateValues={handUpdate} {...apiData} />;
       break;
     case 'Technologys':
@@ -58,22 +51,24 @@ const Home: NextPage<Props> = (props) => {
       break;
     case 'Settings':
       pagesElement = <UserArea {...apiData} />;
-      break;
+      break; */
     default:
       pagesElement = <p> dados não encontrado </p>;
   }
 
-  if (apiError) {
+  /*   if (apiError) {
     return (pagesElement = <p>Error fetching data from the API</p>);
   }
 
-  console.log(apiData);
+  console.log(apiData); */
+
+  console.log(props);
 
   return (
     <Container direction="column" align="center" justify="center" padding="3">
       {!loader && (
         <>
-          <Panel setOpen={handleOpen} {...apiData} />
+          <Panel setOpen={handleOpen} {...props} />
           <Col xs="auto" className="conElementes">
             {pagesElement}
           </Col>
@@ -89,7 +84,8 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const data = await getData();
+    const data = await DataProvider();
+
     return {
       props: data,
     };
