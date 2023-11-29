@@ -8,7 +8,13 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { LoadingPage } from '../loadingPage';
 
 import { Form, StepperBox } from './styles';
-import { IGithub, IProject, ITechnologys, PUTProject } from '@interfaces';
+import {
+  IGithub,
+  IProject,
+  ITechnologys,
+  PUTProject,
+  Provaider,
+} from '@interfaces';
 
 import { ApiClient, verifyToken } from '@utils';
 import { Preview } from '../PreviewCrad';
@@ -31,16 +37,16 @@ type Inputs = {
   technologies_three: number;
 };
 
-type Outputs = {
+/* type Outputs = {
   projects: IProject[];
   technologys: ITechnologys[];
   github: IGithub[];
   values: boolean;
   admin: boolean;
   statusUpdate: (status: boolean) => void;
-};
+}; */
 
-const FormProject: React.FC<Outputs> = (props) => {
+const FormProject: React.FC<Provaider> = (props) => {
   const [step, setStep] = React.useState<number>(1); //eslint-disable-line
 
   const [projects, setProjects] = React.useState<IProject[]>([]);
@@ -150,7 +156,7 @@ const FormProject: React.FC<Outputs> = (props) => {
       gif: 'https://i.imgur.com/XhUIa5q.png',
     };
 
-    const githubDescription = (description: string): string => {
+    /*   const githubDescription = (description: string): string => {
       if (
         description !== null &&
         description !== undefined &&
@@ -165,7 +171,7 @@ const FormProject: React.FC<Outputs> = (props) => {
         );
       }
     };
-
+ */
     try {
       switch (step) {
         case 1:
@@ -272,7 +278,7 @@ const FormProject: React.FC<Outputs> = (props) => {
       break;
   }
 
-  React.useEffect(() => {
+  /*   React.useEffect(() => {
     props.technologys && setTechnologys(Object.values(props.technologys));
 
     props.projects && setProjects(Object.values(props.projects));
@@ -291,7 +297,7 @@ const FormProject: React.FC<Outputs> = (props) => {
     setTimeout(() => {
       setAlertMensage('');
     }, 3000);
-  }, [props, errors, alertmensage]);
+  }, [props, errors, alertmensage]); */
 
   return (
     <>
@@ -391,7 +397,7 @@ const FormProject: React.FC<Outputs> = (props) => {
                         Open this select menu
                       </option>
                       {github.length > 0 &&
-                        github.map((tech) => (
+                        props.github.map((tech) => (
                           <option key={tech.id} value={tech.name}>
                             {tech.name}
                           </option>

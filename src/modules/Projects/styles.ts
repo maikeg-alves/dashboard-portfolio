@@ -6,8 +6,6 @@ export const Project = styled(Col)`
     background-color: ${(props) => props.theme.colors.backgroundSecondary};
     border-radius: 17px;
 
-    width: 100%;
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,6 +25,7 @@ export const Project = styled(Col)`
     }
 
     .add-plus {
+      cursor: pointer;
       padding: 10px;
       font-size: 20px;
       color: ${(props) => props.theme.colors.text};

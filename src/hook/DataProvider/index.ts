@@ -4,7 +4,7 @@ import { baseUrl } from '@constant';
 export async function DataProvider() {
   try {
     const [projectsRes, techsRes, githubRes] = await Promise.all([
-      fetch(`${baseUrl}projects`),
+      fetch(`${baseUrl}projects?viewTechs=true`),
       fetch(`${baseUrl}techs?viewProjects=true`),
       fetch(`${baseUrl}github/repos`),
     ]);

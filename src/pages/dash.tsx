@@ -14,7 +14,8 @@ import { DataProvider } from '@hook';
 const Home: NextPage<Provaider> = (props) => {
   const [update, setUpdate] = React.useState<boolean>(false);
   const [loader, setLoader] = React.useState<boolean>(false);
-  const [pages, setPages] = React.useState<string>('Home');
+
+  const [pages, setPages] = React.useState<string>('Projects');
   /*  const { data: apiData, error: apiError } = useSWR<Props>(props, getData); */
 
   const handleOpen = (open: string) => {
@@ -43,9 +44,10 @@ const Home: NextPage<Provaider> = (props) => {
     case 'Home':
       pagesElement = <Dashbord {...props} />;
       break;
-    /*  case 'Projects':
-      pagesElement = <Projects updateValues={handUpdate} {...apiData} />;
+    case 'Projects':
+      pagesElement = <Projects {...props} />;
       break;
+    /* 
     case 'Technologys':
       pagesElement = <Technologys updateValues={handUpdate} {...apiData} />;
       break;

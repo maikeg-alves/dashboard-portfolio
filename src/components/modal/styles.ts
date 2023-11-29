@@ -15,8 +15,22 @@ export const Box = styled(MUIBox)`
   width: 50%;
   background-color: ${(props) => props.theme.colors.backgroundSecondary};
   box-shadow: 24px;
-  padding: 40px;
+  padding: 1rem;
   border-radius: 17px;
+
+  .exit {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    span {
+      font-weight: bold;
+      font-size: 20px;
+      transform: rotate(90deg);
+      margin: 0 10px;
+      color: ${(props) => props.theme.table.danger};
+      cursor: pointer;
+    }
+  }
 
   @media screen and (max-width: 426px) {
     width: 90%;
