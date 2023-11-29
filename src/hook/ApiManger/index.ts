@@ -1,5 +1,14 @@
 import { GetCookie } from '@utils';
 
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: {
+    statusCode: number;
+    message: string;
+  };
+}
+
 export class ApiManager {
   private apiUrl: string;
 
@@ -7,22 +16,37 @@ export class ApiManager {
     this.apiUrl = _apiUrl;
   }
 
-  getToken() {
+  private getToken() {
     return GetCookie('accesstoken');
   }
 
-  async getData<T>() {
+  private handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
+    if (response.ok) {
+      return response.json().then((data) => ({ success: true, data }));
+    }
+    return response.json().then((error) => ({
+      success: false,
+      error: {
+        statusCode: response.status,
+        message: error.message || 'Unknown error',
+      },
+    }));
+  }
+
+  async getData<T>(): Promise<ApiResponse<T>> {
     try {
       const response = await fetch(this.apiUrl);
-      const data: T = await response.json();
-      return data;
+      return this.handleResponse<T>(response);
     } catch (error) {
       console.error('Erro na requisição GET:', error);
-      throw error;
+      return {
+        success: false,
+        error: { statusCode: 500, message: 'Internal server error' },
+      };
     }
   }
 
-  async postData<T>(dados: T) {
+  async postData<T>(dados: T): Promise<ApiResponse<T>> {
     try {
       const response = await fetch(this.apiUrl, {
         method: 'POST',
@@ -33,11 +57,13 @@ export class ApiManager {
         body: JSON.stringify(dados),
       });
 
-      const data: T = await response.json();
-      return data;
+      return this.handleResponse<T>(response);
     } catch (error) {
       console.error('Erro na requisição POST:', error);
-      throw error;
+      return {
+        success: false,
+        error: { statusCode: 500, message: 'Internal server error' },
+      };
     }
   }
 
@@ -52,11 +78,13 @@ export class ApiManager {
         body: JSON.stringify(dados),
       });
 
-      const data: T = await response.json();
-      return data;
+      return this.handleResponse<T>(response);
     } catch (error) {
       console.error('Erro na requisição PUT:', error);
-      throw error;
+      return {
+        success: false,
+        error: { statusCode: 500, message: 'Internal server error' },
+      };
     }
   }
   async deleteData<T>() {
@@ -69,11 +97,13 @@ export class ApiManager {
         },
       });
 
-      const data: T = await response.json();
-      return data;
+      return this.handleResponse<T>(response);
     } catch (error) {
       console.error('Erro na requisição DELETE:', error);
-      throw error;
+      return {
+        success: false,
+        error: { statusCode: 500, message: 'Internal server error' },
+      };
     }
   }
 }

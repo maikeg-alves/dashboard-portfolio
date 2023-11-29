@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Box as MUIBox } from '@mui/material';
+import { Box as MUIBox, Modal } from '@mui/material';
 
 export const Box = styled(MUIBox)`
   position: absolute;
@@ -17,6 +17,10 @@ export const Box = styled(MUIBox)`
   box-shadow: 24px;
   padding: 1rem;
   border-radius: 17px;
+
+  @media (max-width: 700px) {
+    width: 90%;
+  }
 
   .exit {
     display: flex;
@@ -36,4 +40,8 @@ export const Box = styled(MUIBox)`
     width: 90%;
     padding: 20px;
   }
+`;
+
+export const MUIModal = styled(Modal)`
+  width: 100%;
 `;

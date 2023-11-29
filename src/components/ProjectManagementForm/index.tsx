@@ -10,7 +10,9 @@ import { Provaider } from '@interfaces';
 
 import { Steps } from './Steps';
 import { ApiManager } from '@hook';
-import { baseUrl } from '@utils';
+import { baseUrl, closeAlertWithDelay } from '@utils';
+import { statusMessages } from './exceptions';
+import { StatusCodes } from '../auth/login/exceptions';
 
 const steps = [
   'name, Github, description',
@@ -42,6 +44,9 @@ interface SelecteComponet {
 }
 
 export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
+  const [Element, setElement] = React.useState<JSX.Element | null>(null);
+  const [showAlert, setShowAlert] = React.useState(false);
+
   const [step, setStep] = React.useState<number>(SetComponet.StepOne);
   const [check, setCheck] = React.useState<boolean>(false);
   const [apiManager] = React.useState(
@@ -52,27 +57,9 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
     ),
   );
 
-  async function postData<T>(dados: T) {
-    try {
-      const data: T = await apiManager.postData(dados);
-      return data;
-    } catch (error) {
-      console.error('Erro ao enviar dados:', error);
-      throw error;
-    }
-  }
-
-  async function updateData<T>(dados: T) {
-    try {
-      const data: T = await apiManager.putData(dados);
-      return data;
-    } catch (error) {
-      console.error('Erro ao enviar dados:', error);
-      throw error;
-    }
-  }
-
   const methods = useForm<Inputs>();
+
+  const { reset } = methods;
 
   const onSubmit: SubmitHandler<Inputs> = async () => {
     const {
@@ -97,19 +84,28 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
           description: description ? description : null,
         };
 
-        if (props.update) {
-          const response = await updateData(bodyData);
-          console.log(response);
+        try {
+          const response = await (props.update
+            ? apiManager.putData(bodyData)
+            : apiManager.postData(bodyData));
+
+          if (!response.success && response.error) {
+            setElement(statusMessages[response.error.statusCode]);
+            closeAlertWithDelay(6000, setShowAlert);
+            setStep(SetComponet.StepOne);
+            reset();
+            return;
+          }
+
+          setElement(statusMessages[StatusCodes.CREATED]);
+          closeAlertWithDelay(6000, setShowAlert);
+
+          setTimeout(() => {
+            setCheck(true);
+          }, 3000);
+        } catch (error) {
+          console.error('Erro ao enviar dados:', error);
         }
-
-        const response = await postData(bodyData);
-        console.log(response);
-
-        /* 
-        setTimeout(() => {
-          setCheck(true);
-          console.log(bodyData);
-        }, 3000); */
       }
     }
   };
@@ -126,6 +122,7 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
         <FormProvider {...methods}>
           <Form onSubmit={methods.handleSubmit(onSubmit)}>
             {SetStepsComponet[step]}
+
             {step != SetComponet.StepThee && (
               <Col xs={12} className="d-flex justify-content-center">
                 <button type="submit" className="w-100">
@@ -137,7 +134,7 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
         </FormProvider>
       </Col>
       <StepperBox>
-        <Stepper activeStep={step} alternativeLabel>
+        <Stepper activeStep={!check ? step : 4} alternativeLabel>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -145,6 +142,8 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
           ))}
         </Stepper>
       </StepperBox>
+
+      {showAlert && Element}
     </>
   );
 };

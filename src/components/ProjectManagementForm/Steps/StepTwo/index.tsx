@@ -23,13 +23,12 @@ export const StepTwo: React.FC<StepTwoProps> = ({
       ? projects[0].thumbnail_url
       : defaultImageUrl;
 
-  if (Object.keys(errors).length > 0 && update) {
+  if (Object.keys(errors).length > 0) {
     if (!getValues().image_url) {
       setValue('image_url', imageUrl ? imageUrl : defaultImageUrl);
     }
 
-    if (getValues().technologies == undefined) {
-      console.log('error');
+    if (getValues().technologies == undefined && update) {
       const techsFromProjects = projects[0]?.techs || [];
       const techIds = techsFromProjects.map((tech) => tech.id);
       setValue('technologies', techIds);

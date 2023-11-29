@@ -21,7 +21,7 @@ import { sortByCreatedAt } from '@utils';
 
 interface PropsMain extends Provaider {
   selectedComponent: number;
-  mode: 'tech' | 'project';
+  mode: 'techs' | 'projects';
   update?: boolean;
   id?: number | null;
 }
@@ -41,7 +41,7 @@ const Projects: React.FC<Provaider> = (props) => {
   const [appData, setAppData] = React.useState<PropsMain>({
     ...props,
     selectedComponent: SetComponet.CREATE,
-    mode: 'project',
+    mode: 'projects',
     update: false,
     id: null,
   });

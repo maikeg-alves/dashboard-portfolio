@@ -7,7 +7,7 @@ import { Table, TableItems } from '@components';
 import { sortByCreatedAt } from '@utils';
 
 interface PropsGetView extends Provaider {
-  mode: 'tech' | 'project';
+  mode: 'techs' | 'projects';
   SetUpdate: (id: number) => void;
   SetDelete: (id: number) => void;
 }
@@ -17,7 +17,7 @@ const GetView: React.FC<PropsGetView> = (props) => {
 
   let techs;
 
-  if (props.mode === 'tech') {
+  if (props.mode === 'techs') {
     techs = props.techs.sort(sortByCreatedAt);
   } else if (props.projects) {
     projects = props.projects.sort(sortByCreatedAt);

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Modal as MUIModal } from '@mui/material';
-import { Box } from './styles';
+import { Box, MUIModal } from './styles';
 import { BsChevronDown } from 'react-icons/bs';
 import { Col } from 'react-bootstrap';
 

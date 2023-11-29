@@ -1,41 +1,79 @@
 import { StandardExceptionAlert } from '@utils';
 import { StatusErros, StatusCodes } from 'src/utils/StandardExeceptionAlert';
 
-export const RecoverySuccess = StandardExceptionAlert(
+export const ProjectCreationSuccess = StandardExceptionAlert(
   {
-    message: 'Recovery email sent successfully',
+    message: 'Project created successfully',
   },
   StatusErros.SUCCESS,
 );
 
-export const RecoveryExisting = StandardExceptionAlert(
+export const ProjectUpdateSuccess = StandardExceptionAlert(
   {
-    message: 'Recovery already requested for this email',
+    message: 'Project updated successfully',
   },
-  StatusErros.WARNING,
+  StatusErros.SUCCESS,
 );
 
-export const RecoveryNotFoud = StandardExceptionAlert(
+export const ProjectDeletionSuccess = StandardExceptionAlert(
   {
-    message: 'Email not found in the database',
+    message: 'Project deleted successfully',
+  },
+  StatusErros.SUCCESS,
+);
+
+export const ProjectCreationError = StandardExceptionAlert(
+  {
+    message: 'Error creating the project',
   },
   StatusErros.ERROR,
 );
 
-export const RecoveryUnavailableService = StandardExceptionAlert(
+export const ProjectUpdateError = StandardExceptionAlert(
+  {
+    message: 'Error updating the project',
+  },
+  StatusErros.ERROR,
+);
+
+export const ProjectDeletionError = StandardExceptionAlert(
+  {
+    message: 'Error deleting the project',
+  },
+  StatusErros.ERROR,
+);
+
+export const ProjectNotFound = StandardExceptionAlert(
+  {
+    message: 'Project not found',
+  },
+  StatusErros.ERROR,
+);
+
+export const AuthorizationError = StandardExceptionAlert(
+  {
+    message: 'Unauthorized access.',
+  },
+  StatusErros.ERROR,
+);
+
+export const ServerNotResponding = StandardExceptionAlert(
   {
     message: 'It appears that the server is not responding',
   },
   StatusErros.ERROR,
 );
 
-interface StatusMessages {
+export interface IStatusCode {
   [key: number]: JSX.Element;
 }
 
-export const statusMessages: StatusMessages = {
-  [StatusCodes.CREATED]: RecoverySuccess,
-  [StatusCodes.BAD_REQUEST]: RecoveryExisting,
-  [StatusCodes.NOT_FOUND]: RecoveryNotFoud,
-  [StatusCodes.INTERNAL_SERVER_ERROR]: RecoveryUnavailableService,
+export const statusMessages: IStatusCode = {
+  [StatusCodes.CREATED]: ProjectCreationSuccess,
+  [StatusCodes.OK]: ProjectUpdateSuccess,
+  [StatusCodes.NO_CONTENT]: ProjectDeletionSuccess,
+  [StatusCodes.BAD_REQUEST]: ProjectCreationError,
+  [StatusCodes.NOT_FOUND]: ProjectNotFound,
+  [StatusCodes.UNAUTHORIZED]: AuthorizationError,
+  [StatusCodes.INTERNAL_SERVER_ERROR]: ServerNotResponding,
 };
