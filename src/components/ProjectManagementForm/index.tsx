@@ -9,7 +9,7 @@ import { Form, StepperBox } from './styles';
 import { Provaider } from '@interfaces';
 
 import { Steps } from './Steps';
-import { ApiManager } from '@hook';
+import { ApiManager, DataContext } from '@hook';
 import { baseUrl, closeAlertWithDelay } from '@utils';
 import { statusMessages } from './exceptions';
 import { StatusCodes } from '../auth/login/exceptions';
@@ -31,6 +31,7 @@ type Inputs = {
 
 interface PropsManagementForm extends Provaider {
   update?: boolean;
+  hide: () => void;
 }
 
 enum SetComponet {
@@ -44,6 +45,7 @@ interface SelecteComponet {
 }
 
 export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
+  const context = React.useContext(DataContext);
   const [Element, setElement] = React.useState<JSX.Element | null>(null);
   const [showAlert, setShowAlert] = React.useState(false);
 
@@ -96,12 +98,13 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
             reset();
             return;
           }
-
+          context?.atualizarDados();
           setElement(statusMessages[StatusCodes.CREATED]);
           closeAlertWithDelay(6000, setShowAlert);
+          setCheck(true);
 
           setTimeout(() => {
-            setCheck(true);
+            props.hide();
           }, 3000);
         } catch (error) {
           console.error('Erro ao enviar dados:', error);

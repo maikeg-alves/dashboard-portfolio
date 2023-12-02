@@ -1,7 +1,7 @@
 import Panel from './Panel/Panel.module';
-import Dashbord from './Dashbord/Dashbord.module';
+import Statistics from './Statistics/Statistics.module';
 import Projects from './Projects/Projects.module';
 import MobilePanel from './MobilePanel/MobilePanel.module';
 import UserArea from './userArea/userArea.module';
 
-export { Panel, Dashbord, Projects, MobilePanel, UserArea };
+export { Panel, Statistics, Projects, MobilePanel, UserArea };

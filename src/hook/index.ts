@@ -1,2 +1,2 @@
-export { DataProvider } from './DataProvider';
+export { DataProvider, DataContext } from './DataProvider';
 export { ApiManager } from './ApiManger';

@@ -14,9 +14,10 @@ import {
   GetView,
   Delete,
   ProjectManagementForm,
+  LoadingPage,
 } from '@components';
 
-import { Provaider } from '../../interfaces';
+import { IProject, Provaider } from '../../interfaces';
 import { sortByCreatedAt } from '@utils';
 
 interface PropsMain extends Provaider {
@@ -24,7 +25,9 @@ interface PropsMain extends Provaider {
   mode: 'techs' | 'projects';
   update?: boolean;
   id?: number | null;
+  hide: () => void; // Adicione esta linha
 }
+
 enum SetComponet {
   GET = 1,
   CREATE = 2,
@@ -38,12 +41,14 @@ interface SelecteComponet {
 
 const Projects: React.FC<Provaider> = (props) => {
   const { isShown, toggle } = useModal();
+
   const [appData, setAppData] = React.useState<PropsMain>({
     ...props,
     selectedComponent: SetComponet.CREATE,
     mode: 'projects',
     update: false,
     id: null,
+    hide: toggle, // Adicione esta linha
   });
 
   const handleviewProjects = () => {
@@ -79,7 +84,6 @@ const Projects: React.FC<Provaider> = (props) => {
   };
 
   const handleDelete = (id: number) => {
-    console.log(id);
     const selectedProject = props.projects.find((p) => p.id === id);
 
     if (selectedProject) {
@@ -93,6 +97,17 @@ const Projects: React.FC<Provaider> = (props) => {
     !isShown && toggle();
   };
 
+  const [projects, setProjects] = React.useState<IProject[]>([]);
+
+  React.useEffect(() => {
+    setProjects(props.projects || []);
+    setAppData({
+      ...props,
+      ...appData,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.projects, props]);
+
   const currentComponent: SelecteComponet = {
     [SetComponet.GET]: (
       <GetView {...appData} SetDelete={handleDelete} SetUpdate={handleUpdate} />
@@ -102,7 +117,9 @@ const Projects: React.FC<Provaider> = (props) => {
     [SetComponet.UPDATE]: <ProjectManagementForm {...appData} />,
   };
 
-  return (
+  return !projects.length ? (
+    <LoadingPage />
+  ) : (
     <>
       <Project xs={12}>
         <Container>
@@ -126,35 +143,26 @@ const Projects: React.FC<Provaider> = (props) => {
             </div>
             <Row className="flex-responsive" style={{ height: 'auto' }}>
               <Table techs={true}>
-                <>
-                  {props.projects &&
-                    props.projects
-                      .sort(sortByCreatedAt)
-                      .slice(0, 4)
-                      .map((project) => (
-                        <>
-                          <TableItems
-                            {...project}
-                            handleDeleteProject={handleDelete}
-                            handleEditProject={handleUpdate}
-                          />
-                        </>
-                      ))}
-                </>
+                {projects
+                  .sort(sortByCreatedAt)
+                  .slice(0, 4)
+                  .map((project) => (
+                    <>
+                      <TableItems
+                        {...project}
+                        handleDeleteProject={handleDelete}
+                        handleEditProject={handleUpdate}
+                      />
+                    </>
+                  ))}
               </Table>
             </Row>
-            {props.projects.length && (
-              <>
-                <Col xs={12} lg={12} className="modalgrid">
-                  <button
-                    className="add-plus w-100"
-                    onClick={handleviewProjects}
-                  >
-                    <AiOutlinePlusCircle />
-                  </button>
-                </Col>
-              </>
-            )}
+
+            <Col xs={12} lg={12} className="modalgrid">
+              <button className="add-plus w-100" onClick={handleviewProjects}>
+                <AiOutlinePlusCircle />
+              </button>
+            </Col>
           </Col>
         </Container>
       </Project>

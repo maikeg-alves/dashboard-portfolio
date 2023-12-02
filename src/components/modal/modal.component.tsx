@@ -24,7 +24,10 @@ const Modal: React.FC<ModalProps> = ({ isShown, hide, children }) => {
               <BsChevronDown />
             </span>
           </Col>
-          {children}
+          {/* {children} */}
+          {React.Children.map(children, (child) =>
+            React.cloneElement(child, { isShown, hide }),
+          )}
         </Box>
       </MUIModal>
     </div>

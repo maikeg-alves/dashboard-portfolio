@@ -59,7 +59,7 @@ const MobilePanel: React.FC<Props> = (props) => {
                 <i className="icon">
                   <RiFileCodeFill />
                 </i>
-                <span className="text">Technologys</span>
+                <span className="text">Techs</span>
               </a>
             </li>
 

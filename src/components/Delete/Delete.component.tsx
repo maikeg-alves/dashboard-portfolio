@@ -11,6 +11,7 @@ import { StatusCodes } from '../auth/login/exceptions';
 
 interface PropsDelete extends Provaider {
   mode: 'techs' | 'projects';
+  hide: () => void;
 }
 
 const Delete: React.FC<PropsDelete> = (props) => {
@@ -39,8 +40,6 @@ const Delete: React.FC<PropsDelete> = (props) => {
     }
   };
 
-  /* TODO: trocar pelo hook de delete */
-
   const handleDelete = async () => {
     try {
       const response = await apiManager.deleteData();
@@ -54,6 +53,10 @@ const Delete: React.FC<PropsDelete> = (props) => {
 
       setElement(statusMessages[StatusCodes.CREATED]);
       closeAlertWithDelay(6000, setShowAlert);
+
+      setTimeout(() => {
+        props.hide();
+      }, 3000);
     } catch (error) {
       console.error('Erro ao deletar Item:', error);
     }

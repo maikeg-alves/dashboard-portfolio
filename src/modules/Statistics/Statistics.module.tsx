@@ -6,7 +6,7 @@ import { Provaider, IGithubRepos } from '@interfaces';
 
 type LanguageCount = { [language: string]: number };
 
-const Dashbord: React.FC<Provaider> = (props) => {
+const Statistics: React.FC<Provaider> = (props) => {
   function languageCounts(reposGithub: IGithubRepos[]) {
     const languageCounts: LanguageCount = {};
 
@@ -26,12 +26,10 @@ const Dashbord: React.FC<Provaider> = (props) => {
 
   const mostLanguage = languageCounts(props.github);
 
-  console.log(props.github.length);
-
   return (
     <Dash>
       <div>
-        <h3>Dashboard:</h3>
+        <h3>Statistics:</h3>
       </div>
       <Container className="flex-responsive ">
         <Row>
@@ -111,4 +109,4 @@ const Dashbord: React.FC<Provaider> = (props) => {
   );
 };
 
-export default Dashbord;
+export default Statistics;

@@ -17,35 +17,27 @@ const image = 'https://i.imgur.com/NIkBDgT.jpg';
 const Login: NextPage = () => {
   const [page, setPage] = React.useState<number>(1);
 
-  let setComponent: React.ReactElement;
-
-  switch (page) {
-    case 1:
-      setComponent = <LoginComponet setPage={(page) => setPage(page)} />;
-      break;
-    case 2:
-      setComponent = <AuthTwoStep />;
-      break;
-    case 3:
-      setComponent = <ConfirmCodeComponent setPage={(page) => setPage(page)} />;
-      break;
-    case 4:
-      setComponent = (
-        <ChangePasswordComponent setPage={(page) => setPage(page)} />
-      );
-      break;
-    case 5:
-      setComponent = <RecoveryComponent setPage={(page) => setPage(page)} />;
-      break;
-    default:
-      setComponent = <p>Nenhuma página disponível</p>;
-      break;
-  }
+  const getPageComponent = (page: number) => {
+    switch (page) {
+      case 1:
+        return <LoginComponet setPage={(page) => setPage(page)} />;
+      case 2:
+        return <AuthTwoStep />;
+      case 3:
+        return <ConfirmCodeComponent setPage={(page) => setPage(page)} />;
+      case 4:
+        return <ChangePasswordComponent setPage={(page) => setPage(page)} />;
+      case 5:
+        return <RecoveryComponent setPage={(page) => setPage(page)} />;
+      default:
+        return <p>Nenhuma página disponível</p>;
+    }
+  };
 
   return (
     <Container background={image}>
       <CardLogin xs={12}>
-        <>{setComponent}</>
+        <>{getPageComponent(page)}</>
       </CardLogin>
     </Container>
   );
