@@ -3,10 +3,16 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { CardGrid, Dash, ProgressBar } from './styles';
 
 import { Provaider, IGithubRepos } from '@interfaces';
+import React from 'react';
+import { LoadingPage } from '@components';
 
 type LanguageCount = { [language: string]: number };
 
 const Statistics: React.FC<Provaider> = (props) => {
+  const [statistics, setStatistics] = React.useState<Provaider>(
+    {} as Provaider,
+  );
+
   function languageCounts(reposGithub: IGithubRepos[]) {
     const languageCounts: LanguageCount = {};
 
@@ -26,7 +32,18 @@ const Statistics: React.FC<Provaider> = (props) => {
 
   const mostLanguage = languageCounts(props.github);
 
-  return (
+  React.useEffect(() => {
+    setStatistics(props || {});
+  }, [props]);
+
+  const StatisticsIsValid =
+    statistics.github?.length &&
+    statistics.techs?.length &&
+    statistics.projects?.length;
+
+  return !StatisticsIsValid ? (
+    <LoadingPage />
+  ) : (
     <Dash>
       <div>
         <h3>Statistics:</h3>

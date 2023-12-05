@@ -142,7 +142,7 @@ const Projects: React.FC<Provaider> = (props) => {
               <h3>Existing projects</h3>
             </div>
             <Row className="flex-responsive" style={{ height: 'auto' }}>
-              <Table techs={true}>
+              <Table techs>
                 {projects
                   .sort(sortByCreatedAt)
                   .slice(0, 4)

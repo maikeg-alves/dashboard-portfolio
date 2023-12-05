@@ -8,32 +8,26 @@ import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { Form, StepperBox } from './styles';
 import { Provaider } from '@interfaces';
 
-import { Steps } from './Steps';
-import { ApiManager, DataContext } from '@hook';
-import { baseUrl, closeAlertWithDelay } from '@utils';
-import { statusMessages } from './exceptions';
-import { StatusCodes } from '../auth/login/exceptions';
+import { Steps } from './steps';
 import { SelecteComponet } from 'src/interfaces/component';
+import { baseUrl, closeAlertWithDelay } from '@utils';
+import { ApiManager, DataContext } from '@hook';
+import { technologyStatusMessages } from './exceptions';
+import { StatusCodes } from '../auth/login/exceptions';
 
-const steps = [
-  'name, Github, description',
-  'image url, technologies',
-  'concluir',
-];
-
-type Inputs = {
-  projectName: string;
-  githubRepository: string;
-  description: string;
-  image_url: string;
-  difficulty: number;
-  technologies: number[];
-};
+const steps = ['name, icon url, description', 'preview', 'finish'];
 
 interface PropsManagementForm extends Provaider {
   update?: boolean;
   hide: () => void;
 }
+
+type Inputs = {
+  name: string;
+  icon: string;
+  description: string;
+  checkPreview: boolean;
+};
 
 enum SetComponet {
   StepOne = 0,
@@ -41,7 +35,7 @@ enum SetComponet {
   StepThee = 2,
 }
 
-export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
+const TechManagementForm: React.FC<PropsManagementForm> = (props) => {
   const context = React.useContext(DataContext);
   const [Element, setElement] = React.useState<JSX.Element | null>(null);
   const [showAlert, setShowAlert] = React.useState(false);
@@ -50,8 +44,8 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
   const [check, setCheck] = React.useState<boolean>(false);
   const [apiManager] = React.useState(
     new ApiManager(
-      `${baseUrl}projects/${
-        props.update ? `update/${props.projects[0].id}` : 'create'
+      `${baseUrl}techs/${
+        props.update ? `update/${props.techs[0].id}` : 'create'
       }`,
     ),
   );
@@ -61,26 +55,17 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
   const { reset } = methods;
 
   const onSubmit: SubmitHandler<Inputs> = async () => {
-    const {
-      projectName,
-      githubRepository,
-      description,
-      image_url,
-      technologies,
-    } = methods.getValues();
-
-    if ((projectName && githubRepository) || description) {
+    const { name, icon, description, checkPreview } = methods.getValues();
+    if (name && icon && description) {
       setStep(SetComponet.StepTwo);
 
-      if (image_url && technologies.length !== 0) {
+      if (checkPreview) {
         setStep(SetComponet.StepThee);
 
         const bodyData = {
-          name: projectName,
-          thumbnail_url: image_url,
-          githubRepoId: githubRepository,
-          techs: technologies,
-          description: description ? description : null,
+          name: name,
+          icon: icon,
+          description: description,
         };
 
         try {
@@ -89,14 +74,15 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
             : apiManager.postData(bodyData));
 
           if (!response.success && response.error) {
-            setElement(statusMessages[response.error.statusCode]);
+            setElement(technologyStatusMessages[response.error.statusCode]);
             closeAlertWithDelay(6000, setShowAlert);
             setStep(SetComponet.StepOne);
             reset();
             return;
           }
+
           context?.atualizarDados();
-          setElement(statusMessages[StatusCodes.CREATED]);
+          setElement(technologyStatusMessages[StatusCodes.CREATED]);
           closeAlertWithDelay(6000, setShowAlert);
           setCheck(true);
 
@@ -113,7 +99,7 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
   const SetStepsComponet: SelecteComponet = {
     [SetComponet.StepOne]: <Steps.One {...props} />,
     [SetComponet.StepTwo]: <Steps.Two {...props} />,
-    [SetComponet.StepThee]: <Steps.Thee success={check} />,
+    [SetComponet.StepThee]: <Steps.Thee success={check} {...props} />,
   };
 
   return (
@@ -126,18 +112,21 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
             {step != SetComponet.StepThee && (
               <Col xs={12} className="d-flex justify-content-center">
                 <button type="submit" className="w-100">
-                  {step != SetComponet.StepOne ? 'Finalizar' : 'Confirma'}
+                  {step != SetComponet.StepOne && step != SetComponet.StepThee
+                    ? 'Finalizar'
+                    : 'Confirma'}
                 </button>
               </Col>
             )}
           </Form>
         </FormProvider>
       </Col>
+
       <StepperBox>
         <Stepper activeStep={!check ? step : 4} alternativeLabel>
-          {steps.map((label) => (
+          {steps.map((label, index) => (
             <Step key={label}>
-              <StepLabel>{label}</StepLabel>
+              <StepLabel onClick={() => setStep(index)}>{label}</StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -147,3 +136,5 @@ export const ProjectManagementForm: React.FC<PropsManagementForm> = (props) => {
     </>
   );
 };
+
+export default TechManagementForm;

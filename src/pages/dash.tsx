@@ -1,7 +1,14 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
 
-import { Panel, Projects, MobilePanel, UserArea, Statistics } from '../modules';
+import {
+  Panel,
+  Projects,
+  MobilePanel,
+  UserArea,
+  Statistics,
+  Techs,
+} from '../modules';
 import { Container } from '../layout';
 
 import { LoadingPage } from '@components';
@@ -11,7 +18,7 @@ import { NextPage } from 'next';
 const Dashbord: NextPage = () => {
   const { dados, atualizarDados } = React.useContext(DataContext) || {};
   const [loader, setLoader] = React.useState<boolean>(false);
-  const [pages, setPages] = React.useState<string>('Home');
+  const [pages, setPages] = React.useState<string>('Techs');
 
   React.useEffect(() => {
     setLoader(!dados);
@@ -31,8 +38,8 @@ const Dashbord: NextPage = () => {
         return <Statistics {...dados} />;
       case 'Projects':
         return <Projects {...dados} />;
-      /*  case 'Technologys':
-        return <Technologys updateValues={handUpdate} {...dados} />; */
+      case 'Techs':
+        return <Techs {...dados} />;
       case 'Settings':
         return <UserArea {...dados} />;
       default:

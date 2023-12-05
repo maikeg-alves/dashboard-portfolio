@@ -1,5 +1,5 @@
 import FormProject from './formProject/formProject.componet';
-import FormTechnology from './formTechnology/formTechnology.componet';
+import TechManagementForm from './TechManagementForm';
 import TableItems from './Table/TableItem.component';
 import Table from './Table/Table.component';
 import { useModal, Modal } from './modal/modal.component';
@@ -22,7 +22,7 @@ export {
   Modal,
   useModal,
   FormProject,
-  FormTechnology,
+  TechManagementForm,
   GetView,
   Delete,
   ErrorMessage,
