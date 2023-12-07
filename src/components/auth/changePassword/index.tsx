@@ -2,7 +2,7 @@ import React from 'react';
 import { Col, Form } from 'react-bootstrap';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { RiLockPasswordLine } from '@styles';
-import { ErrorContainer, FormGroup } from '../login/styles';
+import { FormGroup } from '../login/styles';
 
 import { useRouter } from 'next/router';
 
@@ -12,7 +12,6 @@ import {
   baseUrl,
   closeAlertWithDelay,
   delayChangePage,
-  recoveryPasswordErrors,
 } from '@utils';
 import { StatusCodes, statusMessages } from './exceptions';
 
@@ -156,18 +155,6 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
               </div>
             </FormGroup>
 
-            {errors.password1 && (
-              <ErrorContainer>
-                <p>{recoveryPasswordErrors.password}</p>
-              </ErrorContainer>
-            )}
-
-            {errors.password1?.type === 'minLength' && (
-              <ErrorContainer>
-                <p>{recoveryPasswordErrors.incompatibleSize}</p>
-              </ErrorContainer>
-            )}
-
             <FormGroup>
               <Form.Control
                 type="password"
@@ -187,12 +174,6 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
                 <RiLockPasswordLine />
               </div>
             </FormGroup>
-
-            {errors.password2 && (
-              <ErrorContainer>
-                <p>{recoveryPasswordErrors.password}</p>
-              </ErrorContainer>
-            )}
 
             <Col xs="auto" className="d-flex flex-column align-items-center">
               <Col xs="auto" className="d-flex flex-column align-items-center">
@@ -215,12 +196,6 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
                   </p>
                 )}
               </Col>
-
-              {error.status && error.type === 'incompatible' && (
-                <ErrorContainer>
-                  <p>{recoveryPasswordErrors.incompatible}</p>
-                </ErrorContainer>
-              )}
             </Col>
           </Form>
         </Col>
