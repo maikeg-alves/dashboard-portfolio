@@ -6,7 +6,7 @@ import { FormGroup } from '../login/styles';
 
 import { useRouter } from 'next/router';
 
-import { LoadingPage } from '@components';
+import { ErrorMessage, LoadingPage } from '@components';
 import {
   GetCookie,
   baseUrl,
@@ -112,8 +112,6 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
     router.push('/dash');
   };
 
-  console.log(watch(), error);
-
   return (
     <>
       {!loader && (
@@ -136,7 +134,10 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
                 type="password"
                 placeholder="Password"
                 {...register('password1', {
-                  required: true,
+                  required: {
+                    value: true,
+                    message: 'O campo é obrigatório',
+                  },
                   minLength: {
                     value: 8,
                     message:
@@ -155,12 +156,19 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
               </div>
             </FormGroup>
 
+            {errors.password1 && errors.password1.message && (
+              <ErrorMessage message={errors.password1.message} />
+            )}
+
             <FormGroup>
               <Form.Control
                 type="password"
                 placeholder="Confirmar Password"
                 {...register('password2', {
-                  required: true,
+                  required: {
+                    value: true,
+                    message: 'O campo é obrigatório',
+                  },
                   value: watch('password1'),
                 })}
                 style={{
@@ -174,6 +182,10 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
                 <RiLockPasswordLine />
               </div>
             </FormGroup>
+
+            {errors.password2 && errors.password2.message && (
+              <ErrorMessage message={errors.password2.message} />
+            )}
 
             <Col xs="auto" className="d-flex flex-column align-items-center">
               <Col xs="auto" className="d-flex flex-column align-items-center">
