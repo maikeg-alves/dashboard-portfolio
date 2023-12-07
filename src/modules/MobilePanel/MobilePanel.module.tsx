@@ -54,12 +54,12 @@ const MobilePanel: React.FC<Props> = (props) => {
                 <span className="text">Projects</span>
               </a>
             </li>
-            <li className="list" onClick={() => handleActive('Technologys')}>
+            <li className="list" onClick={() => handleActive('Techs')}>
               <a href="javascript:void(0);">
                 <i className="icon">
                   <RiFileCodeFill />
                 </i>
-                <span className="text">Technologys</span>
+                <span className="text">Techs</span>
               </a>
             </li>
 

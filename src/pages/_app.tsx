@@ -5,12 +5,15 @@ import { ThemeProvider } from 'styled-components';
 import GlobalStyle from '../styles/global';
 import theme from '../styles/theme';
 import { Layout } from '../layout';
+import { DataProvider } from '@hook';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <ThemeProvider theme={theme}>
       <Layout>
-        <Component {...pageProps} />
+        <DataProvider>
+          <Component {...pageProps} />
+        </DataProvider>
         <GlobalStyle />
       </Layout>
     </ThemeProvider>

@@ -15,16 +15,10 @@ export const Table = styled(BTTable)`
     margin: 10px 0;
     height: 37px;
     border-radius: 13px;
-    /*  display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-wrap: nowrap;
-    flex-direction: row; */
     background-color: ${(props) => props.theme.table.background};
     color: ${(props) => props.theme.table.text};
 
     td {
-      /*  padding: 5px 10px; */
       text-align: center;
       button {
         border: none;
@@ -42,13 +36,16 @@ export const Table = styled(BTTable)`
     }
   }
 
+  .sub-menu {
+    color: #6f6f6f;
+  }
+
   th {
-    display: none; // for accessibility, use a visually hidden method here instead! Thanks, reddit!
+    display: none;
   }
 
   td {
     font-weight: normal;
-    /* display: block; */
   }
 
   th,

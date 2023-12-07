@@ -11,170 +11,164 @@ import {
   Table,
   Modal,
   useModal,
-  FormProject,
   GetView,
   Delete,
-} from '../../components';
-import { IGithub, IProject, ITechnologys } from '../../interfaces';
+  ProjectManagementForm,
+  LoadingPage,
+} from '@components';
 
-type Props = {
-  projects: IProject[];
-  technologys: ITechnologys[];
-  github: IGithub[];
-  values: boolean;
-  admin: boolean;
-  updateValues?: (values: boolean) => void;
-};
+import { IProject, Provaider } from '../../interfaces';
+import { sortByCreatedAt } from '@utils';
 
-const Projects: React.FC<Props> = (props) => {
-  const { projects } = props;
+interface PropsMain extends Provaider {
+  selectedComponent: number;
+  mode: 'techs' | 'projects';
+  update?: boolean;
+  id?: number | null;
+  hide: () => void; // Adicione esta linha
+}
 
+enum SetComponet {
+  GET = 1,
+  CREATE = 2,
+  UPDATE = 3,
+  DELETE = 4,
+}
+
+interface SelecteComponet {
+  [key: number]: JSX.Element;
+}
+
+const Projects: React.FC<Provaider> = (props) => {
   const { isShown, toggle } = useModal();
 
-  const [pages, setPages] = React.useState<number>(0);
-
-  const [putprojectsPage, setPutprojectsPage] = React.useState<Props>(
-    [] as unknown as Props,
-  );
-
-  const [id, setID] = React.useState<number>(0);
-
-  const handleNewProjects = () => {
-    setPages(1);
-    toggle();
-  };
+  const [appData, setAppData] = React.useState<PropsMain>({
+    ...props,
+    selectedComponent: SetComponet.CREATE,
+    mode: 'projects',
+    update: false,
+    id: null,
+    hide: toggle, // Adicione esta linha
+  });
 
   const handleviewProjects = () => {
-    setPages(2);
-    toggle();
+    setAppData({
+      ...appData,
+      projects: props.projects,
+      selectedComponent: SetComponet.GET,
+    });
+    !isShown && toggle();
   };
 
-  const handleeditProjects = (id: number) => {
-    setPages(3);
-    if (props) {
-      const data = props.projects.filter((project) => project.id === id);
+  const handleCreate = () => {
+    setAppData({
+      ...appData,
+      update: false,
+      selectedComponent: SetComponet.CREATE,
+    });
+    !isShown && toggle();
+  };
 
-      const { technologys, github } = props;
+  const handleUpdate = (id: number) => {
+    const selectedProject = props.projects.find((p) => p.id === id);
 
-      setPutprojectsPage({
-        projects: data,
-        technologys,
-        github,
-        values: true,
-        admin: props.admin,
+    if (selectedProject) {
+      setAppData({
+        ...appData,
+        update: true,
+        projects: [selectedProject] || [],
+        selectedComponent: SetComponet.UPDATE,
+      });
+    }
+    !isShown && toggle();
+  };
+
+  const handleDelete = (id: number) => {
+    const selectedProject = props.projects.find((p) => p.id === id);
+
+    if (selectedProject) {
+      setAppData({
+        ...appData,
+        projects: [selectedProject] || [],
+        selectedComponent: SetComponet.DELETE,
       });
     }
 
-    toggle();
+    !isShown && toggle();
   };
 
-  // setando o id que será usado
-
-  const handledeleteProjects = (id: number) => {
-    setPages(4);
-    setID(id);
-    toggle();
-  };
-
-  // solicitando updates nos dados após mudanças na base de dasdos
-
-  const statusUpdate = (e: boolean) => {
-    if (props.updateValues !== undefined) {
-      props.updateValues(e ? false : true);
-      toggle();
-    }
-  };
-
-  // renderizando a pagina de acordo com oq o usuario seleciona
-
-  let pagesElement: React.ReactElement;
-
-  switch (pages) {
-    case 1:
-      pagesElement = <FormProject statusUpdate={statusUpdate} {...props} />;
-      break;
-    case 2:
-      pagesElement = <GetView statusUpdate={statusUpdate} {...props} />;
-      break;
-    case 3:
-      pagesElement = (
-        <FormProject statusUpdate={statusUpdate} {...putprojectsPage} />
-      );
-      break;
-    case 4:
-      pagesElement = <Delete handleDelete={statusUpdate} id={id} {...props} />;
-      break;
-    default:
-      pagesElement = <div>valores não carregados</div>;
-  }
+  const [projects, setProjects] = React.useState<IProject[]>([]);
 
   React.useEffect(() => {
-    if (isShown === false) {
-      setPages(0);
-    }
-  }, [isShown]);
+    setProjects(props.projects || []);
+    setAppData({
+      ...props,
+      ...appData,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.projects, props]);
 
-  return (
+  const currentComponent: SelecteComponet = {
+    [SetComponet.GET]: (
+      <GetView {...appData} SetDelete={handleDelete} SetUpdate={handleUpdate} />
+    ),
+    [SetComponet.DELETE]: <Delete {...appData} />,
+    [SetComponet.CREATE]: <ProjectManagementForm {...appData} />,
+    [SetComponet.UPDATE]: <ProjectManagementForm {...appData} />,
+  };
+
+  return !projects.length ? (
+    <LoadingPage />
+  ) : (
     <>
       <Project xs={12}>
-        <Col>
-          <h3>New project: </h3>
-        </Col>
         <Container>
-          <Row className="my-3">
-            <Col className="modalgrid">
-              <button className="add-icon" onClick={handleNewProjects}>
-                <AiFillPlusCircle />
-                <p>add new project</p>
-              </button>
+          <Col xs={12}>
+            <Col>
+              <h3>New project: </h3>
             </Col>
-          </Row>
+            <Row className="my-3">
+              <Col className="modalgrid">
+                <button className="add-icon" onClick={handleCreate}>
+                  <AiFillPlusCircle />
+                  <p>add new project</p>
+                </button>
+              </Col>
+            </Row>
+          </Col>
 
           <Col xs={12}>
             <div>
               <h3>Existing projects</h3>
             </div>
             <Row className="flex-responsive" style={{ height: 'auto' }}>
-              <Table>
-                <tbody>
-                  {projects &&
-                    projects
-                      .sort(
-                        (a, b) =>
-                          Date.parse(a.created_at) - Date.parse(b.created_at),
-                      )
-                      .slice(0, 4)
-                      .map((project, id: number) => (
-                        <>
-                          <TableItems
-                            id={id + 1}
-                            name={project.name}
-                            idproject={project.id}
-                            created_at={project.created_at}
-                            technologys={project.technologys}
-                            handleDeleteProject={handledeleteProjects}
-                            handleEditProject={handleeditProjects}
-                          />
-                        </>
-                      ))}
-                </tbody>
+              <Table techs>
+                {projects
+                  .sort(sortByCreatedAt)
+                  .slice(0, 4)
+                  .map((project) => (
+                    <>
+                      <TableItems
+                        {...project}
+                        handleDeleteProject={handleDelete}
+                        handleEditProject={handleUpdate}
+                      />
+                    </>
+                  ))}
               </Table>
             </Row>
-            {projects.length > 4 && (
-              <>
-                <Col xs={12} className="modalgrid">
-                  <button className="add-plus" onClick={handleviewProjects}>
-                    <AiOutlinePlusCircle />
-                  </button>
-                </Col>
-              </>
-            )}
+
+            <Col xs={12} lg={12} className="modalgrid">
+              <button className="add-plus w-100" onClick={handleviewProjects}>
+                <AiOutlinePlusCircle />
+              </button>
+            </Col>
           </Col>
         </Container>
       </Project>
 
       <Modal isShown={isShown} hide={toggle}>
-        <>{pagesElement}</>
+        {currentComponent[appData.selectedComponent]}
       </Modal>
     </>
   );

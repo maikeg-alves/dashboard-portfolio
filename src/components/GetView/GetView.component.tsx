@@ -1,131 +1,52 @@
 import * as React from 'react';
-import { IGithub, IProject, ITechnologys } from '@interfaces';
-import { Col } from 'react-bootstrap';
-import {
-  Delete,
-  FormProject,
-  Table,
-  TableItems,
-  FormTechnology,
-} from '../../components';
+import { Provaider } from '@interfaces';
+
 import { Container } from './styles';
-import { BsChevronDown } from 'react-icons/bs';
 
-type Props = {
-  projects: IProject[];
-  technologys: ITechnologys[];
-  github: IGithub[];
-  values: boolean;
-  mode?: boolean;
-  admin: boolean;
-  statusUpdate?: (status: boolean) => void;
-};
+import { Table, TableItems } from '@components';
+import { sortByCreatedAt } from '@utils';
 
-const GetView: React.FC<Props> = (props) => {
-  const { projects, technologys } = props;
+interface PropsGetView extends Provaider {
+  mode: 'techs' | 'projects';
+  SetUpdate: (id: number) => void;
+  SetDelete: (id: number) => void;
+}
 
-  const [id, setId] = React.useState<number>(0);
-  const [pages, setPages] = React.useState<number>(0);
+const GetView: React.FC<PropsGetView> = (props) => {
+  let projects;
 
-  const [data, setData] = React.useState<Props>([] as unknown as Props);
+  let techs;
 
-  const handledeleteProjects = (e: number) => {
-    setPages(1);
-    setId(e);
-  };
-  const handleeditProjects = (id: number) => {
-    setPages(2);
-    setId(id);
-    const { projects, technologys, github } = props;
-
-    const data = projects?.filter((project) => project.id === id);
-
-    const allData: Props = {
-      projects: data,
-      technologys,
-      github,
-      values: true,
-      admin: props.admin,
-    };
-    setData(allData);
-  };
-
-  const Update = (e: boolean) => {
-    if (props.statusUpdate !== undefined) {
-      props.statusUpdate(e);
-    }
-  };
-
-  const exitpage = () => {
-    setPages(0);
-  };
-
-  let Elemente: React.ReactElement;
-
-  switch (pages) {
-    case 0:
-      Elemente = (
-        <Table>
-          {props.mode
-            ? technologys
-                .sort((a, b) => b.ability - a.ability)
-                .map((tech, id: number) => (
-                  <>
-                    <TableItems
-                      id={id + 1}
-                      name={tech.name}
-                      idproject={tech.id}
-                      ability={tech.ability}
-                      handleDeleteProject={handledeleteProjects}
-                      handleEditProject={handleeditProjects}
-                    />
-                  </>
-                ))
-            : projects
-                .sort(
-                  (a, b) => Date.parse(a.created_at) - Date.parse(b.created_at),
-                )
-                .map((project, id: number) => (
-                  <>
-                    <TableItems
-                      id={id + 1}
-                      name={project.name}
-                      idproject={project.id}
-                      created_at={project.created_at}
-                      technologys={project.technologys}
-                      handleDeleteProject={handledeleteProjects}
-                      handleEditProject={handleeditProjects}
-                    />
-                  </>
-                ))}
-        </Table>
-      );
-      break;
-
-    case 1:
-      Elemente = <Delete handleDelete={Update} id={id} {...props} />;
-      break;
-
-    case 2:
-      if (props.mode) {
-        Elemente = <FormTechnology statusUpdate={Update} id={id} {...data} />;
-      } else {
-        Elemente = <FormProject statusUpdate={Update} {...data} />;
-      }
-      break;
-
-    default:
-      Elemente = <p>error page</p>;
+  if (props.mode === 'techs') {
+    techs = props.techs.sort(sortByCreatedAt);
+  } else if (props.projects) {
+    projects = props.projects.sort(sortByCreatedAt);
   }
 
   return (
     <Container xs={12}>
-      <Col xs={12} className="exit">
-        <span onClick={exitpage}>
-          <BsChevronDown />
-        </span>
-      </Col>
-      <>{Elemente}</>
+      <Table techs={!techs} projects={!projects}>
+        {techs &&
+          techs.map((techs) => (
+            <>
+              <TableItems
+                {...techs}
+                handleDeleteProject={(id) => props.SetDelete(id)}
+                handleEditProject={(id) => props.SetUpdate(id)}
+              />
+            </>
+          ))}
+        {projects &&
+          projects.map((projects) => (
+            <>
+              <TableItems
+                {...projects}
+                handleDeleteProject={(id) => props.SetDelete(id)}
+                handleEditProject={(id) => props.SetUpdate(id)}
+              />
+            </>
+          ))}
+      </Table>
     </Container>
   );
 };

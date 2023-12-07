@@ -1,1 +1,1 @@
-export { URL_API } from './Api';
+export { baseUrl } from './baseurl';

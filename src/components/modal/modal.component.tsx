@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Modal as MUIModal } from '@mui/material';
-import { Box } from './styles';
+import { Box, MUIModal } from './styles';
+import { BsChevronDown } from 'react-icons/bs';
+import { Col } from 'react-bootstrap';
 
 export interface ModalProps {
   isShown: boolean;
@@ -17,7 +18,17 @@ const Modal: React.FC<ModalProps> = ({ isShown, hide, children }) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box>{children}</Box>
+        <Box>
+          <Col xs={12} className="exit">
+            <span onClick={hide}>
+              <BsChevronDown />
+            </span>
+          </Col>
+          {/* {children} */}
+          {React.Children.map(children, (child) =>
+            React.cloneElement(child, { isShown, hide }),
+          )}
+        </Box>
       </MUIModal>
     </div>
   );

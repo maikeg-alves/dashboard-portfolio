@@ -94,7 +94,7 @@ const Panel: React.FC<PanelProps> = (props) => {
               </button>
             </li>
             <li className="btndesk">
-              <button onClick={() => handleActive('Technologys')}>
+              <button onClick={() => handleActive('Techs')}>
                 <div>
                   <RiFileCodeFill />
                   <p>Technologys</p>
