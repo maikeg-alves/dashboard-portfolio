@@ -17,7 +17,6 @@ export const LoadingPage: React.FC<PropsLoading> = ({ showCheck }) => {
             value={100}
           />
         </Label>
-        {/* <input type="checkbox" id="check" onChange={handleCheckboxChange} /> */}
       </Col>
     </Container>
   );

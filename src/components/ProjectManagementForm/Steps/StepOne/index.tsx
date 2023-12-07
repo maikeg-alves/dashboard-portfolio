@@ -30,7 +30,7 @@ export const StepOne: React.FC<StepOneProps> = ({
         <Form.Label>Project Name</Form.Label>
         <Form.Control
           type="text"
-          placeholder={`${(update && projects[0].name) || 'add nome'}`}
+          placeholder={`${(update && projects[0].name) || 'Nome do Projeto'}`}
           {...register('projectName', {
             required: true,
             pattern: /^[a-zA-Z]/,
@@ -64,7 +64,9 @@ export const StepOne: React.FC<StepOneProps> = ({
         <Form.Label>Descriotion</Form.Label>
         <Form.Control
           as="textarea"
-          placeholder={`${update && projects[0].description}`}
+          placeholder={`${
+            (update && projects[0].description) || 'Descrição do projeto'
+          }`}
           style={{ height: '100px' }}
           {...register('description', {
             required: false,

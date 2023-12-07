@@ -69,7 +69,7 @@ export const StepTwo: React.FC<StepTwoProps> = ({
               <TextField
                 {...params}
                 variant="standard"
-                placeholder="Select the technologies applied "
+                placeholder="Selecione a Tecnologia Utilizada"
               />
             )}
           />

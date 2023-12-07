@@ -18,7 +18,7 @@ import { NextPage } from 'next';
 const Dashbord: NextPage = () => {
   const { dados, atualizarDados } = React.useContext(DataContext) || {};
   const [loader, setLoader] = React.useState<boolean>(false);
-  const [pages, setPages] = React.useState<string>('Techs');
+  const [pages, setPages] = React.useState<string>('Home');
 
   React.useEffect(() => {
     setLoader(!dados);

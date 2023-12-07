@@ -6,7 +6,7 @@ export function SetCookie(name: string, value: string, options: object): void {
   document.cookie = `${name}=${encodeURIComponent(value)}; ${optionsString}`;
 }
 
-export function GetCookie(name: string) {
+export function GetCookie(name: string): string | null {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -22,7 +22,7 @@ export function GetCookie(name: string) {
   return null;
 }
 
-export function DeleteCookie(name: string) {
+export function DeleteCookie(name: string): void {
   const expirationDate = new Date('2000-01-01').toUTCString();
   document.cookie = `${name}=; expires=${expirationDate}`;
 }

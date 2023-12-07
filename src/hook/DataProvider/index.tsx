@@ -2,6 +2,7 @@ import React from 'react';
 import { IGithubRepos, IProject, ITech } from '@interfaces';
 import { baseUrl } from '@constant';
 import { Provaider } from '@interfaces';
+import { GetCookie } from '@utils';
 
 interface DataContextProps {
   dados: Provaider;
@@ -28,6 +29,14 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const atualizarDados = async () => {
     try {
       const dadosAtualizados = await getData();
+
+      if (GetCookie('accesstoken')) {
+        setDados({
+          ...dadosAtualizados,
+          admin: true,
+        });
+      }
+
       setDados(dadosAtualizados);
     } catch (error) {
       console.error('Erro ao carregar dados atualizados:', error);
@@ -38,6 +47,14 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     const carregarDadosIniciais = async () => {
       try {
         const dadosIniciais = await getData();
+
+        if (GetCookie('accesstoken')) {
+          setDados({
+            ...dadosIniciais,
+            admin: true,
+          });
+        }
+
         setDados(dadosIniciais);
       } catch (error) {
         console.error('Erro ao carregar dados iniciais:', error);
@@ -70,12 +87,18 @@ export async function getData() {
     const techs = (await techsRes.json()) as ITech[];
     const github = (await githubRes.json()) as IGithubRepos[];
 
+    let isAdmin = false;
+
+    if (GetCookie('accesstoken')) {
+      isAdmin = true;
+    }
+
     return {
       projects,
       techs,
       github,
-      values: true,
-      admin: true,
+      values: false,
+      admin: isAdmin,
     };
   } catch (error) {
     console.error('Erro na requisição:', error);
