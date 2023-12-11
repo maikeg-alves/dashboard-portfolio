@@ -1,119 +1,61 @@
-import { PanelMenu } from './styles';
-import { IoMdExit } from 'react-icons/io';
-
-/* icons */
-import { RiHomeLine } from 'react-icons/ri';
-import { AiOutlineAppstoreAdd, AiOutlineUser } from 'react-icons/ai';
-import { RiFileCodeFill } from 'react-icons/ri';
 import React from 'react';
-import { useRouter } from 'next/router';
-import Image from 'next/image';
+import { Col } from 'react-bootstrap';
+
+import { Panel } from '@components';
+import { IoIosArrowForward } from 'react-icons/io';
+import { MenuContainer, PanelMenu, ReduceMenu } from './styles';
 
 type PanelProps = {
   setOpen: (open: string) => void;
   admin: boolean;
 };
 
-const Panel: React.FC<PanelProps> = (props) => {
-  const router = useRouter();
+const PanelDash: React.FC<PanelProps> = (props) => {
+  const panelRef = React.useRef<HTMLDivElement>(null);
 
-  const handleActive = (open: string) => {
-    props.setOpen(open);
-  };
+  const [reduced, setReduced] = React.useState<boolean>(false);
 
-  const logout = () => {
-    localStorage.getItem('token') && localStorage.removeItem('token');
-    router.push('/');
-  };
+  const toggleWidth = () => {
+    if (panelRef.current) {
+      const currentWidth = panelRef.current.offsetWidth;
+      const targetWidth = reduced ? '90px' : '285px';
 
-  if (typeof window !== 'undefined') {
-    const listItem = document.querySelectorAll(
-      '.btndesk',
-    ) as NodeListOf<HTMLElement>;
+      panelRef.current.style.width = targetWidth;
 
-    function activateLink(this: HTMLDivElement) {
-      listItem.forEach((item) => {
-        item.classList.remove('active');
-      });
-
-      this.classList.add('active');
+      void panelRef.current.offsetWidth;
+      panelRef.current.style.width = currentWidth === 0 ? 'auto' : targetWidth;
     }
-
-    listItem.forEach((item) => {
-      item.addEventListener('click', activateLink);
-    });
-  }
+  };
 
   return (
-    <PanelMenu>
-      <div className="d-flex flex-row align-items-center login">
-        <div className="avatar">
-          {/* <h4></h4> */}
-          <Image
-            src={`${
-              props.admin
-                ? 'https://i.imgur.com/p7LZCvN.png'
-                : 'https://i.imgur.com/YYNLL6b.jpgs'
-            }`} /* */
-            alt="avatar user"
-            width={55}
-            height={55}
-          />
-        </div>
-        <div className="user">
-          <h6>{props.admin ? 'Maicon Gabriel alves' : 'Usuário '}</h6>
-          <p> {props.admin ? 'administrador' : 'visitante '} </p>
-        </div>
-        <div className="m-3 logout">
-          <button onClick={logout}>
-            <IoMdExit />
-          </button>
-        </div>
-      </div>
+    <PanelMenu xs={'auto'} ref={panelRef}>
+      <MenuContainer>
+        <Col xs={'auto'}>
+          <Panel.UserInfo {...props} reduced={!reduced} />
+          <>
+            <Panel.MenuDesktop {...props} reduced={!reduced} />
+          </>
+        </Col>
 
-      <div className="d-flex  flex-column menu">
-        <div className="title">
-          <h4>Deshboard</h4>
-        </div>
-        <div>
-          <ul>
-            <li className="btndesk active">
-              <button onClick={() => handleActive('Home')}>
-                <div>
-                  <RiHomeLine />
-                  <p>Home</p>
-                </div>
-              </button>
-            </li>
-            <li className="btndesk">
-              <button onClick={() => handleActive('Projects')}>
-                <div>
-                  <AiOutlineAppstoreAdd />
-                  <p>Projects</p>
-                </div>
-              </button>
-            </li>
-            <li className="btndesk">
-              <button onClick={() => handleActive('Techs')}>
-                <div>
-                  <RiFileCodeFill />
-                  <p>Technologys</p>
-                </div>
-              </button>
-            </li>
-            <li className="btndesk">
-              <button onClick={() => handleActive('Settings')}>
-                <div>
-                  <AiOutlineUser />
-                  <p>Settings</p>
-                </div>
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
+        <ReduceMenu xs={2}>
+          <button
+            onClick={() => {
+              setReduced(!reduced);
+              toggleWidth();
+            }}
+          >
+            <div>
+              <IoIosArrowForward
+                style={{
+                  transform: reduced ? 'rotate(180deg)' : 'rotate(0deg)',
+                }}
+              />
+            </div>
+          </button>
+        </ReduceMenu>
+      </MenuContainer>
     </PanelMenu>
   );
 };
 
-export default Panel;
+export default PanelDash;

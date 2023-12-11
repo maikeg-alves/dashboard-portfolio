@@ -45,10 +45,10 @@ const Statistics: React.FC<Provaider> = (props) => {
     <LoadingPage />
   ) : (
     <Dash>
-      <div>
-        <h3>Statistics:</h3>
-      </div>
       <Container className="flex-responsive ">
+        <div>
+          <h3>Statistics:</h3>
+        </div>
         <Row>
           <CardGrid>
             <h4>Projects</h4>

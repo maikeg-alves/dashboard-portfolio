@@ -122,11 +122,11 @@ const Projects: React.FC<Provaider> = (props) => {
   ) : (
     <>
       <Project xs={12}>
-        <Container>
-          <Col xs={12}>
-            <Col>
-              <h3>New project: </h3>
-            </Col>
+        <Col xs={12} style={{ margin: '15px 0' }}>
+          <Col>
+            <h3>New project: </h3>
+          </Col>
+          <Container>
             <Row className="my-3">
               <Col className="modalgrid">
                 <button className="add-icon" onClick={handleCreate}>
@@ -135,36 +135,36 @@ const Projects: React.FC<Provaider> = (props) => {
                 </button>
               </Col>
             </Row>
-          </Col>
+          </Container>
+        </Col>
 
+        <Col xs={12}>
+          <Col>
+            <h3>Existing projects</h3>
+          </Col>
           <Col xs={12}>
-            <div>
-              <h3>Existing projects</h3>
-            </div>
-            <Row className="flex-responsive" style={{ height: 'auto' }}>
-              <Table techs>
-                {projects
-                  .sort(sortByCreatedAt)
-                  .slice(0, 4)
-                  .map((project) => (
-                    <>
-                      <TableItems
-                        {...project}
-                        handleDeleteProject={handleDelete}
-                        handleEditProject={handleUpdate}
-                      />
-                    </>
-                  ))}
-              </Table>
-            </Row>
-
-            <Col xs={12} lg={12} className="modalgrid">
-              <button className="add-plus w-100" onClick={handleviewProjects}>
-                <AiOutlinePlusCircle />
-              </button>
-            </Col>
+            <Table techs>
+              {projects
+                .sort(sortByCreatedAt)
+                .slice(0, 4)
+                .map((project) => (
+                  <>
+                    <TableItems
+                      {...project}
+                      handleDeleteProject={handleDelete}
+                      handleEditProject={handleUpdate}
+                    />
+                  </>
+                ))}
+            </Table>
           </Col>
-        </Container>
+
+          <Col xs={12} className="modalgrid">
+            <button className="add-plus w-100" onClick={handleviewProjects}>
+              <AiOutlinePlusCircle />
+            </button>
+          </Col>
+        </Col>
       </Project>
 
       <Modal isShown={isShown} hide={toggle}>

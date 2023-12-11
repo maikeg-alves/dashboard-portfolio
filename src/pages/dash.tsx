@@ -2,9 +2,9 @@ import React from 'react';
 import { Col } from 'react-bootstrap';
 
 import {
-  Panel,
+  PanelDash,
   Projects,
-  MobilePanel,
+  /*  MobilePanel, */
   UserArea,
   Statistics,
   Techs,
@@ -48,16 +48,18 @@ const Dashbord: NextPage = () => {
   };
 
   return (
-    <Container direction="column" align="center" justify="center" padding="3">
+    <Container direction="row" align="center" justify="around" padding="3">
       {!loader && (
         <>
-          <Panel setOpen={handleOpen} {...dados} />
+          <Col xs={'auto'} className="h-100 p-0">
+            <PanelDash setOpen={handleOpen} {...dados} />
+          </Col>
           <Col xs="auto" className="conElementes">
             {getPageComponent(pages)}
           </Col>
-          <MobilePanel setOpen={handleOpen} />
         </>
       )}
+      {/*  <MobilePanel setOpen={handleOpen} /> */}
       {loader && <LoadingPage />}
     </Container>
   );

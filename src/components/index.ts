@@ -13,6 +13,7 @@ export { ConfirmCodeComponent } from './auth/confirmCode';
 export { ChangePasswordComponent } from './auth/changePassword';
 export { AuthTwoStep } from './auth/authTwoStep';
 export { ErrorMessage } from './ErrorMessage';
+export { Panel } from './Panel';
 
 export {
   TableItems,
