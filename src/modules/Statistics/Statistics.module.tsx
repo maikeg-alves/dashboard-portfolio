@@ -45,10 +45,10 @@ const Statistics: React.FC<Provaider> = (props) => {
     <LoadingPage />
   ) : (
     <Dash>
-      <Container className="flex-responsive ">
-        <div>
-          <h3>Statistics:</h3>
-        </div>
+      <Col lg={12} sm={12}>
+        <h3>Statistics:</h3>
+      </Col>
+      <Container className="flex-responsive p-0 ">
         <Row>
           <CardGrid>
             <h4>Projects</h4>
@@ -81,7 +81,7 @@ const Statistics: React.FC<Provaider> = (props) => {
         <Row>
           <CardGrid>
             <h4>Technology ranking </h4>
-            <Col xs={12} className="bodyGridList">
+            <Col xs={2} className="bodyGridList">
               {props.techs &&
                 props.techs
                   .slice(0, 5)
@@ -105,7 +105,7 @@ const Statistics: React.FC<Provaider> = (props) => {
 
           <CardGrid>
             <h4>Language ranking</h4>
-            <Col xs={12} className="bodyGridList">
+            <Col className="bodyGridList">
               {mostLanguage.length > 0 &&
                 mostLanguage
                   .filter((language) => language[0] !== 'null')

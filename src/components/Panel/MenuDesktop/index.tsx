@@ -43,32 +43,44 @@ const Desktop: React.FC<DesktopProps> = (props) => {
       )}
       <ul>
         <li className="btndesk active">
-          <button onClick={() => props.setOpen('Home')}>
-            <div>
+          <button
+            onClick={() => props.setOpen('Home')}
+            className={props.reduced ? 'justify-content-center' : ''}
+          >
+            <div className={props.reduced ? 'm-0 ' : ''}>
               <RiHomeLine />
               {!props.reduced && <p>Home</p>}
             </div>
           </button>
         </li>
         <li className="btndesk">
-          <button onClick={() => props.setOpen('Projects')}>
-            <div>
+          <button
+            onClick={() => props.setOpen('Projects')}
+            className={props.reduced ? 'justify-content-center' : ''}
+          >
+            <div className={props.reduced ? 'm-0 ' : ''}>
               <AiOutlineAppstoreAdd />
               {!props.reduced && <p>Projects</p>}
             </div>
           </button>
         </li>
         <li className="btndesk">
-          <button onClick={() => props.setOpen('Techs')}>
-            <div>
+          <button
+            onClick={() => props.setOpen('Techs')}
+            className={props.reduced ? 'justify-content-center' : ''}
+          >
+            <div className={props.reduced ? 'm-0 ' : ''}>
               <RiFileCodeFill />
               {!props.reduced && <p>Technologys</p>}
             </div>
           </button>
         </li>
         <li className="btndesk">
-          <button onClick={() => props.setOpen('Settings')}>
-            <div>
+          <button
+            onClick={() => props.setOpen('Settings')}
+            className={props.reduced ? 'justify-content-center' : ''}
+          >
+            <div className={props.reduced ? 'm-0 ' : ''}>
               <AiOutlineUser />
               {!props.reduced && <p>Settings</p>}
             </div>

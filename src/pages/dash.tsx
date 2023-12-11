@@ -1,14 +1,7 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
 
-import {
-  PanelDash,
-  Projects,
-  MobilePanel,
-  UserArea,
-  Statistics,
-  Techs,
-} from '../modules';
+import { PanelDash, Projects, UserArea, Statistics, Techs } from '../modules';
 import { Container } from '../layout';
 
 import { LoadingPage } from '@components';
