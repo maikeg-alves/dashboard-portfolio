@@ -4,8 +4,6 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { RiLockPasswordLine } from '@styles';
 import { FormGroup } from '../login/styles';
 
-import { useRouter } from 'next/router';
-
 import { ErrorMessage, LoadingPage } from '@components';
 import {
   GetCookie,
@@ -14,6 +12,7 @@ import {
   delayChangePage,
 } from '@utils';
 import { StatusCodes, statusMessages } from './exceptions';
+import BodyLogin from '../BodyLogin';
 
 interface Props {
   setPage: (page: number) => void;
@@ -32,7 +31,6 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const router = useRouter();
   const [loader, setLoader] = React.useState<boolean>(false);
   const [error, setError] = React.useState({
     status: false,
@@ -105,17 +103,10 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
     }
   };
 
-  const handleVisitor = () => {
-    if (localStorage.getItem('token')) {
-      localStorage.removeItem('token');
-    }
-    router.push('/dash');
-  };
-
   return (
     <>
       {!loader && (
-        <Col className="d-flex flex-column align-items-center" xs="auto">
+        <BodyLogin>
           <Form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
             <Col xs="auto">
               <Col>
@@ -196,21 +187,9 @@ export const ChangePasswordComponent: React.FC<Props> = ({ setPage }) => {
                   <a onClick={() => setPage(1)}>fazer login</a>
                 </Col>
               </Col>
-
-              <Col className="msg-secondary visit">
-                {!error.type && error.type === '' && (
-                  <p>
-                    Não é o administrador? entre como
-                    <a onClick={handleVisitor} style={{ cursor: 'pointer' }}>
-                      {' '}
-                      Visitante
-                    </a>
-                  </p>
-                )}
-              </Col>
             </Col>
           </Form>
-        </Col>
+        </BodyLogin>
       )}
       {showAlert && Element}
 

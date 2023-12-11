@@ -47,17 +47,23 @@ export const StepOne: React.FC<StepOneProps> = ({
           defaultValue={update ? projects[0].githubRepoId : ''}
         >
           {github &&
-            github.map((repo) => (
-              <option
-                key={repo.id}
-                value={repo.name}
-                selected={update && repo.name === projects[0].githubRepoId}
-              >
-                {update && repo.name === projects[0].githubRepoId
-                  ? projects[0].githubRepoId
-                  : repo.name}
-              </option>
-            ))}
+            github
+              .filter((repo) =>
+                !update
+                  ? !projects.some((proj) => proj.githubRepoId === repo.name)
+                  : repo,
+              )
+              .map((repo) => (
+                <option
+                  key={repo.id}
+                  value={repo.name}
+                  selected={update && repo.name === projects[0].githubRepoId}
+                >
+                  {update && repo.name === projects[0].githubRepoId
+                    ? projects[0].githubRepoId
+                    : repo.name}
+                </option>
+              ))}
         </Form.Select>
       </Form.Group>
       <Form.Group>

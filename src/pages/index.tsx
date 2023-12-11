@@ -13,10 +13,12 @@ import {
 } from '@components';
 import { GetCookie } from '@utils';
 import { useRouter } from 'next/router';
+import { DataContext } from '@hook';
 
 const image = 'https://i.imgur.com/NIkBDgT.jpg';
 
 const Login: NextPage = () => {
+  const context = React.useContext(DataContext);
   const router = useRouter();
   const [page, setPage] = React.useState<number>(1);
 
@@ -43,6 +45,7 @@ const Login: NextPage = () => {
   };
 
   if (GetCookie('accesstoken')) {
+    context?.carregarDadosIniciais();
     router.push('/dash');
   }
 

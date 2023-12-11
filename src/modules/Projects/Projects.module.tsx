@@ -89,6 +89,7 @@ const Projects: React.FC<Provaider> = (props) => {
     if (selectedProject) {
       setAppData({
         ...appData,
+        id,
         projects: [selectedProject] || [],
         selectedComponent: SetComponet.DELETE,
       });

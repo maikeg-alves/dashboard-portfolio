@@ -20,6 +20,7 @@ import { ErrorMessage, LoadingPage } from '@components';
 
 import { IState, Inputs } from '@interfaces';
 import { StatusCodes, statusMessages } from './exceptions';
+import BodyLogin from '../BodyLogin';
 
 interface Props {
   setPage: (page: number) => void;
@@ -57,7 +58,7 @@ export const LoginComponet: React.FC<Props> = ({ setPage }) => {
       if (objetoRecuperado) {
         const objetoParseado = JSON.parse(objetoRecuperado) as IState;
 
-        if (objetoParseado != state) {
+        if (objetoParseado.passaPortAcesse != state.passaPortAcesse) {
           return true;
         }
 
@@ -113,13 +114,20 @@ export const LoginComponet: React.FC<Props> = ({ setPage }) => {
           router.push(
             'https://www.youtube.com/embed/VX0g9gu9co8?controls=0&rel=0&showinfo=0&autoplay=1',
           );
-        } else if (state.attempts === 3) {
+
+          return;
+        }
+
+        if (state.attempts === 3) {
           setState((prevState) => ({ ...prevState, disabled: true }));
           localStorage.setItem(
             'lockoutTime',
             (Date.now() + state.lockoutTime * 60 * 1000).toString(),
           );
+          return;
         }
+
+        return;
       }
 
       setElement(statusMessages[StatusCodes.CREATED]);
@@ -140,13 +148,6 @@ export const LoginComponet: React.FC<Props> = ({ setPage }) => {
         throw new Error('Error ao tentar eestabelecer conexão com o servidor');
       }
     }
-  };
-
-  const handleVisitor = () => {
-    if (localStorage.getItem('token')) {
-      localStorage.removeItem('token');
-    }
-    router.push('/dash');
   };
 
   React.useEffect(() => {
@@ -172,7 +173,7 @@ export const LoginComponet: React.FC<Props> = ({ setPage }) => {
   return (
     <>
       {!loader && (
-        <Col className="d-flex flex-column align-items-center" xs="auto">
+        <BodyLogin>
           <Form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
             <Col xs="auto">
               <Col>
@@ -273,18 +274,9 @@ export const LoginComponet: React.FC<Props> = ({ setPage }) => {
                   <a onClick={() => setPage(2)}>forgot Password?</a>
                 </Col>
               </Col>
-              <Col className="msg-secondary visit">
-                <p>
-                  Não é o administrador? entre como
-                  <a onClick={handleVisitor} style={{ cursor: 'pointer' }}>
-                    {' '}
-                    Visitante
-                  </a>
-                </p>
-              </Col>
             </Col>
           </Form>
-        </Col>
+        </BodyLogin>
       )}
 
       {showAlert && Element}

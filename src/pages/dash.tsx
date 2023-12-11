@@ -9,15 +9,25 @@ import { DataContext } from '@hook';
 import { NextPage } from 'next';
 
 const Dashbord: NextPage = () => {
-  const { dados, atualizarDados } = React.useContext(DataContext) || {};
-  const [loader, setLoader] = React.useState<boolean>(false);
+  const { dados, carregarDadosIniciais } = React.useContext(DataContext) || {};
+  const [loader, setLoader] = React.useState<boolean>(true);
   const [pages, setPages] = React.useState<string>('Home');
 
   React.useEffect(() => {
-    setLoader(!dados);
-  }, [dados]);
+    const fetchData = async () => {
+      try {
+        if (carregarDadosIniciais && !dados?.values) {
+          await carregarDadosIniciais();
+        }
+      } finally {
+        setLoader(false);
+      }
+    };
 
-  if (!dados || !atualizarDados) {
+    fetchData();
+  }, [carregarDadosIniciais, dados]);
+
+  if (!dados) {
     return null;
   }
 

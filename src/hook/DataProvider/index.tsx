@@ -7,6 +7,7 @@ import { GetCookie } from '@utils';
 interface DataContextProps {
   dados: Provaider;
   atualizarDados: () => void;
+  carregarDadosIniciais: () => void;
 }
 
 export const DataContext = React.createContext<DataContextProps | undefined>(
@@ -34,38 +35,40 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         setDados({
           ...dadosAtualizados,
           admin: true,
+          values: true,
         });
       }
 
-      setDados(dadosAtualizados);
+      setDados({ ...dadosAtualizados, values: true });
     } catch (error) {
       console.error('Erro ao carregar dados atualizados:', error);
     }
   };
 
-  React.useEffect(() => {
-    const carregarDadosIniciais = async () => {
-      try {
-        const dadosIniciais = await getData();
+  const carregarDadosIniciais = async () => {
+    try {
+      const dadosIniciais = await getData();
 
-        if (GetCookie('accesstoken')) {
-          setDados({
-            ...dadosIniciais,
-            admin: true,
-          });
-        }
-
-        setDados(dadosIniciais);
-      } catch (error) {
-        console.error('Erro ao carregar dados iniciais:', error);
+      if (dadosIniciais.admin && GetCookie('accesstoken')) {
+        setDados({
+          ...dadosIniciais,
+          admin: true,
+          values: true,
+        });
       }
-    };
 
-    carregarDadosIniciais();
-  }, []);
+      setDados(dadosIniciais);
+
+      setDados({ ...dadosIniciais, values: true });
+    } catch (error) {
+      console.error('Erro ao carregar dados iniciais:', error);
+    }
+  };
 
   return (
-    <DataContext.Provider value={{ dados, atualizarDados }}>
+    <DataContext.Provider
+      value={{ dados, atualizarDados, carregarDadosIniciais }}
+    >
       {children}
     </DataContext.Provider>
   );

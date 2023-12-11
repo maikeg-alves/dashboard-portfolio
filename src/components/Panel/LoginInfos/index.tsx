@@ -41,7 +41,7 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
         {!props.reduced && (
           <>
             <div className="user">
-              <h6>{props.admin ? 'Maicon Gabriel alves' : 'Usuário '}</h6>
+              <h6>{props.admin ? 'Maicon Gabriel Alves' : 'Usuário '}</h6>
               <p> {props.admin ? 'administrador' : 'visitante '} </p>
             </div>
 

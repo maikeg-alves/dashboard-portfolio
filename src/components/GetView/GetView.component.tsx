@@ -27,24 +27,24 @@ const GetView: React.FC<PropsGetView> = (props) => {
     <Container xs={12}>
       <Table techs={!techs} projects={!projects}>
         {techs &&
-          techs.map((techs) => (
-            <>
+          techs.map((tech) => (
+            <React.Fragment key={tech.id}>
               <TableItems
-                {...techs}
+                {...tech}
                 handleDeleteProject={(id) => props.SetDelete(id)}
                 handleEditProject={(id) => props.SetUpdate(id)}
               />
-            </>
+            </React.Fragment>
           ))}
         {projects &&
-          projects.map((projects) => (
-            <>
+          projects.map((project) => (
+            <React.Fragment key={project.id}>
               <TableItems
-                {...projects}
+                {...project}
                 handleDeleteProject={(id) => props.SetDelete(id)}
                 handleEditProject={(id) => props.SetUpdate(id)}
               />
-            </>
+            </React.Fragment>
           ))}
       </Table>
     </Container>
