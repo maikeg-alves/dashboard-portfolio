@@ -3,7 +3,8 @@ import { Col } from 'react-bootstrap';
 
 import { Panel } from '@components';
 import { IoIosArrowForward } from 'react-icons/io';
-import { MenuContainer, PanelMenu, ReduceMenu } from './styles';
+import { MenuContainer, MenuMobile, PanelMenu } from './styles';
+import MobilePanel from '../MobilePanel/MobilePanel.module';
 
 type PanelProps = {
   setOpen: (open: string) => void;
@@ -28,33 +29,38 @@ const PanelDash: React.FC<PanelProps> = (props) => {
   };
 
   return (
-    <PanelMenu xs={'auto'} ref={panelRef}>
-      <MenuContainer>
-        <Col xs={'auto'}>
-          <Panel.UserInfo {...props} reduced={!reduced} />
-          <>
-            <Panel.MenuDesktop {...props} reduced={!reduced} />
-          </>
-        </Col>
+    <>
+      <Col className="d-none d-lg-block h-100" lg={'auto'}>
+        <PanelMenu xs={'auto'} ref={panelRef}>
+          <MenuContainer>
+            <Col xs={'auto'}>
+              <Panel.UserInfo {...props} reduced={!reduced} />
+              <Panel.MenuDesktop {...props} reduced={!reduced} />
+            </Col>
 
-        <ReduceMenu xs={2}>
-          <button
-            onClick={() => {
-              setReduced(!reduced);
-              toggleWidth();
-            }}
-          >
-            <div>
-              <IoIosArrowForward
-                style={{
-                  transform: reduced ? 'rotate(180deg)' : 'rotate(0deg)',
+            <Col className="reduceMenu" xs={2}>
+              <button
+                onClick={() => {
+                  setReduced(!reduced);
+                  toggleWidth();
                 }}
-              />
-            </div>
-          </button>
-        </ReduceMenu>
-      </MenuContainer>
-    </PanelMenu>
+              >
+                <IoIosArrowForward
+                  style={{
+                    transform: reduced ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}
+                />
+              </button>
+            </Col>
+          </MenuContainer>
+        </PanelMenu>
+      </Col>
+      <MenuMobile className="d-lg-none d-sm-block col-12">
+        <Col sm={12} className="mobile">
+          <MobilePanel {...props} />
+        </Col>
+      </MenuMobile>
+    </>
   );
 };
 

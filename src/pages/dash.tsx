@@ -4,7 +4,7 @@ import { Col } from 'react-bootstrap';
 import {
   PanelDash,
   Projects,
-  /*  MobilePanel, */
+  MobilePanel,
   UserArea,
   Statistics,
   Techs,
@@ -54,12 +54,11 @@ const Dashbord: NextPage = () => {
           <Col xs={'auto'} className="h-100 p-0">
             <PanelDash setOpen={handleOpen} {...dados} />
           </Col>
-          <Col xs="auto" className="conElementes">
+          <Col xs="auto" className="conElementes h-100 pt-3">
             {getPageComponent(pages)}
           </Col>
         </>
       )}
-      {/*  <MobilePanel setOpen={handleOpen} /> */}
       {loader && <LoadingPage />}
     </Container>
   );
