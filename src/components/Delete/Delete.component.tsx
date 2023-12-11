@@ -5,25 +5,24 @@ import { Provaider } from '@interfaces';
 import { Container } from './styles';
 import { LoadingPage } from '@components';
 import { baseUrl, closeAlertWithDelay } from '@utils';
-import { ApiManager } from '@hook';
+import { ApiManager, DataContext } from '@hook';
 import { statusMessages } from './exceptions';
 import { StatusCodes } from '../auth/login/exceptions';
 
 interface PropsDelete extends Provaider {
+  id?: number | null;
   mode: 'techs' | 'projects';
   hide: () => void;
 }
 
 const Delete: React.FC<PropsDelete> = (props) => {
+  const context = React.useContext(DataContext);
+
   const [Element, setElement] = React.useState<JSX.Element | null>(null);
   const [showAlert, setShowAlert] = React.useState(false);
 
   const [apiManager] = React.useState(
-    new ApiManager(
-      `${baseUrl}${props.mode}/delete/${
-        props.mode ? props.projects[0].id : props.techs[0].id
-      }`,
-    ),
+    new ApiManager(`${baseUrl}${props.mode}/delete/${props.id || null}`),
   );
 
   const [check, setCheck] = React.useState<boolean>(false);
@@ -42,6 +41,8 @@ const Delete: React.FC<PropsDelete> = (props) => {
 
   const handleDelete = async () => {
     try {
+      setLoader(true);
+
       const response = await apiManager.deleteData();
 
       if (!response.success && response.error) {
@@ -55,6 +56,7 @@ const Delete: React.FC<PropsDelete> = (props) => {
       closeAlertWithDelay(6000, setShowAlert);
 
       setTimeout(() => {
+        context?.atualizarDados();
         props.hide();
       }, 3000);
     } catch (error) {
@@ -64,19 +66,18 @@ const Delete: React.FC<PropsDelete> = (props) => {
 
   React.useEffect(() => {
     if (props.mode === 'techs') {
-      const tech = props.techs.find((item) => item);
+      const tech = props.techs[0];
 
       if (tech) {
         setParameter(`${tech.name}/id:${tech.id}`);
-        setLoader(false);
+        return;
       }
     }
-
-    const project = props.projects.find((item) => item);
+    const project = props.projects[0];
 
     if (project) {
       setParameter(`${project.name}/id:${project.id}`);
-      setLoader(false);
+      return;
     }
   }, [loader, props, parameter]);
 

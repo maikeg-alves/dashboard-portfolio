@@ -79,6 +79,7 @@ const Techs: React.FC<Provaider> = (props) => {
     if (selectedTech) {
       setAppData({
         ...appData,
+        id,
         techs: [selectedTech] || [],
         selectedComponent: SetComponet.DELETE,
       });

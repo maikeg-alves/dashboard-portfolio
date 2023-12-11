@@ -1,7 +1,6 @@
 import React, { useRef, useState, ClipboardEvent } from 'react';
 import { Col, Form } from 'react-bootstrap';
 import { CodeDigitInput, VerificationCodeInput } from './styles';
-import { useRouter } from 'next/router';
 
 import {
   SetCookie,
@@ -11,13 +10,13 @@ import {
 } from '@utils';
 import { LoadingPage } from '@components';
 import { statusMessages } from './exceptions';
+import BodyLogin from '../BodyLogin';
 
 interface Props {
   setPage: (page: number) => void;
 }
 
 export const ConfirmCodeComponent: React.FC<Props> = ({ setPage }) => {
-  const router = useRouter();
   const [code, setCode] = useState(Array(6).fill(''));
 
   const codeInputs = Array(6).fill(useRef(null));
@@ -127,17 +126,10 @@ export const ConfirmCodeComponent: React.FC<Props> = ({ setPage }) => {
     }
   };
 
-  const handleVisitor = () => {
-    if (localStorage.getItem('token')) {
-      localStorage.removeItem('token');
-    }
-    router.push('/dash');
-  };
-
   return (
     <>
       {!loader && (
-        <>
+        <BodyLogin>
           <Col xs="auto">
             <Col>
               <h4>Confirmação de Código</h4>
@@ -171,19 +163,9 @@ export const ConfirmCodeComponent: React.FC<Props> = ({ setPage }) => {
                   <h5>Confirmar Código</h5>
                 </button>
               </Col>
-
-              <Col className="msg-secondary visit">
-                <p>
-                  Não é o administrador? entre como
-                  <a onClick={handleVisitor} style={{ cursor: 'pointer' }}>
-                    {' '}
-                    Visitante
-                  </a>
-                </p>
-              </Col>
             </Col>
           </Form>
-        </>
+        </BodyLogin>
       )}
       {showAlert && Element}
 

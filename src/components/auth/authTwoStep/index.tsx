@@ -7,9 +7,12 @@ import { GetCookie, SetCookie, baseUrl, closeAlertWithDelay } from '@utils';
 import { LoadingPage } from '@components';
 import { StatusCodes, statusMessages } from './exceptions';
 import { IloginRes } from '@interfaces';
+import BodyLogin from '../BodyLogin';
+import { DataContext } from '@hook';
 
 export const AuthTwoStep: React.FC = () => {
   const router = useRouter();
+  const context = React.useContext(DataContext);
   const [code, setCode] = useState(Array(6).fill(''));
 
   const [inputRefs] = useState<Array<React.RefObject<HTMLInputElement>>>(
@@ -137,6 +140,7 @@ export const AuthTwoStep: React.FC = () => {
       SetCookie('accesstoken', json.token, optionsCookie);
 
       if (GetCookie('accesstoken')) {
+        context?.atualizarDados();
         if (response.ok) router.push('/dash');
       }
     } catch (error) {
@@ -151,13 +155,6 @@ export const AuthTwoStep: React.FC = () => {
     }
   };
 
-  const handleVisitor = () => {
-    if (localStorage.getItem('token')) {
-      localStorage.removeItem('token');
-    }
-    router.push('/dash');
-  };
-
   React.useEffect(() => {
     const allInputsFilled = code.every((digit) => digit !== '');
 
@@ -167,7 +164,7 @@ export const AuthTwoStep: React.FC = () => {
   return (
     <>
       {!loader && (
-        <>
+        <BodyLogin>
           <Col xs="auto">
             <Col>
               <h4>Autenticação por 2FA</h4>
@@ -213,19 +210,9 @@ export const AuthTwoStep: React.FC = () => {
                   Confirmar Token
                 </button>
               </Col>
-
-              <Col className="msg-secondary visit">
-                <p>
-                  Não é o administrador? Entre como
-                  <a onClick={handleVisitor} style={{ cursor: 'pointer' }}>
-                    {' '}
-                    Visitante
-                  </a>
-                </p>
-              </Col>
             </Col>
           </Form>
-        </>
+        </BodyLogin>
       )}
       {showAlert && Element}
 

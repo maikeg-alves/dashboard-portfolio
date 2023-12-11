@@ -4,9 +4,9 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineEmail } from '@styles';
 import { FormGroup } from '../login/styles';
 import { baseUrl, closeAlertWithDelay, delayChangePage } from '@utils';
-import { useRouter } from 'next/router';
 import { ErrorMessage, LoadingPage } from '@components';
 import { statusMessages } from './exceptions';
+import BodyLogin from '../BodyLogin';
 interface Props {
   setPage: (page: number) => void;
 }
@@ -23,7 +23,6 @@ export const RecoveryComponent: React.FC<Props> = ({ setPage }) => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const router = useRouter();
   const [loader, setLoader] = React.useState<boolean>(false);
   const [Element, setElement] = React.useState<JSX.Element | null>(null);
   const [showAlert, setShowAlert] = React.useState(false);
@@ -60,17 +59,10 @@ export const RecoveryComponent: React.FC<Props> = ({ setPage }) => {
     }
   };
 
-  const handleVisitor = () => {
-    if (localStorage.getItem('token')) {
-      localStorage.removeItem('token');
-    }
-    router.push('/dash');
-  };
-
   return (
     <>
       {!loader && (
-        <Col className="d-flex flex-column align-items-center" xs="auto">
+        <BodyLogin>
           <Form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
             <Col xs="auto">
               <Col>
@@ -121,18 +113,9 @@ export const RecoveryComponent: React.FC<Props> = ({ setPage }) => {
                   <a onClick={() => setPage(1)}>fazer login</a>
                 </Col>
               </Col>
-
-              <Col className="msg-secondary visit">
-                <p>
-                  Não é o administrador? entre como{' '}
-                  <a onClick={handleVisitor} style={{ cursor: 'pointer' }}>
-                    Visitante
-                  </a>
-                </p>
-              </Col>
             </Col>
           </Form>
-        </Col>
+        </BodyLogin>
       )}
 
       {showAlert && Element}
