@@ -3,6 +3,12 @@ import styled from 'styled-components';
 import LinearProgress from '@mui/material/LinearProgress';
 
 export const Dash = styled(Col)`
+  height: 100%;
+  .flex-responsive {
+    @media only screen and (max-width: 356px) {
+      overflow-x: hidden;
+    }
+  }
   .Visitors {
     justify-content: space-between !important;
   }

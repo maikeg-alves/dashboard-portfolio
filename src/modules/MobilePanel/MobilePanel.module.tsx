@@ -34,8 +34,8 @@ const MobilePanel: React.FC<Props> = (props) => {
   }
 
   return (
-    <Container xs={12}>
-      <Col xs="auto" className="menumobile">
+    <Container sm={12}>
+      <Col sm="auto" className="menumobile">
         <div className="navigation">
           <ul className="listWrap">
             <li className="list active" onClick={() => handleActive('Home')}>

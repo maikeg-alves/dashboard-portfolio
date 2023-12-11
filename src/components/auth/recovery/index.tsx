@@ -2,15 +2,10 @@ import React from 'react';
 import { Col, Form } from 'react-bootstrap';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineEmail } from '@styles';
-import { ErrorContainer, FormGroup } from '../login/styles';
-import {
-  baseUrl,
-  loginFormErrors,
-  closeAlertWithDelay,
-  delayChangePage,
-} from '@utils';
+import { FormGroup } from '../login/styles';
+import { baseUrl, closeAlertWithDelay, delayChangePage } from '@utils';
 import { useRouter } from 'next/router';
-import { LoadingPage } from '@components';
+import { ErrorMessage, LoadingPage } from '@components';
 import { statusMessages } from './exceptions';
 interface Props {
   setPage: (page: number) => void;
@@ -94,9 +89,15 @@ export const RecoveryComponent: React.FC<Props> = ({ setPage }) => {
                 type="email"
                 placeholder="Email"
                 {...register('email', {
-                  required: true,
-                  pattern:
-                    /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                  required: {
+                    value: true,
+                    message: 'O campo é obrigatório',
+                  },
+                  pattern: {
+                    value:
+                      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                    message: 'Formato de email inválido',
+                  },
                 })}
                 style={{
                   border: `2px solid ${errors.email && 'red'}`,
@@ -107,10 +108,8 @@ export const RecoveryComponent: React.FC<Props> = ({ setPage }) => {
               </div>
             </FormGroup>
 
-            {errors.email && (
-              <ErrorContainer>
-                <p>{loginFormErrors.email}</p>
-              </ErrorContainer>
+            {errors.email && errors.email.message && (
+              <ErrorMessage message={errors.email.message} />
             )}
 
             <Col xs="auto" className="d-flex flex-column align-items-center">

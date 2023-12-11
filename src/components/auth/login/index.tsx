@@ -8,16 +8,15 @@ import Countdown from 'react-countdown-now';
 import { RiLockPasswordLine, MdOutlineEmail } from '@styles';
 
 import {
-  loginFormErrors,
   baseUrl,
   SetCookie,
   closeAlertWithDelay,
   delayChangePage,
 } from '@utils';
 
-import { ErrorContainer, FormGroup } from './styles';
+import { FormGroup } from './styles';
 
-import { LoadingPage } from '@components';
+import { ErrorMessage, LoadingPage } from '@components';
 
 import { IState, Inputs } from '@interfaces';
 import { StatusCodes, statusMessages } from './exceptions';
@@ -189,9 +188,15 @@ export const LoginComponet: React.FC<Props> = ({ setPage }) => {
                 type="email"
                 placeholder="Email"
                 {...register('email', {
-                  required: true,
-                  pattern:
-                    /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                  required: {
+                    value: true,
+                    message: 'O campo é obrigatório',
+                  },
+                  pattern: {
+                    value:
+                      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                    message: 'Formato de email inválido',
+                  },
                 })}
                 style={{
                   border: `2px solid ${
@@ -203,10 +208,9 @@ export const LoginComponet: React.FC<Props> = ({ setPage }) => {
                 <MdOutlineEmail />
               </div>
             </FormGroup>
-            {errors.email && (
-              <ErrorContainer>
-                <p>{loginFormErrors.email}</p>
-              </ErrorContainer>
+
+            {errors.email && errors.email.message && (
+              <ErrorMessage message={errors.email.message} />
             )}
 
             <FormGroup>
@@ -214,7 +218,10 @@ export const LoginComponet: React.FC<Props> = ({ setPage }) => {
                 type="password"
                 placeholder="Password"
                 {...register('password', {
-                  required: true,
+                  required: {
+                    value: true,
+                    message: 'O campo é obrigatório',
+                  },
                 })}
                 style={{
                   border: `2px solid ${
@@ -227,16 +234,9 @@ export const LoginComponet: React.FC<Props> = ({ setPage }) => {
                 <RiLockPasswordLine />
               </div>
             </FormGroup>
-            {errors.password && (
-              <ErrorContainer>
-                <p>{loginFormErrors.password}</p>
-              </ErrorContainer>
-            )}
 
-            {state.disabled && (
-              <ErrorContainer>
-                <p>{loginFormErrors.bruteforce}</p>
-              </ErrorContainer>
+            {errors.password && errors.password.message && (
+              <ErrorMessage message={errors.password.message} />
             )}
 
             <Col xs="auto" className="d-flex flex-column align-items-center">
