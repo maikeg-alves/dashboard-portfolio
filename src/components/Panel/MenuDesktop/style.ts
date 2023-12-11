@@ -18,6 +18,7 @@ export const DesktopStyle = styled.div<{ reduced: boolean }>`
       padding: ${(props) => (props.reduced ? 0 : '10px')};
       width: 100%;
       border: none;
+      padding-bottom: 1rem;
       button {
         background-color: transparent;
         width: 100%;
