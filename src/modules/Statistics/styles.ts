@@ -116,15 +116,17 @@ export const CardGrid = styled(Col)`
   background-color: ${(props) => props.theme.colors.backgroundSecondary};
   border-radius: 17px;
   padding: 20px;
-  width: 200px;
+
   margin: 11px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   .bodyGrid {
-    width: 100%;
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 1rem;
   }
 
   .bodyGridList {

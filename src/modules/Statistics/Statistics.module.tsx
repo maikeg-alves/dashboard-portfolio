@@ -6,12 +6,17 @@ import { Provaider, IGithubRepos } from '@interfaces';
 import React from 'react';
 import { LoadingPage } from '@components';
 
+import { BiLoaderAlt } from 'react-icons/bi';
+
 type LanguageCount = { [language: string]: number };
 
 const Statistics: React.FC<Provaider> = (props) => {
   const [statistics, setStatistics] = React.useState<Provaider>(
     {} as Provaider,
   );
+
+  const [status, setStatus] = React.useState<boolean>(true);
+  const [loader, setLoader] = React.useState<boolean>(false);
 
   function languageCounts(reposGithub: IGithubRepos[]) {
     const languageCounts: LanguageCount = {};
@@ -40,6 +45,29 @@ const Statistics: React.FC<Provaider> = (props) => {
     statistics.github?.length &&
     statistics.techs?.length &&
     statistics.projects?.length;
+
+  const checkStatSite = async () => {
+    try {
+      setLoader(true);
+
+      const response = await fetch('https://www.maicongabrielalves.com.br', {
+        method: 'GET',
+      });
+
+      console.log(response.status);
+
+      if (response.status !== 200) {
+        setStatus(!status);
+        return;
+      }
+      setStatus(true);
+    } catch (error) {
+      console.error(error);
+      setStatus(false);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   return !StatisticsIsValid ? (
     <LoadingPage />
@@ -119,6 +147,41 @@ const Statistics: React.FC<Provaider> = (props) => {
                     </Col>
                   ))}
             </Col>
+          </CardGrid>
+        </Row>
+
+        <Row>
+          <CardGrid>
+            {loader ? (
+              <Col
+                xs={12}
+                className="d-flex align-items-center justify-content-between "
+                style={{ maxHeight: '100px' }}
+              >
+                <LoadingPage />
+              </Col>
+            ) : (
+              <>
+                <Col
+                  xs={12}
+                  className="d-flex align-items-center justify-content-between "
+                >
+                  <h4>Status Site</h4>
+                  <BiLoaderAlt
+                    onClick={checkStatSite}
+                    style={{
+                      transform: status ? 'rotate(180deg)' : 'rotate(0deg)',
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Col>
+                <Col xs={'auto'} className="bodyGrid m-3">
+                  <h2 style={{ color: status ? '#01c88c' : 'red' }}>
+                    {status ? 'Online' : 'Offline'}
+                  </h2>
+                </Col>
+              </>
+            )}
           </CardGrid>
         </Row>
       </Container>
